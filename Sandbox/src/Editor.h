@@ -17,6 +17,8 @@
 
 #include "Windows/ProjectSetupWindow.h"
 
+#include "PointMass.h"
+
 
 const std::string icon_path = "Assets/IVlogo.png";
 const std::string shader_path = "Assets/shaders/shader.glsl";
@@ -110,7 +112,6 @@ namespace Zeus {
 		Entity m_entity_hovered;
 
 		SceneHierarchy m_hierarchy;
-		ContentBrowser m_content_browser;
 
 		ProjectSetupWindow m_setup_window;
 
@@ -119,7 +120,7 @@ namespace Zeus {
 
 	class Editor : public Application {
 	public:
-		Editor() {
+		Editor() : Application("Zeus Sandbox") {
 			//Ivory::Application::get_window().set_vsync(false);
 			//push_layer(std::make_shared<Test2D>());
 			push_layer(std::make_shared<EditorLayer>());

@@ -9,7 +9,7 @@
 #include <fstream>
 
 namespace Zeus {
-    EditorLayer::EditorLayer() : Layer("Test2D"), m_camera_controller(1280.0f / 720.f) {
+    EditorLayer::EditorLayer() : Layer("Sandbox"), m_camera_controller(1280.0f / 720.f) {
     
     }
 
@@ -29,21 +29,6 @@ namespace Zeus {
         m_active_scene = std::make_shared<Scene>();
         m_editor_scene = m_active_scene;
 
-        /*Entity square_entity = m_active_scene->create_entity("Sprite");
-        square_entity.add_component<SpriteRendererComponent>(glm::vec4{ 0.1f, 0.5f, 0.1f, 1.0f });
-        m_camera_entity = m_active_scene->create_entity("Camera");
-        m_camera_entity.add_component<CameraComponent>();
-
-        class CameraController : public ScriptableEntity {
-        public:
-            void on_create() {}
-            void on_destroy() {}
-            void on_update(Timestep dt) {
-                
-            }
-        };
-
-        m_camera_entity.add_component<CScriptComponent>().bind<CameraController>();*/
         m_hierarchy.set_context(m_active_scene);
 
         m_editor_camera = EditorCamera(30.0f, 16.0f / 9.0f, 0.01f, 1000.0f);
@@ -225,7 +210,7 @@ namespace Zeus {
         }
 
         m_hierarchy.on_imgui_render();
-        m_content_browser.on_imgui_render();
+        //m_content_browser.on_imgui_render();
 
         // VIEWPORT
 
@@ -560,7 +545,7 @@ namespace Zeus {
             new_scene();
             SceneSerializer serializer(m_active_scene);
             serializer.serialize(default_scene.string());
-            m_content_browser.set_assets_dir(Project::get_assets_dir());
+            //m_content_browser.set_assets_dir(Project::get_assets_dir());
             save_project(std::filesystem::path(path)/ (name.empty() ? "Untitled Project.ivprj" : name));
         }
     }
@@ -577,7 +562,7 @@ namespace Zeus {
         if (Project::load(path)) {
             auto default_scene = Project::get_assets_dir() / Project::get_settings()->default_scene;
             open_scene(default_scene);
-            m_content_browser.set_assets_dir(Project::get_assets_dir());
+            //m_content_browser.set_assets_dir(Project::get_assets_dir());
             m_current_project_path = path;
         }
     }
