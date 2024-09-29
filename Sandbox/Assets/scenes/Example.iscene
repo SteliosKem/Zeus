@@ -1,0 +1,58 @@
+Scene: Name
+Entities:
+  - Entity: 2334883269537274311
+    TagComponent:
+      Tag: New Entity
+    TransformComponent:
+      Translation: [0, 0, 2]
+      Rotation: [0, -0, 0]
+      Scale: [1.38, 1.38, 1.38]
+    CircleRendererComponent:
+      Color: [0.226724491, 0.976303339, 0.454084724, 1]
+      Thickness: 0.100000001
+      Fade: 0.063000001
+  - Entity: 14996722310850210497
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 1.95000005, 5.80000019]
+      Rotation: [-0.34906584, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 10000
+        OrthoSize: 10
+        OrthoNear: -1
+        OrthoFar: 1
+      Primary: true
+      FixedAspectRation: false
+  - Entity: 1205827045219950180
+    TagComponent:
+      Tag: Right Quad
+    TransformComponent:
+      Translation: [0.349999994, 0, 0.349999994]
+      Rotation: [0, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.597156405, 0.121695362, 0.121695362, 1]
+  - Entity: 10525810746279725569
+    TagComponent:
+      Tag: Top Quad
+    TransformComponent:
+      Translation: [0, 0.5, 0]
+      Rotation: [1.57079637, 0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.88625592, 0.23101458, 0.23101458, 1]
+  - Entity: 5501045971559664086
+    TagComponent:
+      Tag: Left Quad
+    TransformComponent:
+      Translation: [-0.349999994, 0, 0.349999994]
+      Rotation: [0, -0.785398185, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.744075835, 0.141057029, 0.141057029, 1]
