@@ -9,6 +9,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include "Rendering/Texture.h"
 
+#include "PointMass.h"
+
 namespace Ivory {
 	struct IdComponent {
 		Uuid id;
@@ -80,5 +82,30 @@ namespace Ivory {
 			instantiate_script = []() {return static_cast<ScriptableEntity*>(new T()); };
 			destroy_script = [](CScriptComponent* script_component) {delete script_component->instance; script_component->instance = nullptr; };
 		}
+	};
+
+	struct PointMassComponent {
+		Alchemist::PointMass2D point_mass = {1.0f};
+
+		PointMassComponent() = default;
+		PointMassComponent(const PointMassComponent&) = default;
+	};
+
+	struct SpringComponent {
+		Alchemist::PointMassSpring spring = {nullptr, 1.0f, 1.0f};
+		Alchemist::PointMass2D* first_object;
+		Alchemist::PointMass2D* second_object;
+		Uuid first_object_id;
+		Uuid second_object_id;
+
+		SpringComponent() = default;
+		SpringComponent(const SpringComponent&) = default;
+	};
+
+	struct GravityComponent {
+		Alchemist::PointMassGravity gravity;
+
+		GravityComponent() = default;
+		GravityComponent(const GravityComponent&) = default;
 	};
 }

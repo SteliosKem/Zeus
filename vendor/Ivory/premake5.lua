@@ -9,11 +9,13 @@ IncludeDir["stb"] = "vendor/stb"
 IncludeDir["entt"] = "vendor/entt/include"
 IncludeDir["yaml_cpp"] = "vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "vendor/ImGuizmo"
+IncludeDir["Alchemist"] = "vendor/Alchemist/src"
 
 include "vendor/GLFW"
 include "vendor/Glad"
 include "vendor/imgui"
 include "vendor/yaml-cpp"
+include "vendor/Alchemist"
 
 project "Ivory"
 	location ""
@@ -49,6 +51,7 @@ project "Ivory"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGuizmo}",
 		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.Alchemist}",
 	}
 
 	links {
@@ -57,6 +60,7 @@ project "Ivory"
 		"ImGui",
 		"opengl32.lib",
 		"yaml-cpp",
+		"Alchemist",
 	}
 
 	filter "vendor/ImGuizmo/**.cpp"

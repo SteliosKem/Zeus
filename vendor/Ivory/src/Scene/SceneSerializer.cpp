@@ -139,6 +139,32 @@ namespace Ivory {
 			out << YAML::Value << comp.fade;
 			out << YAML::EndMap;
 		}
+		if (entity.has_component<PointMassComponent>()) {
+			PointMassComponent comp = entity.get_component<PointMassComponent>();
+			out << YAML::Key << "PointMassComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "Mass";
+			out << YAML::Value << comp.point_mass.get_mass();
+			out << YAML::Key << "Velocity";
+			out << YAML::Value << glm::vec3(comp.point_mass.get_velocity(), 0.0f);
+			out << YAML::Key << "Acceleration";
+			out << YAML::Value << glm::vec3(comp.point_mass.get_acceleration(), 0.0f);
+			out << YAML::EndMap;
+		}
+		if (entity.has_component<SpringComponent>()) {
+			SpringComponent comp = entity.get_component<SpringComponent>();
+			out << YAML::Key << "SpringComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "RestLength";
+			out << YAML::Value << comp.spring.get_rest_length();
+			out << YAML::Key << "SpringConstant";
+			out << YAML::Value << comp.spring.get_constant();
+			out << YAML::Key << "FirstObjectID";
+			out << YAML::Value << (uint64_t)comp.first_object_id;
+			out << YAML::Key << "SecondObjectID";
+			out << YAML::Value << (uint64_t)comp.second_object_id;
+			out << YAML::EndMap;
+		}
 
 		out << YAML::EndMap;
 	}
@@ -236,6 +262,23 @@ namespace Ivory {
 					component.color = circle_renderer_component["Color"].as<glm::vec4>();
 					component.fade = circle_renderer_component["Fade"].as<float>();
 					component.thickness = circle_renderer_component["Thickness"].as<float>();
+				}
+
+				auto point_mass_component = entity["PointMassComponent"];
+				if (point_mass_component) {
+					auto& component = deserialized_entity.add_component<PointMassComponent>();
+					component.point_mass.set_mass(point_mass_component["Mass"].as<float>());
+					component.point_mass.set_velocity(point_mass_component["Velocity"].as<glm::vec3>());
+					component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
+				}
+
+				auto spring_component = entity["SpringComponent"];
+				if (spring_component) {
+					auto& component = deserialized_entity.add_component<SpringComponent>();
+					component.spring.set_constant(spring_component["SpringConstant"].as<float>());
+					component.spring.set_rest_length(spring_component["RestLength"].as<float>());
+					component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
+					component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
 				}
 			}
 		}

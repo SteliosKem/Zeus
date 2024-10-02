@@ -12,13 +12,12 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 ZeusIncludeDir = {}
 ZeusIncludeDir["Ivory"] = "vendor/Ivory/src"
-ZeusIncludeDir["Alchemist"] = "vendor/Alchemist/src"
+ZeusIncludeDir["Alchemist"] = "vendor/Ivory/vendor/Alchemist/src"
 ZeusIncludeDir["glm"] = "vendor/Ivory/vendor/glm"
 ZeusIncludeDir["entt"] = "vendor/Ivory/vendor/entt/include"
 ZeusIncludeDir["ImGuizmo"] = "vendor/Ivory/vendor/ImGuizmo"
 
 include "vendor/Ivory"
-include "vendor/Alchemist"
 
 project "Sandbox"
 	location "Sandbox"

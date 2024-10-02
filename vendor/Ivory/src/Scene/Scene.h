@@ -3,6 +3,7 @@
 #include "Core/Timestep.h"
 #include "Rendering/EditorCamera.h"
 #include "Core/Uuid.h"
+#include "PointMass.h"
 
 namespace Ivory {
 	class Entity;
@@ -24,8 +25,12 @@ namespace Ivory {
 		void on_update_runtime(Timestep dt);
 		void on_update_editor(Timestep dt, EditorCamera& camera);
 
+		void on_play();
+
 		Entity get_primary_camera();
 		Entity copy_entity(Entity entity);
+
+		Entity get_by_uuid(Uuid& uuid);
 
 		static std::shared_ptr<Scene> copy(const std::shared_ptr<Scene>& scene);
 	private:
@@ -42,5 +47,9 @@ namespace Ivory {
 
 		bool m_selected = false;
 		entt::entity m_selected_entity = {};
+
+		// Physics
+		Alchemist::ForceRegistry m_force_registry;
+		void on_update_physics(float dt);
 	};
 }

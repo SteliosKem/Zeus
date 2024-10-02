@@ -1,0 +1,60 @@
+Scene: Name
+Entities:
+  - Entity: 14786109076201320312
+    TagComponent:
+      Tag: Box 2
+    TransformComponent:
+      Translation: [2.16500425, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.639999986, 0.660000026, 1]
+    SpriteRendererComponent:
+      Color: [0.838862538, 0.381662577, 0.381662577, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, -1.01699996, 0]
+  - Entity: 1837399879121237336
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 18.3454056]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 10000
+        OrthoSize: 10
+        OrthoNear: -1
+        OrthoFar: 1
+      Primary: true
+      FixedAspectRation: false
+  - Entity: 6867975049679752995
+    TagComponent:
+      Tag: Box
+    TransformComponent:
+      Translation: [-1.16415322e-10, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0.155000001, 0]
+      Acceleration: [0, 0, 0]
+  - Entity: 8314306614578154259
+    TagComponent:
+      Tag: Spring
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpringComponent:
+      RestLength: 1
+      SpringConstant: 1
+      FirstObjectID: 6867975049679752995
+      SecondObjectID: 14786109076201320312

@@ -329,8 +329,10 @@ namespace Zeus {
     void EditorLayer::on_scene_play() {
         m_scene_state = SceneState::Play;
         m_active_scene = Scene::copy(m_editor_scene);
+        
         m_hierarchy.set_allow_action_ptr(false);
         m_hierarchy.set_context(m_active_scene);
+        m_active_scene->on_play();
     }
 
     void EditorLayer::on_scene_stop() {

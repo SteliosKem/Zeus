@@ -68,7 +68,21 @@ namespace Ivory {
 		m_selected = false;
 	}
 
+	void Scene::on_play() {
+		auto springs = m_registry.view<SpringComponent>();
+		for (auto entity : springs) {
+			auto& comp = springs.get<SpringComponent>(entity);
+			comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
+			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
+			comp.spring.set_attached_object(comp.first_object);
+			m_force_registry.add(comp.second_object, &comp.spring);
+		}
+	}
+
 	void Scene::on_update_runtime(Timestep dt) {
+		
+		on_update_physics(dt);
+
 		m_registry.view<CScriptComponent>().each([=](auto entity, auto& cscript_component) {
 			if (!cscript_component.instance) {
 				cscript_component.instance = cscript_component.instantiate_script();
@@ -84,7 +98,6 @@ namespace Ivory {
 		auto view = m_registry.view<TransformComponent, CameraComponent>();
 		for (auto entity : view) {
 			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-
 			if (camera.active) {
 				main_camera = &camera.camera;
 				camera_transform = transform.get_transform();
@@ -95,9 +108,16 @@ namespace Ivory {
 		if (main_camera) {
 			Renderer2D::begin_scene(main_camera->get_projection(), camera_transform);
 
-			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			/*auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group) {
 				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
+			}*/
+
+			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
+			for (auto entity : group) {
+				auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
+				transform.translation = glm::vec3(point_mass.point_mass.get_position(), transform.translation.z);
 				Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
 			}
 
@@ -167,8 +187,19 @@ namespace Ivory {
 		copy_component_if_exists<SpriteRendererComponent>(entity, new_entity);
 		copy_component_if_exists<CircleRendererComponent>(entity, new_entity);
 		copy_component_if_exists<CScriptComponent>(entity, new_entity);
+		copy_component_if_exists<PointMassComponent>(entity, new_entity);
+		copy_component_if_exists<SpringComponent>(entity, new_entity);
 
 		return new_entity;
+	}
+
+	Entity Scene::get_by_uuid(Uuid& uuid) {
+		auto& view = m_registry.view<IdComponent>();
+		for (auto& entity : view) {
+			auto id = m_registry.get<IdComponent>(entity).id;
+			if(id == uuid)
+				return Entity{ entity, this };
+		}
 	}
 
 	std::shared_ptr<Scene> Scene::copy(const std::shared_ptr<Scene>& scene) {
@@ -195,12 +226,24 @@ namespace Ivory {
 		copy_component<SpriteRendererComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<CircleRendererComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<CScriptComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
 
 		return new_scene;
 	}
 
 	void Scene::clear_entities() {
 		m_registry.clear();
+	}
+
+	void Scene::on_update_physics(float dt) {
+		
+		m_force_registry.update_forces(dt);
+		auto view = m_registry.view<PointMassComponent>();
+		for (auto entity : view) {
+			auto& point_mass_component = view.get<PointMassComponent>(entity);
+			point_mass_component.point_mass.on_update(dt);
+		}
 	}
 
 	template<typename T>
@@ -230,4 +273,13 @@ namespace Ivory {
 	void Scene::on_component_add<CameraComponent>(Entity entity, CameraComponent& component) {
 		component.camera.set_viewport_size(m_vp_width, m_vp_height);
 	}
+
+	template<>
+	void Scene::on_component_add<PointMassComponent>(Entity entity, PointMassComponent& component) {}
+
+	template<>
+	void Scene::on_component_add<SpringComponent>(Entity entity, SpringComponent& component) {}
+
+	template<>
+	void Scene::on_component_add<GravityComponent>(Entity entity, GravityComponent& component) {}
 }

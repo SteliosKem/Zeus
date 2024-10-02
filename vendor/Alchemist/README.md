@@ -1,2 +1,0 @@
-# Alchemist
-A Physics Engine

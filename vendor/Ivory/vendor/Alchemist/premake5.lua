@@ -9,15 +9,15 @@ project "Alchemist"
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 	
 	files {
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl",
+		"src/**.h",
+		"src/**.cpp",
+		"vendor/glm/glm/**.hpp",
+		"vendor/glm/glm/**.inl",
 	}
 
 	includedirs {
-		"%{prj.name}/src",
-		"Alchemist/vendor/glm",
+		"src",
+		"vendor/glm",
 	}
 	systemversion "latest"
 

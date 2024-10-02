@@ -38,8 +38,8 @@ namespace Ivory {
 
 	void SceneHierarchy::on_imgui_render() {
 		ImGui::Begin("Scene Hierarchy");
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_selection_context = {};
+		//if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+		//	m_selection_context = {};
 		auto view = m_context->m_registry.view<TagComponent>();
 		for (auto entity : view) {
 			draw_entity_node({entity, m_context.get()});
@@ -91,7 +91,17 @@ namespace Ivory {
 			ImGui::EndPopup();
 		}
 
+
 		if (opened) {
+			if (ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.tag.c_str())) {
+
+				if (ImGui::BeginDragDropSource()) {
+					Entity* entity_ = &entity;
+					ImGui::SetDragDropPayload("HIERARCHY_ITEM", entity_, sizeof(Entity*) + 8, ImGuiCond_Once);
+					ImGui::EndDragDropSource();
+				}
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
 		}
 
@@ -201,6 +211,18 @@ namespace Ivory {
 				m_selection_context.add_component<CircleRendererComponent>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (ImGui::MenuItem("Point Mass")) {
+				m_selection_context.add_component<PointMassComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Spring")) {
+				m_selection_context.add_component<SpringComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (ImGui::MenuItem("Gravity")) {
+				m_selection_context.add_component<GravityComponent>();
+				ImGui::CloseCurrentPopup();
+			}
 			ImGui::EndPopup();
 		}
 
@@ -286,6 +308,51 @@ namespace Ivory {
 			ImGui::ColorPicker4("Color", glm::value_ptr(component.color));
 			ImGui::DragFloat("Thickness", &component.thickness, 0.0025f, 0.0f, 1.0f);
 			ImGui::DragFloat("Fade", &component.fade, 0.0025f, 0.0f, 1.0f);
+			});
+
+		draw_component<PointMassComponent>("Point Mass Component", entity, [](auto& component) {
+			float mass = component.point_mass.get_mass();
+			ImGui::DragFloat("Mass", &mass, 0.0025f, 0.0f);
+			component.point_mass.set_mass(mass);
+
+			bool check = false;
+			if (ImGui::Checkbox("Apply Gravity", &check)) {
+				ImGui::DragFloat("Gravity Intensity", &mass, 0.0025f, 0.0f);
+			}
+
+			ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.0025f);
+			ImGui::DragFloat2("Velocity", glm::value_ptr(component.point_mass.get_velocity()), 0.0025f);
+			ImGui::DragFloat2("Acceleration", glm::value_ptr(component.point_mass.get_acceleration()), 0.0025f);
+		});
+
+		draw_component<SpringComponent>("Spring Component", entity, [](auto& component) {
+			ImGui::DragFloat("Rest Length", &component.spring.get_rest_length(), 0.0025f, 0.0f);
+			ImGui::DragFloat("Spring Constant", &component.spring.get_constant(), 0.0025f, 0.0f);
+
+			ImGui::Button("Attached Object 1");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					Entity* entity_ = (Entity*)payload->Data;
+					//entity_->get_component<TransformComponent>();
+					//component.first_object = &entity_->get_component<PointMassComponent>().point_mass;
+					component.first_object_id = entity_->get_component<IdComponent>().id;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			
+			ImGui::Button("Attached Object 2");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					Entity* entity_ = (Entity*)payload->Data;
+					//component.second_object = &entity_->get_component<PointMassComponent>().point_mass;
+					component.second_object_id = entity_->get_component<IdComponent>().id;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			});
+
+		draw_component<GravityComponent>("Gravity Component", entity, [](auto& component) {
+			ImGui::DragFloat2("Intensity", glm::value_ptr(component.gravity.get_gravity()), 0.0025f);
 			});
 	}
 
