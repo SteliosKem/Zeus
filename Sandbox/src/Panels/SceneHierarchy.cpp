@@ -48,6 +48,15 @@ namespace Ivory {
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
 			if (ImGui::MenuItem("Create Entity"))
 				m_context->create_entity();
+			if (ImGui::MenuItem("Add Point Mass")) {
+				Entity point_mass = m_context->create_entity();
+				point_mass.add_component<SpriteRendererComponent>();
+				point_mass.add_component<PointMassComponent>();
+			}
+			if (ImGui::MenuItem("Add Spring")) {
+				Entity spring = m_context->create_entity();
+				spring.add_component<SpringComponent>();
+			}
 			ImGui::EndPopup();
 		}
 
