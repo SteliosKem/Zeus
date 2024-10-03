@@ -4,7 +4,7 @@ Entities:
     TagComponent:
       Tag: Box 2
     TransformComponent:
-      Translation: [2.16500425, 0, 0]
+      Translation: [1.41448045, 1.62706411, 0]
       Rotation: [0, -0, 0]
       Scale: [0.639999986, 0.660000026, 1]
     SpriteRendererComponent:
@@ -13,7 +13,9 @@ Entities:
     PointMassComponent:
       Mass: 1
       Velocity: [0, 0, 0]
-      Acceleration: [0, -1.01699996, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 0.600000024
   - Entity: 1837399879121237336
     TagComponent:
       Tag: Camera
@@ -44,8 +46,10 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
-      Velocity: [0, 0.155000001, 0]
+      Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
   - Entity: 8314306614578154259
     TagComponent:
       Tag: Spring
@@ -54,7 +58,16 @@ Entities:
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     SpringComponent:
-      RestLength: 1
-      SpringConstant: 1
+      RestLength: 5.5999999
+      SpringConstant: 30.2000008
       FirstObjectID: 6867975049679752995
       SecondObjectID: 14786109076201320312
+  - Entity: 4607729107431902431
+    TagComponent:
+      Tag: Gravity
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    GravityComponent:
+      GravityIntensity: [0, -4.42299986, 0]

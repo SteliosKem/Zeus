@@ -149,6 +149,10 @@ namespace Ivory {
 			out << YAML::Value << glm::vec3(comp.point_mass.get_velocity(), 0.0f);
 			out << YAML::Key << "Acceleration";
 			out << YAML::Value << glm::vec3(comp.point_mass.get_acceleration(), 0.0f);
+			out << YAML::Key << "AffectedByGravity";
+			out << YAML::Value << comp.affected_by_gravity;
+			out << YAML::Key << "Damping";
+			out << YAML::Value << comp.point_mass.get_damping();
 			out << YAML::EndMap;
 		}
 		if (entity.has_component<SpringComponent>()) {
@@ -163,6 +167,14 @@ namespace Ivory {
 			out << YAML::Value << (uint64_t)comp.first_object_id;
 			out << YAML::Key << "SecondObjectID";
 			out << YAML::Value << (uint64_t)comp.second_object_id;
+			out << YAML::EndMap;
+		}
+		if (entity.has_component<GravityComponent>()) {
+			GravityComponent comp = entity.get_component<GravityComponent>();
+			out << YAML::Key << "GravityComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "GravityIntensity";
+			out << YAML::Value << glm::vec3(comp.gravity.get_gravity(), 0.0f);
 			out << YAML::EndMap;
 		}
 
@@ -267,9 +279,11 @@ namespace Ivory {
 				auto point_mass_component = entity["PointMassComponent"];
 				if (point_mass_component) {
 					auto& component = deserialized_entity.add_component<PointMassComponent>();
+					component.affected_by_gravity = point_mass_component["AffectedByGravity"].as<bool>();
 					component.point_mass.set_mass(point_mass_component["Mass"].as<float>());
 					component.point_mass.set_velocity(point_mass_component["Velocity"].as<glm::vec3>());
 					component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
+					component.point_mass.set_damp(point_mass_component["Damping"].as<float>());
 				}
 
 				auto spring_component = entity["SpringComponent"];
@@ -279,6 +293,12 @@ namespace Ivory {
 					component.spring.set_rest_length(spring_component["RestLength"].as<float>());
 					component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
 					component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
+				}
+
+				auto gravity_component = entity["GravityComponent"];
+				if (gravity_component) {
+					auto& component = deserialized_entity.add_component<GravityComponent>();
+					component.gravity.set_gravity(gravity_component["GravityIntensity"].as<glm::vec3>());
 				}
 			}
 		}

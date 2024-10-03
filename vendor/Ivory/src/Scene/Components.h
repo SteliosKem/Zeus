@@ -86,6 +86,7 @@ namespace Ivory {
 
 	struct PointMassComponent {
 		Alchemist::PointMass2D point_mass = {1.0f};
+		bool affected_by_gravity = true;
 
 		PointMassComponent() = default;
 		PointMassComponent(const PointMassComponent&) = default;

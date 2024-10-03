@@ -77,6 +77,21 @@ namespace Ivory {
 			comp.spring.set_attached_object(comp.first_object);
 			m_force_registry.add(comp.second_object, &comp.spring);
 		}
+		auto point_masses = m_registry.view<PointMassComponent>();
+		auto gravity_view = m_registry.view<GravityComponent>();
+		Alchemist::PointMassGravity* gravity;
+		for (auto& entity : gravity_view) {
+			gravity = &gravity_view.get<GravityComponent>(entity).gravity;
+		}
+		bool gravity_exists = !gravity_view.empty();
+		for (auto entity : point_masses) {
+			auto& trans = m_registry.get<TransformComponent>(entity);
+			auto& comp = point_masses.get<PointMassComponent>(entity);
+			comp.point_mass.set_position(trans.translation);
+			if (gravity_exists && comp.affected_by_gravity) {
+				m_force_registry.add(&comp.point_mass, gravity);
+			}
+		}
 	}
 
 	void Scene::on_update_runtime(Timestep dt) {
@@ -189,6 +204,7 @@ namespace Ivory {
 		copy_component_if_exists<CScriptComponent>(entity, new_entity);
 		copy_component_if_exists<PointMassComponent>(entity, new_entity);
 		copy_component_if_exists<SpringComponent>(entity, new_entity);
+		copy_component_if_exists<GravityComponent>(entity, new_entity);
 
 		return new_entity;
 	}
@@ -228,6 +244,7 @@ namespace Ivory {
 		copy_component<CScriptComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<GravityComponent>(source_scene_reg, dest_scene_reg, entity_map);
 
 		return new_scene;
 	}

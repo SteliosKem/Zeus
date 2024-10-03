@@ -312,22 +312,21 @@ namespace Ivory {
 
 		draw_component<PointMassComponent>("Point Mass Component", entity, [](auto& component) {
 			float mass = component.point_mass.get_mass();
-			ImGui::DragFloat("Mass", &mass, 0.0025f, 0.0f);
+			ImGui::DragFloat("Mass", &mass, 0.05f, 0.0f);
 			component.point_mass.set_mass(mass);
 
-			bool check = false;
-			if (ImGui::Checkbox("Apply Gravity", &check)) {
-				ImGui::DragFloat("Gravity Intensity", &mass, 0.0025f, 0.0f);
-			}
+			ImGui::Checkbox("Affected by Gravity", &component.affected_by_gravity);
 
-			ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.0025f);
-			ImGui::DragFloat2("Velocity", glm::value_ptr(component.point_mass.get_velocity()), 0.0025f);
-			ImGui::DragFloat2("Acceleration", glm::value_ptr(component.point_mass.get_acceleration()), 0.0025f);
+			ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.1f);
+			ImGui::DragFloat2("Velocity", glm::value_ptr(component.point_mass.get_velocity()), 0.1f);
+			ImGui::DragFloat2("Acceleration", glm::value_ptr(component.point_mass.get_acceleration()), 0.1f);
+
+			ImGui::DragFloat("Damping", &component.point_mass.get_damping(), 0.0025f);
 		});
 
 		draw_component<SpringComponent>("Spring Component", entity, [](auto& component) {
-			ImGui::DragFloat("Rest Length", &component.spring.get_rest_length(), 0.0025f, 0.0f);
-			ImGui::DragFloat("Spring Constant", &component.spring.get_constant(), 0.0025f, 0.0f);
+			ImGui::DragFloat("Rest Length", &component.spring.get_rest_length(), 0.1f, 0.0f);
+			ImGui::DragFloat("Spring Constant", &component.spring.get_constant(), 0.1f, 0.0f);
 
 			ImGui::Button("Attached Object 1");
 			if (ImGui::BeginDragDropTarget()) {
