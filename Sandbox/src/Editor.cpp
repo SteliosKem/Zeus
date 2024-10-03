@@ -73,7 +73,10 @@ namespace Zeus {
             break;
         }
         case SceneState::Play: {
-            m_active_scene->on_update_runtime(dt);
+            m_camera_controller.on_update(dt);
+            m_editor_camera.on_update(dt);
+            m_active_scene->on_update_runtime(dt, m_editor_camera);
+            
             break;
         }
         }

@@ -22,7 +22,7 @@ namespace Ivory {
 		void set_selected_entity(Entity entity);
 		void remove_selected_entity();
 
-		void on_update_runtime(Timestep dt);
+		void on_update_runtime(Timestep dt, EditorCamera& camera);
 		void on_update_editor(Timestep dt, EditorCamera& camera);
 
 		void on_play();

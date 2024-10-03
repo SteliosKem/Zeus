@@ -95,7 +95,7 @@ namespace Ivory {
 		}
 	}
 
-	void Scene::on_update_runtime(Timestep dt) {
+	void Scene::on_update_runtime(Timestep dt, EditorCamera& camera) {
 		
 		on_update_physics(dt * m_time_factor);
 
@@ -109,7 +109,7 @@ namespace Ivory {
 			cscript_component.instance->on_update(dt);
 		});
 
-		Camera* main_camera = nullptr;
+		/*Camera* main_camera = nullptr;
 		glm::mat4 camera_transform;
 		auto view = m_registry.view<TransformComponent, CameraComponent>();
 		for (auto entity : view) {
@@ -119,16 +119,10 @@ namespace Ivory {
 				camera_transform = transform.get_transform();
 				break;
 			}
-		}
+		}*/
 
-		if (main_camera) {
+		/*if (main_camera) {
 			Renderer2D::begin_scene(main_camera->get_projection(), camera_transform);
-
-			/*auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group) {
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
-			}*/
 
 			auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
 			for (auto entity : group) {
@@ -151,7 +145,30 @@ namespace Ivory {
 			}
 
 			Renderer2D::end_scene();
+		}*/
+		Renderer2D::begin_scene(camera);
+
+		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
+		for (auto entity : group) {
+			auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
+			transform.translation = glm::vec3(point_mass.point_mass.get_position(), transform.translation.z);
+			Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
 		}
+
+		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
+		for (auto entity : view) {
+			auto& [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+			Circle circ{};
+			circ.color = circle.color;
+			circ.fade = circle.fade;
+			circ.thickness = circle.thickness;
+			circ.transform = transform.get_transform();
+			circ.entity_id = (int)entity;
+			Renderer2D::draw_circle(circ);
+
+		}
+
+		Renderer2D::end_scene();
 	}
 
 	void Scene::on_viewport_resize(uint32_t width, uint32_t height) {

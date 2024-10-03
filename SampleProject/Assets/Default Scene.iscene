@@ -3,30 +3,31 @@ WorldSettings:
   GravityIntensity: 9.80000019
   TimeFactor: 1
 Entities:
-  - Entity: 12624606151546994764
+  - Entity: 6867975049679752995
     TagComponent:
-      Tag: Camera
+      Tag: Box
     TransformComponent:
-      Translation: [0, 0, 16.8341389]
-      Rotation: [0, -0, 0]
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 0
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 10000
-        OrthoSize: 10
-        OrthoNear: -1
-        OrthoFar: 1
-      Primary: true
-      FixedAspectRation: false
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      ForceIndex: 0
+      Forces:
+        {}
   - Entity: 5236601477127024055
     TagComponent:
       Tag: Box 2
     TransformComponent:
       Translation: [2.29999995, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [0, -0, 0]
       Scale: [0.5, 0.5, 1]
     SpriteRendererComponent:
       Color: [0.573459744, 0.119584009, 0.119584009, 1]
@@ -41,25 +42,6 @@ Entities:
       Forces:
         Force 0: [0, 9.89999962, 0]
         Force 1: [-10.1999998, 0, 0]
-  - Entity: 6867975049679752995
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Translation: [-1.16415322e-10, 0, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-    PointMassComponent:
-      Mass: 1
-      Velocity: [0, 0, 0]
-      Acceleration: [0, 0, 0]
-      AffectedByGravity: false
-      Damping: 1
-      ForceIndex: 0
-      Forces:
-        {}
   - Entity: 8314306614578154259
     TagComponent:
       Tag: Spring

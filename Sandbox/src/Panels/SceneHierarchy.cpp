@@ -49,12 +49,12 @@ namespace Ivory {
 			if (ImGui::MenuItem("Create Entity"))
 				m_context->create_entity();
 			if (ImGui::MenuItem("Add Point Mass")) {
-				Entity point_mass = m_context->create_entity();
+				Entity point_mass = m_context->create_entity("New Point Mass");
 				point_mass.add_component<SpriteRendererComponent>();
 				point_mass.add_component<PointMassComponent>();
 			}
 			if (ImGui::MenuItem("Add Spring")) {
-				Entity spring = m_context->create_entity();
+				Entity spring = m_context->create_entity("New Spring");
 				spring.add_component<SpringComponent>();
 			}
 			ImGui::EndPopup();
@@ -343,11 +343,15 @@ namespace Ivory {
 			}
 		});
 
+
 		draw_component<SpringComponent>("Spring Component", entity, [](auto& component) {
 			ImGui::DragFloat("Rest Length", &component.spring.get_rest_length(), 0.1f, 0.0f);
 			ImGui::DragFloat("Spring Constant", &component.spring.get_constant(), 0.1f, 0.0f);
 
-			ImGui::Button("Attached Object 1");
+			//if(component.first_object_id)
+			//	ImGui::Button(m_context->get_by_uuid(component.first_object_id).get_component<TagComponent>().tag.c_str());
+			//else
+				ImGui::Button("Attached Object 1");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					Entity* entity_ = (Entity*)payload->Data;
@@ -358,7 +362,10 @@ namespace Ivory {
 				ImGui::EndDragDropTarget();
 			}
 			
-			ImGui::Button("Attached Object 2");
+			//if (component.second_object_id)
+			//	ImGui::Button(m_context->get_by_uuid(component.second_object_id).get_component<TagComponent>().tag.c_str());
+			//else
+				ImGui::Button("Attached Object 2");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					Entity* entity_ = (Entity*)payload->Data;
