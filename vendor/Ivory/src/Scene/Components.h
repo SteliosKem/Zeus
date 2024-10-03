@@ -8,6 +8,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 #include "Rendering/Texture.h"
+#include <unordered_map>
 
 #include "PointMass.h"
 
@@ -85,8 +86,17 @@ namespace Ivory {
 	};
 
 	struct PointMassComponent {
+		struct ForceInfo {
+			glm::vec2 force_vector;
+			bool use_angle = false;
+			float force_length;
+			float angle;
+		};
 		Alchemist::PointMass2D point_mass = {1.0f};
 		bool affected_by_gravity = true;
+		std::unordered_map<std::string, ForceInfo> forces_info;
+		int force_counter = 0;
+		std::vector<Alchemist::SimpleForce> forces;
 
 		PointMassComponent() = default;
 		PointMassComponent(const PointMassComponent&) = default;

@@ -86,6 +86,17 @@ namespace Alchemist {
 		glm::vec2 m_gravity;
 	};
 
+	class SimpleForce : public ForceGenerator2D {
+	public:
+		SimpleForce(const glm::vec2& force) : m_force{ force } {}
+		void update_force(PointMass2D* point_mass, float dt) override;
+
+		void set_force(const glm::vec2& force) { m_force = force; }
+		glm::vec2& get_force() { return m_force; }
+	private:
+		glm::vec2 m_force;
+	};
+
 	class PointMassSpring : public ForceGenerator2D {
 	public:
 		PointMassSpring(PointMass2D* attached, float constant, float rest)

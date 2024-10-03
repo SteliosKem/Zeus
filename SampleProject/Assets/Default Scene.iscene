@@ -1,26 +1,10 @@
 Scene: Name
 Entities:
-  - Entity: 14786109076201320312
-    TagComponent:
-      Tag: Box 2
-    TransformComponent:
-      Translation: [1.41448045, 1.62706411, 0]
-      Rotation: [0, -0, 0]
-      Scale: [0.639999986, 0.660000026, 1]
-    SpriteRendererComponent:
-      Color: [0.838862538, 0.381662577, 0.381662577, 1]
-      TilingFactor: 1
-    PointMassComponent:
-      Mass: 1
-      Velocity: [0, 0, 0]
-      Acceleration: [0, 0, 0]
-      AffectedByGravity: true
-      Damping: 0.600000024
-  - Entity: 1837399879121237336
+  - Entity: 12624606151546994764
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Translation: [0, 0, 18.3454056]
+      Translation: [0, 0, 16.8341389]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     CameraComponent:
@@ -34,6 +18,26 @@ Entities:
         OrthoFar: 1
       Primary: true
       FixedAspectRation: false
+  - Entity: 5236601477127024055
+    TagComponent:
+      Tag: Box 2
+    TransformComponent:
+      Translation: [2.29999995, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.5, 0.5, 1]
+    SpriteRendererComponent:
+      Color: [0.573459744, 0.119584009, 0.119584009, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 0.476999998
+      ForceIndex: 2
+      Forces:
+        Force 0: [0, 9.89999962, 0]
+        Force 1: [-10.1999998, 0, 0]
   - Entity: 6867975049679752995
     TagComponent:
       Tag: Box
@@ -50,6 +54,9 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
+      ForceIndex: 0
+      Forces:
+        {}
   - Entity: 8314306614578154259
     TagComponent:
       Tag: Spring
@@ -61,7 +68,7 @@ Entities:
       RestLength: 5.5999999
       SpringConstant: 30.2000008
       FirstObjectID: 6867975049679752995
-      SecondObjectID: 14786109076201320312
+      SecondObjectID: 5236601477127024055
   - Entity: 4607729107431902431
     TagComponent:
       Tag: Gravity

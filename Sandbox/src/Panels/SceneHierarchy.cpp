@@ -322,6 +322,16 @@ namespace Ivory {
 			ImGui::DragFloat2("Acceleration", glm::value_ptr(component.point_mass.get_acceleration()), 0.1f);
 
 			ImGui::DragFloat("Damping", &component.point_mass.get_damping(), 0.0025f);
+
+			if (ImGui::Button("Add Force")) {
+				component.forces_info["Force " + std::to_string(component.force_counter++)];
+			}
+
+			for (auto& [name, force] : component.forces_info) {
+				ImGui::Text(name.c_str());
+				ImGui::SameLine();
+				ImGui::DragFloat2(("##" + name).c_str(), glm::value_ptr(component.forces_info[name].force_vector), 0.1f);
+			}
 		});
 
 		draw_component<SpringComponent>("Spring Component", entity, [](auto& component) {

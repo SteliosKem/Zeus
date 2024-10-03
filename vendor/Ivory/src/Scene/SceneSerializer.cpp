@@ -153,6 +153,18 @@ namespace Ivory {
 			out << YAML::Value << comp.affected_by_gravity;
 			out << YAML::Key << "Damping";
 			out << YAML::Value << comp.point_mass.get_damping();
+			out << YAML::Key << "ForceIndex";
+			out << YAML::Value << comp.force_counter;
+
+			// Forces
+			out << YAML::Key << "Forces";
+			out << YAML::BeginMap;
+
+			for (auto& [name, force] : comp.forces_info) {
+				out << YAML::Key << name;
+				out << YAML::Value << glm::vec3(force.force_vector, 0.0f);
+			}
+			out << YAML::EndMap;
 			out << YAML::EndMap;
 		}
 		if (entity.has_component<SpringComponent>()) {
@@ -284,6 +296,12 @@ namespace Ivory {
 					component.point_mass.set_velocity(point_mass_component["Velocity"].as<glm::vec3>());
 					component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
 					component.point_mass.set_damp(point_mass_component["Damping"].as<float>());
+					component.force_counter = point_mass_component["ForceIndex"].as<int>();
+					auto forces = point_mass_component["Forces"];
+					
+					for (auto& i : forces) {
+						component.forces_info[i.first.as<std::string>()] = PointMassComponent::ForceInfo{ i.second.as<glm::vec3>() };
+					}
 				}
 
 				auto spring_component = entity["SpringComponent"];

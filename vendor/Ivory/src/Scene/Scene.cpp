@@ -91,6 +91,13 @@ namespace Ivory {
 			if (gravity_exists && comp.affected_by_gravity) {
 				m_force_registry.add(&comp.point_mass, gravity);
 			}
+			for (auto& force : comp.forces_info) {
+				comp.forces.push_back(Alchemist::SimpleForce(force.second.force_vector));
+				
+			}
+			for (auto& force : comp.forces) {
+				m_force_registry.add(&comp.point_mass, &force);
+			}
 		}
 	}
 

@@ -27,6 +27,10 @@ namespace Alchemist {
 		point_mass->add_force(m_gravity * point_mass->get_mass());
 	}
 
+	void SimpleForce::update_force(PointMass2D* point_mass, float dt) {
+		point_mass->add_force(m_force * point_mass->get_mass());
+	}
+
 	// Springs
 
 	void PointMassSpring::update_force(PointMass2D* point_mass, float dt) {
