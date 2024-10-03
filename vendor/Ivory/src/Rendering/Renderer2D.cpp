@@ -419,6 +419,46 @@ namespace Ivory {
 
 	}
 
+	void Renderer2D::draw_spring(const glm::vec3& pos_a, const glm::vec3& pos_b, float height, int revolutions, float rest_length, int entity_id) {
+		//draw_line(pos_a, pos_b, glm::vec4(1.0f), entity_id);
+		/*glm::vec3 point_to_point_vec = (pos_b - pos_a) / (float)revolutions;
+		float p_to_p_length = sqrtf(point_to_point_vec.x * point_to_point_vec.x + point_to_point_vec.y * point_to_point_vec.y) / (float)revolutions;
+		float normal_p_to_p_length = rest_length * 100 / revolutions;
+		std::cout << "PtoP" << p_to_p_length << "normal" << normal_p_to_p_length;
+		glm::vec3 last_pos = pos_a;
+		glm::vec3 cross_vec = glm::cross(point_to_point_vec, glm::vec3(0.0, 0.0, 1.0));
+		float new_height = sqrtf(normal_p_to_p_length * normal_p_to_p_length - p_to_p_length * p_to_p_length);
+		cross_vec /= (float)cross_vec.length();
+		cross_vec *= new_height ;
+		std::cout << cross_vec.length();
+		for (int i = 0; i < revolutions; i++) {
+			//glm::vec3 second_pos = pos_a + (float)(i + 1) * point_to_point_vec;
+			//float new_height =  ? height : -height;
+			//second_pos = second_pos + glm::vec3()
+			
+			glm::vec3 second_pos = (last_pos + point_to_point_vec) + (cross_vec / (float)cross_vec.length()) * ((i % 2 == 0) ? 1.0f : -1.0f);
+			draw_line(last_pos, second_pos, glm::vec4(1.0f), entity_id);
+			last_pos = second_pos;
+		}*/
+		float opp = rest_length / revolutions;
+		glm::vec3 npp_vec = (pos_b - pos_a) / (float)revolutions;
+		float npp_len = sqrtf(npp_vec.x * npp_vec.x + npp_vec.y * npp_vec.y) / (float)revolutions;
+		float n_height = sqrtf(opp * opp - npp_len * npp_len) * height;
+
+		glm::vec3 cross_vec = glm::cross(npp_vec, glm::vec3(0.0, 0.0, 1.0));
+		cross_vec /= sqrtf(cross_vec.x * cross_vec.x + cross_vec.y * cross_vec.y);
+		glm::vec3 last_pos = pos_a;
+		for (int i = 0; i < revolutions; i++) {
+			//glm::vec3 second_pos = pos_a + (float)(i + 1) * point_to_point_vec;
+			//float new_height =  ? height : -height;
+			//second_pos = second_pos + glm::vec3()
+
+			glm::vec3 second_pos = (last_pos + npp_vec) + (cross_vec * n_height) * ((i % 2 == 0) ? 1.0f : -1.0f);
+			draw_line(last_pos, second_pos, glm::vec4(1.0f), entity_id);
+			last_pos = second_pos;
+		}
+	}
+
 	void Renderer2D::set_line_width(float width) {
 		s_data.line_width = width;
 	}

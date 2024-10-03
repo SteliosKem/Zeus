@@ -168,6 +168,13 @@ namespace Ivory {
 
 		}
 
+		auto springs = m_registry.view<SpringComponent>();
+		for (auto& entity : springs) {
+			SpringComponent spring = m_registry.get<SpringComponent>(entity);
+			Renderer2D::draw_spring(glm::vec3(spring.first_object->get_position(), 0.0f), glm::vec3(spring.second_object->get_position(), 0.0f)
+				, 2.0f, 20, spring.spring.get_rest_length(), (int)entity);
+		}
+
 		Renderer2D::end_scene();
 	}
 

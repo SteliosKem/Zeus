@@ -50,6 +50,7 @@ namespace Ivory {
 		static void draw_line(const glm::vec3& start_pos, const glm::vec3& end_pos, const glm::vec4& color, int entity_id);
 		static void draw_line_rectangle(const glm::mat4& transform, const glm::vec4& color, int entity_id);
 		static void draw_line_rectangle(const glm::vec3& position, const glm::vec3& size, const glm::vec4& color, int entity_id);
+		static void draw_spring(const glm::vec3& pos_a, const glm::vec3& pos_b, float height, int revolutions, float rest_length, int entity_id);
 
 		static void draw_overlay(glm::mat4* transform, Circle* circle, int entity_id);
 
