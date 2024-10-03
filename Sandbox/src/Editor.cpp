@@ -14,6 +14,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_attach() {
+        
         m_hierarchy.set_allow_action_ptr(true);
         m_setup_window.show(false);
 
@@ -41,7 +42,9 @@ namespace Zeus {
             m_frame_buffer->resize((uint32_t)m_viewport_size.x, );
 
         }*/
-
+        m_world_settings.set_scene_ptr(m_active_scene.get());
+        //m_active_scene->set_gravity(m_world_settings.get_gravity());
+        //m_active_scene->set_time_factor(m_world_settings.get_time_factor());
         if (m_hierarchy.get_selected())
             m_active_scene->set_selected_entity(m_hierarchy.get_selected());
         else
@@ -210,6 +213,7 @@ namespace Zeus {
         }
 
         m_hierarchy.on_imgui_render();
+        m_world_settings.on_imgui_render();
         //m_content_browser.on_imgui_render();
 
         // VIEWPORT

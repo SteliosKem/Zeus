@@ -138,6 +138,7 @@
     <ClInclude Include="src\Editor.h" />
     <ClInclude Include="src\Panels\ContentBrowser.h" />
     <ClInclude Include="src\Panels\SceneHierarchy.h" />
+    <ClInclude Include="src\Panels\WorldSettings.h" />
     <ClInclude Include="src\Test2D.h" />
     <ClInclude Include="src\Windows\Dialogs.h" />
     <ClInclude Include="src\Windows\ProjectSetupWindow.h" />
@@ -147,6 +148,7 @@
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\Panels\ContentBrowser.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchy.cpp" />
+    <ClCompile Include="src\Panels\WorldSettings.cpp" />
     <ClCompile Include="src\Test2D.cpp" />
     <ClCompile Include="src\Windows\Dialogs.cpp" />
     <ClCompile Include="src\Windows\ProjectSetupWindow.cpp" />

@@ -33,6 +33,10 @@ namespace Ivory {
 		Entity get_by_uuid(Uuid& uuid);
 
 		static std::shared_ptr<Scene> copy(const std::shared_ptr<Scene>& scene);
+		void set_gravity(float g) { m_gravity_force.set_gravity({0.0f, -g}); }
+		float get_gravity() { return -m_gravity_force.get_gravity().y; }
+		void set_time_factor(float factor) { m_time_factor = factor; }
+		float& get_time_factor() { return m_time_factor; }
 	private:
 		template<typename T>
 		void on_component_add(Entity entity, T& component);
@@ -47,6 +51,9 @@ namespace Ivory {
 
 		bool m_selected = false;
 		entt::entity m_selected_entity = {};
+
+		Alchemist::PointMassGravity m_gravity_force;
+		float m_time_factor = 1.0f;
 
 		// Physics
 		Alchemist::ForceRegistry m_force_registry;

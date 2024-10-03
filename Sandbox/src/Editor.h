@@ -14,6 +14,7 @@
 
 #include "Panels/SceneHierarchy.h"
 #include "Panels/ContentBrowser.h"
+#include "Panels/WorldSettings.h"
 
 #include "Windows/ProjectSetupWindow.h"
 
@@ -112,8 +113,8 @@ namespace Zeus {
 		Entity m_entity_hovered;
 
 		SceneHierarchy m_hierarchy;
-
 		ProjectSetupWindow m_setup_window;
+		WorldSettings m_world_settings;
 
 		std::string current_path;
 	};

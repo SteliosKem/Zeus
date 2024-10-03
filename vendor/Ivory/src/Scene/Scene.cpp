@@ -78,18 +78,12 @@ namespace Ivory {
 			m_force_registry.add(comp.second_object, &comp.spring);
 		}
 		auto point_masses = m_registry.view<PointMassComponent>();
-		auto gravity_view = m_registry.view<GravityComponent>();
-		Alchemist::PointMassGravity* gravity;
-		for (auto& entity : gravity_view) {
-			gravity = &gravity_view.get<GravityComponent>(entity).gravity;
-		}
-		bool gravity_exists = !gravity_view.empty();
 		for (auto entity : point_masses) {
 			auto& trans = m_registry.get<TransformComponent>(entity);
 			auto& comp = point_masses.get<PointMassComponent>(entity);
 			comp.point_mass.set_position(trans.translation);
-			if (gravity_exists && comp.affected_by_gravity) {
-				m_force_registry.add(&comp.point_mass, gravity);
+			if (comp.affected_by_gravity) {
+				m_force_registry.add(&comp.point_mass, &m_gravity_force);
 			}
 			for (auto& force : comp.forces_info) {
 				comp.forces.push_back(Alchemist::SimpleForce(force.second.force_vector));
@@ -103,7 +97,7 @@ namespace Ivory {
 
 	void Scene::on_update_runtime(Timestep dt) {
 		
-		on_update_physics(dt);
+		on_update_physics(dt * m_time_factor);
 
 		m_registry.view<CScriptComponent>().each([=](auto entity, auto& cscript_component) {
 			if (!cscript_component.instance) {
@@ -230,6 +224,9 @@ namespace Ivory {
 
 		new_scene->m_vp_height = scene->m_vp_height;
 		new_scene->m_vp_width = scene->m_vp_width;
+
+		new_scene->m_gravity_force = scene->m_gravity_force;
+		new_scene->m_time_factor = scene->m_time_factor;
 
 		std::unordered_map<Uuid, entt::entity> entity_map;
 

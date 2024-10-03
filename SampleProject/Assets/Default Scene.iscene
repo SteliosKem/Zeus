@@ -1,4 +1,7 @@
 Scene: Name
+WorldSettings:
+  GravityIntensity: 9.80000019
+  TimeFactor: 1
 Entities:
   - Entity: 12624606151546994764
     TagComponent:
@@ -69,12 +72,3 @@ Entities:
       SpringConstant: 30.2000008
       FirstObjectID: 6867975049679752995
       SecondObjectID: 5236601477127024055
-  - Entity: 4607729107431902431
-    TagComponent:
-      Tag: Gravity
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    GravityComponent:
-      GravityIntensity: [0, -4.42299986, 0]

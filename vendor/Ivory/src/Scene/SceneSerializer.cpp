@@ -198,6 +198,14 @@ namespace Ivory {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene";
 		out << YAML::Value << "Name";
+		out << YAML::Key << "WorldSettings";
+		out << YAML::BeginMap;
+		out << YAML::Key << "GravityIntensity";
+		out << YAML::Value << m_scene->get_gravity();
+		out << YAML::Key << "TimeFactor";
+		out << YAML::Value << m_scene->get_time_factor();
+		out << YAML::EndMap;
+
 		out << YAML::Key << "Entities";
 		out << YAML::Value << YAML::BeginSeq;
 		auto view = m_scene->m_registry.view<Entity::all_entities>();
@@ -229,6 +237,9 @@ namespace Ivory {
 			return false;
 		std::string scene_name = data["Scene"].as<std::string>();
 		IV_CORE_TRACE("Deserializing scene '{0}'", scene_name);
+		auto world_settings = data["WorldSettings"];
+		m_scene->set_time_factor(world_settings["TimeFactor"].as<float>());
+		m_scene->set_gravity(world_settings["GravityIntensity"].as<float>());
 
 		auto entities = data["Entities"];
 		if (entities) {
