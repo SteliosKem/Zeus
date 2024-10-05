@@ -93,6 +93,7 @@ namespace Alchemist {
 
 		void set_force(const glm::vec2& force) { m_force = force; }
 		glm::vec2& get_force() { return m_force; }
+
 	private:
 		glm::vec2 m_force;
 	};
@@ -110,11 +111,16 @@ namespace Alchemist {
 		void set_rest_length(float length) { m_spring_rest_length = length; }
 		void set_constant(float constant) { m_spring_constant = constant; }
 		void set_attached_object(PointMass2D* obj) { m_attached_object = obj; }
+
+		void first_object_affected(bool set) { m_first_object_affected = set; }
+		bool& get_first_object_affected() { return m_first_object_affected; }
 	private:
 		PointMass2D* m_attached_object;
 		glm::vec2 m_spring_length;
 		float m_spring_constant;
 		float m_spring_rest_length;
+
+		bool m_first_object_affected = true;
 	};
 
 	class AnchoredPointMassSpring : public ForceGenerator2D {

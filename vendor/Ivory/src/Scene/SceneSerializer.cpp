@@ -173,6 +173,8 @@ namespace Ivory {
 			out << YAML::BeginMap;
 			out << YAML::Key << "RestLength";
 			out << YAML::Value << comp.spring.get_rest_length();
+			out << YAML::Key << "BothObjectForce";
+			out << YAML::Value << comp.spring.get_first_object_affected();
 			out << YAML::Key << "SpringConstant";
 			out << YAML::Value << comp.spring.get_constant();
 			out << YAML::Key << "FirstObjectID";
@@ -322,6 +324,7 @@ namespace Ivory {
 					component.spring.set_rest_length(spring_component["RestLength"].as<float>());
 					component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
 					component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
+					component.spring.first_object_affected(spring_component["BothObjectForce"].as<bool>());
 				}
 
 				auto gravity_component = entity["GravityComponent"];

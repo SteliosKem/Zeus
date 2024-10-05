@@ -343,11 +343,11 @@ namespace Ivory {
 			}
 		});
 
-
 		draw_component<SpringComponent>("Spring Component", entity, [](auto& component) {
 			ImGui::DragFloat("Rest Length", &component.spring.get_rest_length(), 0.1f, 0.0f);
 			ImGui::DragFloat("Spring Constant", &component.spring.get_constant(), 0.1f, 0.0f);
 
+			ImGui::Checkbox("Force Acting on Both Objects", &component.spring.get_first_object_affected());
 			//if(component.first_object_id)
 			//	ImGui::Button(m_context->get_by_uuid(component.first_object_id).get_component<TagComponent>().tag.c_str());
 			//else

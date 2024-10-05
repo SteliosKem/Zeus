@@ -54,6 +54,8 @@ namespace Alchemist {
 		// The other object's position
 		glm::vec2 force = -m_spring_constant * (total_distance_vector - rest_length_vector);
 		point_mass->add_force(force);
+		if(m_first_object_affected)
+			m_attached_object->add_force(-force);
 	}
 
 	void AnchoredPointMassSpring::update_force(PointMass2D* point_mass, float dt) {
