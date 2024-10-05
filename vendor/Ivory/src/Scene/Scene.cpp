@@ -289,6 +289,22 @@ namespace Ivory {
 			auto& point_mass_component = view.get<PointMassComponent>(entity);
 			point_mass_component.point_mass.on_update(dt);
 		}
+
+		bool done = false;
+
+		for (auto entity : view) {
+			auto& point_mass1 = view.get<PointMassComponent>(entity).point_mass;
+			for (auto entity2 : view) {
+				if (entity == entity2)
+					continue;
+				auto& point_mass2 = view.get<PointMassComponent>(entity2).point_mass;
+
+				if (Alchemist::check_collision(point_mass1, point_mass2) && !done) {
+					done = true;
+					Alchemist::resolve_elastic_collision_circle(point_mass2, point_mass1);
+				}
+			}
+		}
 	}
 
 	template<typename T>

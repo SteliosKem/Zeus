@@ -3,6 +3,20 @@
 #include <utility>
 
 namespace Alchemist {
+	struct AABB {
+		glm::vec2 left_bottom;
+		glm::vec2 right_up;
+	};
+
+	struct Circle {
+		float radius = .2f;
+		glm::vec2 center;
+	};
+
+	// Collision Detection
+	bool check_AABBs(const AABB& first, const AABB& second);
+	bool check_circles(const Circle& first, const Circle& second);
+
 	class PointMass2D {
 	public:
 		PointMass2D(float mass_inverse, float damping = 1, const glm::vec2& acceleration = {0.0f, 0.0f}, 
@@ -33,11 +47,15 @@ namespace Alchemist {
 		// Call every frame
 		void on_update(float dt) { integrate(dt); }
 		void add_force(const glm::vec2& force) { m_force_accumulator += force; }
+		Circle& get_shape() { return m_shape; }
+		Circle get_shape() const { return m_shape; }
 	private:
 		void integrate(float dt);
 		void clear_force_accumulator() { m_force_accumulator = { 0.0f, 0.0f }; }
 		
 	private:
+		Circle m_shape;
+
 		glm::vec2 m_position;
 		glm::vec2 m_velocity;
 		glm::vec2 m_acceleration;
@@ -136,8 +154,7 @@ namespace Alchemist {
 		float m_spring_rest_length;
 	};
 
-	struct AABB {
-		glm::vec2 left_bottom;
-		glm::vec2 right_up;
-	};
+	bool check_collision(const PointMass2D& first, const PointMass2D& second);
+	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
+
 }

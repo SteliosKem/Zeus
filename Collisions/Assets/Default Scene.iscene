@@ -1,0 +1,43 @@
+Scene: Name
+WorldSettings:
+  GravityIntensity: 9.80000019
+  TimeFactor: 1
+Entities:
+  - Entity: 12903701332788568903
+    TagComponent:
+      Tag: S2
+    TransformComponent:
+      Translation: [-2.20785522, -4.51768446, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [2, 2, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      ForceIndex: 0
+      Forces:
+        {}
+  - Entity: 3080154466114410137
+    TagComponent:
+      Tag: S1
+    TransformComponent:
+      Translation: [-2.1500001, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 1, 0.957345724, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [2, -2, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      ForceIndex: 0
+      Forces:
+        {}
