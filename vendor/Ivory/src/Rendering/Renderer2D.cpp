@@ -440,7 +440,7 @@ namespace Ivory {
 			draw_line(last_pos, second_pos, glm::vec4(1.0f), entity_id);
 			last_pos = second_pos;
 		}*/
-		float opp = rest_length / revolutions;
+		float opp = 5.0f / revolutions;
 		glm::vec3 npp_vec = (pos_b - pos_a) / (float)revolutions;
 		float npp_len = sqrtf(npp_vec.x * npp_vec.x + npp_vec.y * npp_vec.y) / (float)revolutions;
 		float n_height = sqrtf(opp * opp - npp_len * npp_len) * height;

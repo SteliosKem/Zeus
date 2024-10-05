@@ -259,7 +259,7 @@ namespace Zeus {
         m_viewport_bounds[1] = { max_bound.x, max_bound.y };
 
         Entity selected = m_hierarchy.get_selected();
-        if (selected && m_scene_state == SceneState::Edit) {
+        if (selected) {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
             float window_width = (float)ImGui::GetWindowWidth();
@@ -275,6 +275,7 @@ namespace Zeus {
             glm::mat4 camera_view = m_editor_camera.get_view_matrix();
 
             auto& transform_component = selected.get_component<TransformComponent>();
+            bool has_point_mass_component = selected.has_component<PointMassComponent>();
             glm::mat4 transform = transform_component.get_transform();
 
             bool snap = Input::is_key_pressed(IV_KEY_LEFT_CONTROL);
@@ -295,6 +296,7 @@ namespace Zeus {
                 transform_component.translation = translation;
                 transform_component.rotation = rotation;
                 transform_component.scale = scale;
+                selected.get_component<PointMassComponent>().point_mass.set_position(translation);
             }
             else
                 m_using_gizmo = false;
@@ -556,6 +558,7 @@ namespace Zeus {
             serializer.serialize(default_scene.string());
             //m_content_browser.set_assets_dir(Project::get_assets_dir());
             save_project(std::filesystem::path(path)/ (name.empty() ? "Untitled Project.ivprj" : name));
+            open_project(std::filesystem::path(path) / (name.empty() ? "Untitled Project.ivprj" : name));
         }
     }
 
