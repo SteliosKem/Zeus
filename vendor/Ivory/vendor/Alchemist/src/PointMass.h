@@ -136,16 +136,8 @@ namespace Alchemist {
 		float m_spring_rest_length;
 	};
 
-	/*class Contact2D {
-	public:
-		std::pair<PointMass2D*, PointMass2D*> particles;
-		float restitution;
-		glm::vec2 contact_normal;
-		float penetration;
-	protected:
-		void resolve(float dt);
-		float calculate_seperating_velocity() const;
-	private:
-		void resolve_velocity(float dt);
-	};*/
+	struct AABB {
+		glm::vec2 left_bottom;
+		glm::vec2 right_up;
+	};
 }

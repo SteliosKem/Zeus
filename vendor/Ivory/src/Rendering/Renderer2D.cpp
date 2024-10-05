@@ -448,15 +448,17 @@ namespace Ivory {
 		glm::vec3 cross_vec = glm::cross(npp_vec, glm::vec3(0.0, 0.0, 1.0));
 		cross_vec /= sqrtf(cross_vec.x * cross_vec.x + cross_vec.y * cross_vec.y);
 		glm::vec3 last_pos = pos_a;
+
 		for (int i = 0; i < revolutions; i++) {
 			//glm::vec3 second_pos = pos_a + (float)(i + 1) * point_to_point_vec;
 			//float new_height =  ? height : -height;
 			//second_pos = second_pos + glm::vec3()
-
+			
 			glm::vec3 second_pos = (last_pos + npp_vec) + (cross_vec * n_height) * ((i % 2 == 0) ? 1.0f : -1.0f);
 			draw_line(last_pos, second_pos, glm::vec4(1.0f), entity_id);
 			last_pos = second_pos;
 		}
+		
 	}
 
 	void Renderer2D::set_line_width(float width) {

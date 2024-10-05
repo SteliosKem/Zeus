@@ -80,38 +80,4 @@ namespace Alchemist {
 		glm::vec2 force = -m_spring_constant * (total_distance_vector - rest_length_vector);
 		point_mass->add_force(force);
 	}
-
-	/*void Contact2D::resolve(float dt) {
-		resolve_velocity(dt);
-	}
-
-	float Contact2D::calculate_seperating_velocity() const {
-		glm::vec2 relative_velocity = particles.first->get_velocity();
-		if (particles.second)
-			relative_velocity -= particles.second;
-		return glm::dot(relative_velocity, contact_normal);
-	}
-
-	void Contact2D::resolve_velocity(float dt) {
-		float seperating_velocity = calculate_seperating_velocity();
-
-		if (seperating_velocity > 0)
-			return;
-
-		float new_seperating_velocity = -seperating_velocity * restitution;
-		float velocity_difference = new_seperating_velocity - seperating_velocity;
-
-		float total_inverse_mass = particles.first->get_mass_inverse();
-		if (particles.second)
-			total_inverse_mass += particles.second->get_mass_inverse();
-		if (total_inverse_mass < 0)
-			return;
-
-		float impulse = velocity_difference / total_inverse_mass;
-		glm::vec2 impuler_per_inverse_mass = contact_normal * impulse;
-
-		particles.first->set_velocity(particles.first->get_velocity() + impuler_per_inverse_mass * particles.first->get_mass_inverse());
-		if(particles.second)
-			particles.second->set_velocity(particles.second->get_velocity() + impuler_per_inverse_mass * -particles.second->get_mass_inverse());
-	}*/
 }
