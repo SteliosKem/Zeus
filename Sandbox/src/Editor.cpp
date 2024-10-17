@@ -20,6 +20,7 @@ namespace Zeus {
 
         m_play_icon = Texture2D::create("Assets/EditorIcons/play.png");
         m_stop_icon = Texture2D::create("Assets/EditorIcons/stop.png");
+        m_pause_icon = Texture2D::create("Assets/EditorIcons/pause.png");
 
         FrameBufferSpecification frame_buffer_spec;
         frame_buffer_spec.width = 1280;
@@ -339,12 +340,22 @@ namespace Zeus {
     }
 
     void EditorLayer::on_scene_play() {
+        if (m_scene_state == SceneState::Paused) {
+            m_scene_state = SceneState::Play;
+            m_active_scene->unpause();
+            return;
+        }
         m_scene_state = SceneState::Play;
         m_active_scene = Scene::copy(m_editor_scene);
         
         m_hierarchy.set_allow_action_ptr(false);
         m_hierarchy.set_context(m_active_scene);
         m_active_scene->on_play();
+    }
+
+    void EditorLayer::on_scene_pause() {
+        m_scene_state = SceneState::Paused;
+        m_active_scene->pause();
     }
 
     void EditorLayer::on_scene_stop() {
@@ -377,6 +388,7 @@ namespace Zeus {
             else if (m_scene_state == SceneState::Edit)
                 on_scene_play();
         }
+        
         ImGui::PopStyleColor(3);
         ImGui::PopStyleVar(2);
         ImGui::End();

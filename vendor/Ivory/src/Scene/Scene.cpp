@@ -108,7 +108,7 @@ namespace Ivory {
 
 	void Scene::on_update_runtime(Timestep dt, EditorCamera& camera) {
 		
-		on_update_physics(dt * m_time_factor);
+		on_update_physics(m_paused ? 0 : dt * m_time_factor);
 
 		m_registry.view<CScriptComponent>().each([=](auto entity, auto& cscript_component) {
 			if (!cscript_component.instance) {

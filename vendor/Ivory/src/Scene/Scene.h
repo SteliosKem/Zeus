@@ -27,6 +27,9 @@ namespace Ivory {
 
 		void on_play();
 
+		void pause() { m_paused = true; }
+		void unpause() { m_paused = false; }
+
 		Entity get_primary_camera();
 		Entity copy_entity(Entity entity);
 
@@ -54,6 +57,8 @@ namespace Ivory {
 
 		Alchemist::PointMassGravity m_gravity_force;
 		float m_time_factor = 1.0f;
+
+		bool m_paused = false;
 
 		// Physics
 		Alchemist::ForceRegistry m_force_registry;

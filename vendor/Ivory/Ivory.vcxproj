@@ -163,6 +163,8 @@
     <ClInclude Include="src\ImGui\IconsFontAwesome6.h" />
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\ImGui\ImGuiNotify.h" />
+    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
+    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
     <ClInclude Include="src\ImGui\L2DFileDialog.h" />
     <ClInclude Include="src\ImGui\fa_solid-900.h" />
     <ClInclude Include="src\ImGui\imgui_spectrum.h" />
@@ -624,6 +626,8 @@
     <ClCompile Include="src\Core\Uuid.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLoad.cpp" />
+    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_internal.cpp" />
+    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_sequencer.cpp" />
     <ClCompile Include="src\ImGui\imgui_spectrum.cpp" />
     <ClCompile Include="src\Layers\Layer.cpp" />
     <ClCompile Include="src\Layers\LayerStack.cpp" />
@@ -661,6 +665,7 @@
   <ItemGroup>
     <None Include="src\ImGui\fa-regular-400.ttf" />
     <None Include="src\ImGui\fa-solid-900.ttf" />
+    <None Include="src\ImGui\Sequencer\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

@@ -1485,6 +1485,8 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
+    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1595,12 +1597,17 @@
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_internal.cpp" />
+    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_sequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ImGui\fa-regular-400.ttf">
       <Filter>src\ImGui</Filter>
     </None>
     <None Include="src\ImGui\fa-solid-900.ttf">
+      <Filter>src\ImGui</Filter>
+    </None>
+    <None Include="src\ImGui\Sequencer\LICENSE">
       <Filter>src\ImGui</Filter>
     </None>
   </ItemGroup>
