@@ -3,9 +3,83 @@ WorldSettings:
   GravityIntensity: 9.80000019
   TimeFactor: 1
 Entities:
-  - Entity: 12849123466852549301
+  - Entity: 6867975049679752995
     TagComponent:
-      Tag: New Spring
+      Tag: Box
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      ForceIndex: 0
+      IgnoreCollisions: true
+      Forces:
+        {}
+  - Entity: 5236601477127024055
+    TagComponent:
+      Tag: Box 2
+    TransformComponent:
+      Translation: [2.29999995, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.5, 0.5, 1]
+    SpriteRendererComponent:
+      Color: [0.573459744, 0.119584009, 0.119584009, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 0.476999998
+      ForceIndex: 2
+      IgnoreCollisions: false
+      Forces:
+        Force 0: [0, 0, 0]
+        Force 1: [0, 0, 0]
+  - Entity: 8314306614578154259
+    TagComponent:
+      Tag: Spring
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpringComponent:
+      RestLength: 5.5999999
+      BothObjectForce: false
+      SpringConstant: 30.2000008
+      FirstObjectID: 6867975049679752995
+      SecondObjectID: 5236601477127024055
+  - Entity: 9505850604838915909
+    TagComponent:
+      Tag: New Point Mass
+    TransformComponent:
+      Translation: [-1.70000005, -2.54999995, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.579999983, 0.579999983, 1]
+    SpriteRendererComponent:
+      Color: [0.600866258, 0.834123254, 0.241144627, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 0.507000029
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 694169423533710351
+    TagComponent:
+      Tag: Spring 2
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -13,8 +87,8 @@ Entities:
     SpringComponent:
       RestLength: 1
       BothObjectForce: true
-      SpringConstant: 6.30000019
-      FirstObjectID: 13234384974124111546
+      SpringConstant: 11.1999998
+      FirstObjectID: 5236601477127024055
       SecondObjectID: 9505850604838915909
   - Entity: 13234384974124111546
     TagComponent:
@@ -33,11 +107,12 @@ Entities:
       AffectedByGravity: true
       Damping: 1
       ForceIndex: 0
+      IgnoreCollisions: false
       Forces:
         {}
-  - Entity: 694169423533710351
+  - Entity: 12849123466852549301
     TagComponent:
-      Tag: Spring 2
+      Tag: New Spring
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -45,77 +120,6 @@ Entities:
     SpringComponent:
       RestLength: 1
       BothObjectForce: true
-      SpringConstant: 11.1999998
-      FirstObjectID: 5236601477127024055
+      SpringConstant: 6.30000019
+      FirstObjectID: 13234384974124111546
       SecondObjectID: 9505850604838915909
-  - Entity: 9505850604838915909
-    TagComponent:
-      Tag: New Point Mass
-    TransformComponent:
-      Translation: [-1.70000005, -2.54999995, 0]
-      Rotation: [0, -0, 0]
-      Scale: [0.579999983, 0.579999983, 1]
-    SpriteRendererComponent:
-      Color: [0.600866258, 0.834123254, 0.241144627, 1]
-      TilingFactor: 1
-    PointMassComponent:
-      Mass: 1
-      Velocity: [0, 0, 0]
-      Acceleration: [0, 0, 0]
-      AffectedByGravity: true
-      Damping: 0.507000029
-      ForceIndex: 0
-      Forces:
-        {}
-  - Entity: 8314306614578154259
-    TagComponent:
-      Tag: Spring
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    SpringComponent:
-      RestLength: 5.5999999
-      BothObjectForce: false
-      SpringConstant: 30.2000008
-      FirstObjectID: 6867975049679752995
-      SecondObjectID: 5236601477127024055
-  - Entity: 5236601477127024055
-    TagComponent:
-      Tag: Box 2
-    TransformComponent:
-      Translation: [2.29999995, 0, 0]
-      Rotation: [0, -0, 0]
-      Scale: [0.5, 0.5, 1]
-    SpriteRendererComponent:
-      Color: [0.573459744, 0.119584009, 0.119584009, 1]
-      TilingFactor: 1
-    PointMassComponent:
-      Mass: 1
-      Velocity: [0, 0, 0]
-      Acceleration: [0, 0, 0]
-      AffectedByGravity: true
-      Damping: 0.476999998
-      ForceIndex: 2
-      Forces:
-        Force 0: [0, 0, 0]
-        Force 1: [0, 0, 0]
-  - Entity: 6867975049679752995
-    TagComponent:
-      Tag: Box
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-    PointMassComponent:
-      Mass: 1
-      Velocity: [0, 0, 0]
-      Acceleration: [0, 0, 0]
-      AffectedByGravity: false
-      Damping: 1
-      ForceIndex: 0
-      Forces:
-        {}

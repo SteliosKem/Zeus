@@ -97,6 +97,8 @@ namespace Ivory {
 		std::unordered_map<std::string, ForceInfo> forces_info;
 		int force_counter = 0;
 		std::vector<Alchemist::SimpleForce> forces;
+		bool ignore_collisions = false;
+		bool will_update = true;
 
 		PointMassComponent() = default;
 		PointMassComponent(const PointMassComponent&) = default;

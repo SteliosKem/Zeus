@@ -332,6 +332,8 @@ namespace Ivory {
 
 			ImGui::DragFloat("Damping", &component.point_mass.get_damping(), 0.0025f);
 
+			ImGui::Checkbox("Ignore Collisions", &component.ignore_collisions);
+
 			if (ImGui::Button("Add Force")) {
 				component.forces_info["Force " + std::to_string(component.force_counter++)];
 			}
@@ -358,6 +360,7 @@ namespace Ivory {
 					//entity_->get_component<TransformComponent>();
 					//component.first_object = &entity_->get_component<PointMassComponent>().point_mass;
 					component.first_object_id = entity_->get_component<IdComponent>().id;
+					//component.first_object = entity_->get_component<PointMassComponent>().point_mass;
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -371,6 +374,7 @@ namespace Ivory {
 					Entity* entity_ = (Entity*)payload->Data;
 					//component.second_object = &entity_->get_component<PointMassComponent>().point_mass;
 					component.second_object_id = entity_->get_component<IdComponent>().id;
+					//component.second_object = entity_->get_component<PointMassComponent>().point_mass;
 				}
 				ImGui::EndDragDropTarget();
 			}

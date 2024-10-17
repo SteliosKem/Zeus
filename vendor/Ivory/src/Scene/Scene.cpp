@@ -53,6 +53,17 @@ namespace Ivory {
 				circ_select = &circ;
 		}
 
+		auto springs = m_registry.view<SpringComponent>();
+		for (auto& entity : springs) {
+			SpringComponent spring = m_registry.get<SpringComponent>(entity);
+			TransformComponent t1 = m_registry.get<TransformComponent>(get_by_uuid(spring.first_object_id));
+			t1.translation.z = 0;
+			TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(spring.second_object_id));
+			t2.translation.z = 0;
+			Renderer2D::draw_spring(t1.translation, t2.translation
+				, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+		}
+
 		if(m_selected)
 			Renderer2D::draw_overlay(quad_transform, circ_select, (int)m_selected_entity);
 
@@ -148,10 +159,19 @@ namespace Ivory {
 		}*/
 		Renderer2D::begin_scene(camera);
 
+		Circle circ{};
+		glm::mat4 tsfm;
+		Circle* circ_select{ nullptr };
+		glm::mat4* quad_transform{ nullptr };
+
 		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
 		for (auto entity : group) {
 			auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
 			transform.translation = glm::vec3(point_mass.point_mass.get_position(), transform.translation.z);
+			if (m_selected && entity == m_selected_entity) {
+				tsfm = transform.get_transform();
+				quad_transform = &tsfm;
+			}
 			Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
 		}
 
@@ -172,8 +192,11 @@ namespace Ivory {
 		for (auto& entity : springs) {
 			SpringComponent spring = m_registry.get<SpringComponent>(entity);
 			Renderer2D::draw_spring(glm::vec3(spring.first_object->get_position(), 0.0f), glm::vec3(spring.second_object->get_position(), 0.0f)
-				, 2.0f, 20, spring.spring.get_rest_length(), (int)entity);
+				, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
+
+		if (m_selected)
+			Renderer2D::draw_overlay(quad_transform, circ_select, (int)m_selected_entity);
 
 		Renderer2D::end_scene();
 	}
@@ -287,21 +310,31 @@ namespace Ivory {
 		auto view = m_registry.view<PointMassComponent>();
 		for (auto entity : view) {
 			auto& point_mass_component = view.get<PointMassComponent>(entity);
-			point_mass_component.point_mass.on_update(dt);
+			if (point_mass_component.will_update)
+				point_mass_component.point_mass.on_update(dt);
+			else
+				IV_INFO(point_mass_component.point_mass.get_acceleration().x);
 		}
 
-		bool done = false;
+		std::unordered_map<entt::entity, entt::entity> collision_history;
 
 		for (auto entity : view) {
-			auto& point_mass1 = view.get<PointMassComponent>(entity).point_mass;
+			auto& point_mass1 = view.get<PointMassComponent>(entity);
+			if (point_mass1.ignore_collisions)
+				continue;
 			for (auto entity2 : view) {
 				if (entity == entity2)
 					continue;
-				auto& point_mass2 = view.get<PointMassComponent>(entity2).point_mass;
+				auto& point_mass2 = view.get<PointMassComponent>(entity2);
+				if (point_mass2.ignore_collisions)
+					continue;
+				if (collision_history[entity] == entity2)
+					continue;
 
-				if (Alchemist::check_collision(point_mass1, point_mass2) && !done) {
-					done = true;
-					Alchemist::resolve_elastic_collision_circle(point_mass2, point_mass1);
+				if (Alchemist::check_collision(point_mass1.point_mass, point_mass2.point_mass)) {
+					collision_history[entity] = entity2;
+					collision_history[entity2] = entity;
+					Alchemist::resolve_elastic_collision_circle(point_mass2.point_mass, point_mass1.point_mass);
 				}
 			}
 		}

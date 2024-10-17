@@ -288,6 +288,7 @@ namespace Zeus {
                 , nullptr, snap ? snap_values : nullptr);
 
             if (ImGuizmo::IsUsing()) {
+                selected.get_component<PointMassComponent>().will_update = false;
                 if (alt && m_using_gizmo == false)
                     on_duplicate_entity();
                 m_using_gizmo = true;
@@ -298,8 +299,10 @@ namespace Zeus {
                 transform_component.scale = scale;
                 selected.get_component<PointMassComponent>().point_mass.set_position(translation);
             }
-            else
+            else {
                 m_using_gizmo = false;
+                selected.get_component<PointMassComponent>().will_update = true;
+            }
 
 
         }

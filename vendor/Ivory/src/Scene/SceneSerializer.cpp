@@ -155,6 +155,8 @@ namespace Ivory {
 			out << YAML::Value << comp.point_mass.get_damping();
 			out << YAML::Key << "ForceIndex";
 			out << YAML::Value << comp.force_counter;
+			out << YAML::Key << "IgnoreCollisions";
+			out << YAML::Value << comp.ignore_collisions;
 
 			// Forces
 			out << YAML::Key << "Forces";
@@ -310,6 +312,7 @@ namespace Ivory {
 					component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
 					component.point_mass.set_damp(point_mass_component["Damping"].as<float>());
 					component.force_counter = point_mass_component["ForceIndex"].as<int>();
+					component.ignore_collisions = point_mass_component["IgnoreCollisions"].as<bool>();
 					auto forces = point_mass_component["Forces"];
 					
 					for (auto& i : forces) {
@@ -325,6 +328,7 @@ namespace Ivory {
 					component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
 					component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
 					component.spring.first_object_affected(spring_component["BothObjectForce"].as<bool>());
+
 				}
 
 				auto gravity_component = entity["GravityComponent"];
