@@ -107,8 +107,8 @@ namespace Ivory {
 		
 	}
 
-	void Scene::on_update_runtime(Timestep dt, EditorCamera& camera) {
-		
+	void Scene::on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame) {
+		m_current_frame = frame;
 		on_update_physics(m_paused ? 0 : dt * m_time_factor);
 
 		m_registry.view<CScriptComponent>().each([=](auto entity, auto& cscript_component) {
@@ -371,6 +371,7 @@ namespace Ivory {
 					collision_history[entity] = entity2;
 					collision_history[entity2] = entity;
 					Alchemist::resolve_elastic_collision_circle(point_mass2.point_mass, point_mass1.point_mass);
+					m_collisions.push_back({m_current_frame});
 				}
 			}
 		}

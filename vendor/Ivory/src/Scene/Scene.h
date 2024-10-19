@@ -10,6 +10,10 @@ namespace Ivory {
 
 	class Scene {
 	public:
+		struct CollisionInfo {
+			int32_t frame;
+		};
+
 		Scene();
 		~Scene() {}
 
@@ -22,7 +26,7 @@ namespace Ivory {
 		void set_selected_entity(Entity entity);
 		void remove_selected_entity();
 
-		void on_update_runtime(Timestep dt, EditorCamera& camera);
+		void on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame);
 		void on_update_editor(Timestep dt, EditorCamera& camera);
 
 		void on_play();
@@ -41,6 +45,7 @@ namespace Ivory {
 		float get_gravity() { return -m_gravity_force.get_gravity().y; }
 		void set_time_factor(float factor) { m_time_factor = factor; }
 		float& get_time_factor() { return m_time_factor; }
+		const std::vector<CollisionInfo>& get_collisions() { return m_collisions; }
 	private:
 		template<typename T>
 		void on_component_add(Entity entity, T& component);
@@ -64,6 +69,8 @@ namespace Ivory {
 		// Physics
 		Alchemist::ForceRegistry m_force_registry;
 		void on_update_physics(float dt);
-
+		
+		int32_t m_current_frame;
+		std::vector<CollisionInfo> m_collisions;
 	};
 }

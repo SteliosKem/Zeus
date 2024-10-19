@@ -78,8 +78,8 @@ namespace Zeus {
         case SceneState::Play: {
             m_camera_controller.on_update(dt);
             m_editor_camera.on_update(dt);
-            m_active_scene->on_update_runtime(dt, m_editor_camera);
             m_timeline.increment(1);
+            m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
             m_scene_snapshots.push_back(Scene::copy(m_active_scene));
             break;
         }
@@ -356,7 +356,9 @@ namespace Zeus {
         m_hierarchy.set_allow_action_ptr(false);
         m_hierarchy.set_context(m_active_scene);
         m_active_scene->on_play();
+        m_timeline.set_scene_ptr(m_active_scene);
         m_timeline.set_is_playing(true);
+        m_timeline.reset();
         m_scene_snapshots.push_back(Scene::copy(m_active_scene));
     }
 
