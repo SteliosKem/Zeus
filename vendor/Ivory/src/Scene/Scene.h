@@ -36,6 +36,7 @@ namespace Ivory {
 		Entity get_by_uuid(Uuid& uuid);
 
 		static std::shared_ptr<Scene> copy(const std::shared_ptr<Scene>& scene);
+		static std::shared_ptr<Scene> copy(Scene* scene);
 		void set_gravity(float g) { m_gravity_force.set_gravity({0.0f, -g}); }
 		float get_gravity() { return -m_gravity_force.get_gravity().y; }
 		void set_time_factor(float factor) { m_time_factor = factor; }
@@ -63,5 +64,6 @@ namespace Ivory {
 		// Physics
 		Alchemist::ForceRegistry m_force_registry;
 		void on_update_physics(float dt);
+
 	};
 }

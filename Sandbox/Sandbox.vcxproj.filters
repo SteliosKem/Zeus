@@ -25,6 +25,7 @@
       <Filter>Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\WorldSettings.h" />
+    <ClInclude Include="src\Panels\Timeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AlchemistSandbox.cpp" />
@@ -43,5 +44,6 @@
       <Filter>Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Panels\WorldSettings.cpp" />
+    <ClCompile Include="src\Panels\Timeline.cpp" />
   </ItemGroup>
 </Project>

@@ -15,6 +15,7 @@
 #include "Panels/SceneHierarchy.h"
 #include "Panels/ContentBrowser.h"
 #include "Panels/WorldSettings.h"
+#include "Panels/Timeline.h"
 
 #include "Windows/ProjectSetupWindow.h"
 
@@ -118,8 +119,13 @@ namespace Zeus {
 		SceneHierarchy m_hierarchy;
 		ProjectSetupWindow m_setup_window;
 		WorldSettings m_world_settings;
+		Timeline m_timeline;
 
 		std::string current_path;
+
+
+
+		std::vector<std::shared_ptr<Scene>> m_scene_snapshots;
 	};
 
 	class Editor : public Application {

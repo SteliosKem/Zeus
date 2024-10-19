@@ -104,6 +104,7 @@ namespace Ivory {
 				m_force_registry.add(&comp.point_mass, &force);
 			}
 		}
+		
 	}
 
 	void Scene::on_update_runtime(Timestep dt, EditorCamera& camera) {
@@ -199,6 +200,7 @@ namespace Ivory {
 			Renderer2D::draw_overlay(quad_transform, circ_select, (int)m_selected_entity);
 
 		Renderer2D::end_scene();
+		
 	}
 
 	void Scene::on_viewport_resize(uint32_t width, uint32_t height) {
@@ -281,6 +283,40 @@ namespace Ivory {
 		auto& dest_scene_reg = new_scene->m_registry;
 		auto id_view = source_scene_reg.view<IdComponent>();
 		
+		for (auto e = id_view.rbegin(); e != id_view.rend(); e++) {
+			Uuid uuid = source_scene_reg.get<IdComponent>(*e).id;
+			const std::string& name = source_scene_reg.get<TagComponent>(*e).tag;
+			Entity entity = new_scene->create_entity_with_uuid(uuid, name);
+			entity_map[uuid] = (entt::entity)entity;
+		}
+
+		copy_component<TransformComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<CameraComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<SpriteRendererComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<CircleRendererComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<CScriptComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<GravityComponent>(source_scene_reg, dest_scene_reg, entity_map);
+
+		return new_scene;
+	}
+
+	std::shared_ptr<Scene> Scene::copy(Scene* scene) {
+		std::shared_ptr<Scene> new_scene = std::make_shared<Scene>();
+
+		new_scene->m_vp_height = scene->m_vp_height;
+		new_scene->m_vp_width = scene->m_vp_width;
+
+		new_scene->m_gravity_force = scene->m_gravity_force;
+		new_scene->m_time_factor = scene->m_time_factor;
+
+		std::unordered_map<Uuid, entt::entity> entity_map;
+
+		auto& source_scene_reg = scene->m_registry;
+		auto& dest_scene_reg = new_scene->m_registry;
+		auto id_view = source_scene_reg.view<IdComponent>();
+
 		for (auto e = id_view.rbegin(); e != id_view.rend(); e++) {
 			Uuid uuid = source_scene_reg.get<IdComponent>(*e).id;
 			const std::string& name = source_scene_reg.get<TagComponent>(*e).tag;

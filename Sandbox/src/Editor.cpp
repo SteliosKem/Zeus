@@ -71,13 +71,16 @@ namespace Zeus {
             m_editor_camera.on_update(dt);
 
             m_active_scene->on_update_editor(dt, m_editor_camera);
+            if (!m_scene_snapshots.empty())
+                m_active_scene = m_scene_snapshots[m_timeline.get_current_time()];
             break;
         }
         case SceneState::Play: {
             m_camera_controller.on_update(dt);
             m_editor_camera.on_update(dt);
             m_active_scene->on_update_runtime(dt, m_editor_camera);
-            
+            m_timeline.increment(1);
+            m_scene_snapshots.push_back(Scene::copy(m_active_scene));
             break;
         }
         }
@@ -218,6 +221,7 @@ namespace Zeus {
 
         m_hierarchy.on_imgui_render();
         m_world_settings.on_imgui_render();
+        m_timeline.on_imgui_render();
         //m_content_browser.on_imgui_render();
 
         // VIEWPORT
@@ -340,6 +344,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_scene_play() {
+        m_scene_snapshots.clear();
         if (m_scene_state == SceneState::Paused) {
             m_scene_state = SceneState::Play;
             m_active_scene->unpause();
@@ -351,6 +356,8 @@ namespace Zeus {
         m_hierarchy.set_allow_action_ptr(false);
         m_hierarchy.set_context(m_active_scene);
         m_active_scene->on_play();
+        m_timeline.set_is_playing(true);
+        m_scene_snapshots.push_back(Scene::copy(m_active_scene));
     }
 
     void EditorLayer::on_scene_pause() {
@@ -364,6 +371,9 @@ namespace Zeus {
         m_active_scene = m_editor_scene;
         m_hierarchy.set_allow_action_ptr(true);
         m_hierarchy.set_context(m_active_scene);
+        m_timeline.reset();
+        m_timeline.set_is_playing(false);
+        
     }
 
     void EditorLayer::ui_toolbar() {
