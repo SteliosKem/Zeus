@@ -344,13 +344,6 @@ namespace Ivory {
 		
 		m_force_registry.update_forces(dt);
 		auto view = m_registry.view<PointMassComponent>();
-		for (auto entity : view) {
-			auto& point_mass_component = view.get<PointMassComponent>(entity);
-			if (point_mass_component.will_update)
-				point_mass_component.point_mass.on_update(dt);
-			else
-				IV_INFO(point_mass_component.point_mass.get_acceleration().x);
-		}
 
 		std::unordered_map<entt::entity, entt::entity> collision_history;
 
@@ -367,14 +360,26 @@ namespace Ivory {
 				if (collision_history[entity] == entity2)
 					continue;
 
-				if (Alchemist::check_collision(point_mass1.point_mass, point_mass2.point_mass)) {
+				Alchemist::Collision collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
+
+				if (collision.depth != 0) {
 					collision_history[entity] = entity2;
 					collision_history[entity2] = entity;
-					Alchemist::resolve_elastic_collision_circle(point_mass2.point_mass, point_mass1.point_mass);
-					m_collisions.push_back({m_current_frame});
+					//Alchemist::resolve_elastic_collision_circle(point_mass2.point_mass, point_mass1.point_mass);
+					Alchemist::resolve_plain_collision_circle(point_mass2.point_mass, point_mass1.point_mass, collision);
+					m_collisions.push_back({ m_current_frame });
 				}
 			}
 		}
+		for (auto entity : view) {
+			auto& point_mass_component = view.get<PointMassComponent>(entity);
+			if (point_mass_component.will_update)
+				point_mass_component.point_mass.on_update(dt);
+			else
+				IV_INFO(point_mass_component.point_mass.get_acceleration().x);
+		}
+
+		
 	}
 
 	template<typename T>

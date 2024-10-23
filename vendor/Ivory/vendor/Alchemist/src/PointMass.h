@@ -9,7 +9,7 @@ namespace Alchemist {
 	};
 
 	struct Circle {
-		float radius = .2f;
+		float radius = .5f;
 		glm::vec2 center;
 	};
 
@@ -154,7 +154,13 @@ namespace Alchemist {
 		float m_spring_rest_length;
 	};
 
-	bool check_collision(const PointMass2D& first, const PointMass2D& second);
-	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
+	struct Collision {
+		float depth = 0;
+		glm::vec2 collision_normal{ 0.0f };
+	};
 
+	bool check_collision(const PointMass2D& first, const PointMass2D& second);
+	Collision check_circle_collision_depth(const PointMass2D& first, const PointMass2D& second);
+	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
+	void resolve_plain_collision_circle(PointMass2D& first, PointMass2D& second, const Collision& collision);
 }

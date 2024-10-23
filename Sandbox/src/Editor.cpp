@@ -229,6 +229,7 @@ namespace Zeus {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
 
+
         float tab_height = ImGui::GetWindowSize().y - ImGui::GetContentRegionAvail().y;
         auto viewport_offset = ImGui::GetCursorPos();
         viewport_offset.y -= tab_height;

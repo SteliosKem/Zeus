@@ -135,4 +135,22 @@ namespace Alchemist {
 			return true;
 		return false;
 	}
+
+	Collision check_circle_collision_depth(const PointMass2D& first, const PointMass2D& second) {
+		// Check if circles intercept, so check if the distance of their centers is
+		// less than the sum of their radi
+		float distance_of_centers_squared = (first.get_position().x - second.get_position().x) * (first.get_position().x - second.get_position().x)
+			+ (first.get_position().y - second.get_position().y) * (first.get_position().y - second.get_position().y);
+
+		float sum_of_radi_squared = (first.get_shape().radius + second.get_shape().radius) * (first.get_shape().radius + second.get_shape().radius);
+		if (distance_of_centers_squared < sum_of_radi_squared)
+			return Collision{first.get_shape().radius + second.get_shape().radius - sqrtf(distance_of_centers_squared), glm::normalize(first.get_position() - second.get_position())};
+		return Collision{};
+	}
+
+	void resolve_plain_collision_circle(PointMass2D& first, PointMass2D& second, const Collision& collision) {
+		std::cout << (collision.collision_normal.x * collision.collision_normal.x + collision.collision_normal.y * collision.collision_normal.y);
+		first.get_position() -= collision.collision_normal * collision.depth / 2.0f;
+		second.get_position() += collision.collision_normal * collision.depth / 2.0f;
+	}
 }
