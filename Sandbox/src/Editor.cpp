@@ -71,8 +71,8 @@ namespace Zeus {
             m_editor_camera.on_update(dt);
 
             m_active_scene->on_update_editor(dt, m_editor_camera);
-            if (!m_scene_snapshots.empty())
-                m_active_scene = m_scene_snapshots[m_timeline.get_current_time()];
+            //if (!m_scene_snapshots.empty())
+            //    m_active_scene = m_scene_snapshots[m_timeline.get_current_time()];
             break;
         }
         case SceneState::Play: {
@@ -306,7 +306,8 @@ namespace Zeus {
             }
             else {
                 m_using_gizmo = false;
-                selected.get_component<PointMassComponent>().will_update = true;
+                if(selected.has_component<PointMassComponent>())
+                    selected.get_component<PointMassComponent>().will_update = true;
             }
 
 
