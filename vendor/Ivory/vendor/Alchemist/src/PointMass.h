@@ -3,18 +3,12 @@
 #include <utility>
 
 namespace Alchemist {
-	struct AABB {
-		glm::vec2 left_bottom;
-		glm::vec2 right_up;
-	};
-
 	struct Circle {
 		float radius = .5f;
-		glm::vec2 center;
+		glm::vec2 center{ 0.0f };
 	};
 
 	// Collision Detection
-	bool check_AABBs(const AABB& first, const AABB& second);
 	bool check_circles(const Circle& first, const Circle& second);
 
 	class PointMass2D {
@@ -159,8 +153,15 @@ namespace Alchemist {
 		glm::vec2 collision_normal{ 0.0f };
 	};
 
+	// Collision Detection
+
 	bool check_collision(const PointMass2D& first, const PointMass2D& second);
 	Collision check_circle_collision_depth(const PointMass2D& first, const PointMass2D& second);
+	Collision check_sat_collision(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons);
+	glm::vec2 project_vertices(const std::vector<glm::vec2>& vertices, const glm::vec2& axis);
+
+
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
 	void resolve_plain_collision_circle(PointMass2D& first, PointMass2D& second, const Collision& collision);
+	void resolve_plain_collision_surface(PointMass2D& point_mass, const Collision& collision);
 }

@@ -1,5 +1,5 @@
-
 #include "PointMass.h"
+#include <limits>
 #include <iostream>
 
 namespace Alchemist {
@@ -101,16 +101,6 @@ namespace Alchemist {
 	}
 
 	// Collision Detection
-	bool check_AABBs(const AABB& first, const AABB& second) {
-		bool overlapping_on_x = second.right_up.x > first.left_bottom.x
-			|| second.left_bottom.x < first.right_up.x;
-		bool overlapping_on_y = second.right_up.y > first.left_bottom.y
-			|| second.left_bottom.y < first.right_up.y;
-
-		if (overlapping_on_x && overlapping_on_y)
-			return true;
-		return false;
-	}
 
 	bool check_circles(const Circle& first, const Circle& second) {
 		// Check if circles intercept, so check if the distance of their centers is
@@ -148,9 +138,50 @@ namespace Alchemist {
 		return Collision{};
 	}
 
+	static bool loop_through_vertices(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons) {
+		for (int i = 0; i < first_polygons.size(); i++) {
+			glm::vec2 vertex_a = first_polygons[i];
+			glm::vec2 vertex_b = first_polygons[(i + 1) % first_polygons.size()];
+
+			glm::vec2 edge = vertex_b - vertex_a;
+			glm::vec2 seperating_axis = glm::vec2(-edge.y, edge.x);
+
+			glm::vec2 min_max_a = project_vertices(first_polygons, seperating_axis);
+			glm::vec2 min_max_b = project_vertices(second_polygons, seperating_axis);
+
+			if (min_max_a.x >= min_max_b.y || min_max_b.x >= min_max_a.y) return true;
+		}
+		return false;
+	}
+
+	Collision check_sat_collision(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons) {
+		if (loop_through_vertices(first_polygons, second_polygons)) return Collision{};
+		if (loop_through_vertices(second_polygons, first_polygons)) return Collision{};
+		return Collision{1.0f};
+	}
+
+	// Projects each point provided to a line for use in the SAT
+	glm::vec2 project_vertices(const std::vector<glm::vec2>& vertices, const glm::vec2& axis) {
+		float min = std::numeric_limits<float>::max();
+		float max = std::numeric_limits<float>::min();
+
+		for (int i = 0; i < vertices.size(); i++) {
+			glm::vec2 vertex = vertices[i];
+			float projection = glm::dot(vertex, axis);
+
+			if (projection < min) min = projection;
+			if (projection > max) max = projection;
+		}
+
+		return {min, max};
+	}
+
 	void resolve_plain_collision_circle(PointMass2D& first, PointMass2D& second, const Collision& collision) {
-		std::cout << (collision.collision_normal.x * collision.collision_normal.x + collision.collision_normal.y * collision.collision_normal.y);
 		first.get_position() -= collision.collision_normal * collision.depth / 2.0f;
 		second.get_position() += collision.collision_normal * collision.depth / 2.0f;
+	}
+
+	void resolve_plain_collision_surface(PointMass2D& point_mass, const Collision& collision) {
+		point_mass.get_position() += collision.collision_normal * collision.depth;
 	}
 }

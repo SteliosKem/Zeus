@@ -41,13 +41,29 @@ namespace Ivory {
 
 			return glm::translate(glm::mat4{ 1.0f }, translation) * _rotation * glm::scale(glm::mat4{ 1.0f }, scale);
 		}
+
+		// Returns a vector of the points of a quad, transformed accordingly with the object's
+		// current transformation matrix
+		std::vector<glm::vec2> get_transformed_points() const {
+			std::array<glm::vec4, 4> points;
+			std::vector<glm::vec2> to_ret(4);
+			points[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+			points[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+			points[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
+			points[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+			glm::mat4 transform = get_transform();
+			for (int i = 0; i < 4; i++) {
+				to_ret[i] = transform * points[i];
+			}
+			return to_ret;
+		}
 	};
 
 	struct SpriteRendererComponent {
 		glm::vec4 color{ 1.0f };
 		std::shared_ptr<Texture2D> texture{ nullptr };
 		float tiling_factor = 1.0f;
-
+		
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color) : color(color) {}

@@ -361,14 +361,19 @@ namespace Ivory {
 					continue;
 
 				Alchemist::Collision collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
-
-				if (collision.depth != 0) {
+				const auto& transform1 = m_registry.get<TransformComponent>(entity);
+				const auto& transform2 = m_registry.get<TransformComponent>(entity2);
+				Alchemist::Collision sat_collision = Alchemist::check_sat_collision(transform1.get_transformed_points(), transform2.get_transformed_points());
+				if (sat_collision.depth == 1) {
+					IV_ERROR("COLLIDED");
+				}
+				/*if (collision.depth != 0) {
 					collision_history[entity] = entity2;
 					collision_history[entity2] = entity;
 					//Alchemist::resolve_elastic_collision_circle(point_mass2.point_mass, point_mass1.point_mass);
 					Alchemist::resolve_plain_collision_circle(point_mass2.point_mass, point_mass1.point_mass, collision);
 					m_collisions.push_back({ m_current_frame });
-				}
+				}*/
 			}
 		}
 		for (auto entity : view) {
