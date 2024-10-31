@@ -158,8 +158,9 @@ namespace Alchemist {
 	bool check_collision(const PointMass2D& first, const PointMass2D& second);
 	Collision check_circle_collision_depth(const PointMass2D& first, const PointMass2D& second);
 	Collision check_sat_collision(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons);
+	Collision check_sat_circle_collision(const glm::vec2& circle_center, float circle_radius, const std::vector<glm::vec2>& polygons);
 	glm::vec2 project_vertices(const std::vector<glm::vec2>& vertices, const glm::vec2& axis);
-
+	glm::vec2 project_circle(const glm::vec2& center, float radius, const glm::vec2& axis);
 
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);

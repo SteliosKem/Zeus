@@ -333,6 +333,7 @@ namespace Ivory {
 			ImGui::DragFloat("Damping", &component.point_mass.get_damping(), 0.0025f);
 
 			ImGui::Checkbox("Ignore Collisions", &component.ignore_collisions);
+			ImGui::Checkbox("Is Circle", &component.is_circle);
 
 			if (ImGui::Button("Add Force")) {
 				component.forces_info["Force " + std::to_string(component.force_counter++)];

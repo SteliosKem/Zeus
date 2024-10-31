@@ -108,6 +108,7 @@ namespace Ivory {
 			float force_length;
 			float angle;
 		};
+		bool is_circle = false;
 		Alchemist::PointMass2D point_mass = {1.0f};
 		bool affected_by_gravity = true;
 		std::unordered_map<std::string, ForceInfo> forces_info;

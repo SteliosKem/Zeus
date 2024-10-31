@@ -183,8 +183,87 @@ namespace Alchemist {
 
 		if (glm::dot(center_b - center_a, normal) > 0)
 			normal = -normal;
-		
-		return Collision{ depth, normal};
+
+		return Collision{ depth, normal };
+	}
+
+	glm::vec2 project_circle(const glm::vec2& center, float radius, const glm::vec2& axis) {
+		glm::vec2 direction = glm::normalize(axis);
+		direction *= radius;
+		glm::vec2 point_a = center + direction;
+		glm::vec2 point_b = center - direction;
+
+		glm::vec2 to_ret = {glm::dot(point_a, axis), glm::dot(point_b, axis)};
+		if (to_ret.y < to_ret.x) {
+			float a = to_ret.x;
+			to_ret.x = to_ret.y;
+			to_ret.y = a;
+		}
+		return to_ret;
+	}
+
+	static int closest_point(const glm::vec2& point, const std::vector<glm::vec2>& polygon) {
+		int result = -1;
+		float min_distance = std::numeric_limits<float>::max();
+
+		for (int i = 0; i < polygon.size(); i++) {
+			glm::vec2 vertex = polygon[i];
+			float distance = glm::distance(vertex, point);
+
+			if (distance < min_distance) {
+				min_distance = distance;
+				result = i;
+			}
+		}
+		return result;
+	}
+
+	Collision check_sat_circle_collision(const glm::vec2& circle_center, float circle_radius, const std::vector<glm::vec2>& polygons) {
+		float depth = std::numeric_limits<float>::max();
+		glm::vec2 normal{ 0.0f };
+		for (int i = 0; i < polygons.size(); i++) {
+			glm::vec2 vertex_a = polygons[i];
+			glm::vec2 vertex_b = polygons[(i + 1) % polygons.size()];
+
+			glm::vec2 edge = vertex_b - vertex_a;
+			glm::vec2 seperating_axis = glm::vec2(-edge.y, edge.x);
+			seperating_axis = glm::normalize(seperating_axis);
+
+			glm::vec2 min_max_a = project_vertices(polygons, seperating_axis);
+			glm::vec2 min_max_b = project_circle(circle_center, circle_radius, seperating_axis);
+
+			if (min_max_a.x >= min_max_b.y || min_max_b.x >= min_max_a.y) return Collision{};
+
+			float axis_depth = fmin(min_max_b.y - min_max_a.x, min_max_a.y - min_max_b.x);
+
+			if (axis_depth < depth) {
+				depth = axis_depth;
+				normal = seperating_axis;
+			}
+		}
+
+		int closest_point_index = closest_point(circle_center, polygons);
+		glm::vec2 closest_point = polygons[closest_point_index];
+		glm::vec2 seperating_axis = closest_point - circle_center;
+
+		glm::vec2 min_max_a = project_vertices(polygons, seperating_axis);
+		glm::vec2 min_max_b = project_circle(circle_center, circle_radius, seperating_axis);
+
+		if (min_max_a.x >= min_max_b.y || min_max_b.x >= min_max_a.y) return Collision{};
+
+		float axis_depth = fmin(min_max_b.y - min_max_a.x, min_max_a.y - min_max_b.x);
+
+		if (axis_depth < depth) {
+			depth = axis_depth;
+			normal = seperating_axis;
+		}
+
+		glm::vec2 center_b = find_mean_vector(polygons);
+
+		if (glm::dot(center_b - circle_center, normal) > 0)
+			normal = -normal;
+
+		return Collision{ depth, normal };
 	}
 
 	// Projects each point provided to a line for use in the SAT
@@ -204,7 +283,7 @@ namespace Alchemist {
 	}
 
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
-		first->set_position(first->get_position() - collision.collision_normal * collision.depth / 2.0f);
+		first->set_position(first->get_position() + collision.collision_normal * collision.depth / 2.0f);
 		second->set_position(second->get_position() - collision.collision_normal * collision.depth / 2.0f);
 	}
 }
