@@ -324,6 +324,13 @@ namespace Ivory {
 			ImGui::DragFloat("Mass", &mass, 0.05f, 0.0f);
 			component.point_mass.set_mass(mass);
 
+			bool is_static = component.point_mass.is_static();
+			ImGui::Checkbox("Is Static", &is_static);
+			component.point_mass.set_static(is_static);
+
+			bool only_plain_collision = component.point_mass.does_only_collide_plainly();
+			ImGui::Checkbox("Does only collide plainly", &only_plain_collision);
+			component.point_mass.set_only_collide_plainly(only_plain_collision);
 			ImGui::Checkbox("Affected by Gravity", &component.affected_by_gravity);
 
 			ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.1f);

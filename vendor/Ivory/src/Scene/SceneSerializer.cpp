@@ -153,6 +153,8 @@ namespace Ivory {
 			out << YAML::Value << comp.affected_by_gravity;
 			out << YAML::Key << "Damping";
 			out << YAML::Value << comp.point_mass.get_damping();
+			out << YAML::Key << "IsStatic";
+			out << YAML::Value << comp.point_mass.is_static();
 			out << YAML::Key << "ForceIndex";
 			out << YAML::Value << comp.force_counter;
 			out << YAML::Key << "IgnoreCollisions";
@@ -311,6 +313,7 @@ namespace Ivory {
 					component.point_mass.set_velocity(point_mass_component["Velocity"].as<glm::vec3>());
 					component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
 					component.point_mass.set_damp(point_mass_component["Damping"].as<float>());
+					component.point_mass.set_static(point_mass_component["IsStatic"].as<bool>());
 					component.force_counter = point_mass_component["ForceIndex"].as<int>();
 					component.ignore_collisions = point_mass_component["IgnoreCollisions"].as<bool>();
 					auto forces = point_mass_component["Forces"];

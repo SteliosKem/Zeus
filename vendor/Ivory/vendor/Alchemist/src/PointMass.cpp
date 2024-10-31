@@ -4,7 +4,7 @@
 
 namespace Alchemist {
 	void PointMass2D::integrate(float dt) {
-		glm::vec2 final_acceleration = m_acceleration + m_force_accumulator * m_mass_inverse;
+		glm::vec2 final_acceleration = m_acceleration + m_force_accumulator * get_mass_inverse();
 		// Update velocity
 		m_velocity += final_acceleration * dt;
 		// Scale velocity down depending on damping factor
@@ -283,7 +283,29 @@ namespace Alchemist {
 	}
 
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
-		first->set_position(first->get_position() + collision.collision_normal * collision.depth / 2.0f);
-		second->set_position(second->get_position() - collision.collision_normal * collision.depth / 2.0f);
+		if (first->is_static() && second->is_static())
+			return;
+		if(first->is_static())
+			second->set_position(second->get_position() - collision.collision_normal * collision.depth);
+		else if(second->is_static())
+			first->set_position(first->get_position() + collision.collision_normal * collision.depth);
+		else {
+			first->set_position(first->get_position() + collision.collision_normal * collision.depth / 2.0f);
+			second->set_position(second->get_position() - collision.collision_normal * collision.depth / 2.0f);
+		}
+	}
+
+	void resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
+		glm::vec2 relative_velocity = second->get_velocity() - first->get_velocity();
+		resolve_plain_collision(first, second, collision);
+		if (first->does_only_collide_plainly() || second->does_only_collide_plainly())
+			return;
+		if (glm::dot(relative_velocity, collision.collision_normal) < 0)
+			return;
+		float restitution = 1.0f;
+		float impulse = ( - (1.0f + restitution) * glm::dot(relative_velocity, collision.collision_normal) )
+						/ ( 1.0f * first->get_mass_inverse() + (1.0f * second->get_mass_inverse()) );
+		first->set_velocity(first->get_velocity() - impulse * first->get_mass_inverse() * collision.collision_normal);
+		second->set_velocity(second->get_velocity() + impulse * second->get_mass_inverse() * collision.collision_normal);
 	}
 }

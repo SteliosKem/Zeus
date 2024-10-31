@@ -359,7 +359,8 @@ namespace Ivory {
 				auto& point_mass2 = view.get<PointMassComponent>(entity2);
 				if (point_mass2.ignore_collisions)
 					continue;
-				
+				if (point_mass1.point_mass.is_static() && point_mass2.point_mass.is_static())
+					continue;
 				const auto& transform1 = m_registry.get<TransformComponent>(entity);
 				const auto& transform2 = m_registry.get<TransformComponent>(entity2);
 				Alchemist::Collision collision;
@@ -376,7 +377,7 @@ namespace Ivory {
 
 				if (collision.depth != 0) {
 					IV_INFO(point_mass2.point_mass.get_position().x);
-					Alchemist::resolve_plain_collision(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+					Alchemist::resolve_collision(&point_mass1.point_mass, &point_mass2.point_mass, collision);
 					IV_ERROR(point_mass2.point_mass.get_position().x);
 				}
 			}

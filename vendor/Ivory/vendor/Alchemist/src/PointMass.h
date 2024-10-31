@@ -34,9 +34,15 @@ namespace Alchemist {
 		glm::vec2& get_velocity() { return m_velocity; }
 		glm::vec2& get_acceleration() { return m_acceleration; }
 		float get_mass() const { return 1 / m_mass_inverse; }
-		float get_mass_inverse() const { return m_mass_inverse; }
+		float get_mass_inverse() const { return (m_is_static) ? 0 : m_mass_inverse; }
 		float get_damping() const { return m_damping; }
 		float& get_damping() { return m_damping; }
+
+		bool is_static() const { return m_is_static; }
+		void set_static(bool set) { m_is_static = set; }
+
+		bool does_only_collide_plainly() const { return m_plain_collide; }
+		void set_only_collide_plainly(bool set) { m_plain_collide = set; }
 
 		// Call every frame
 		void on_update(float dt) { integrate(dt); }
@@ -59,6 +65,9 @@ namespace Alchemist {
 
 		// Holds the inverse of the point's mass, since it is more useful for calculations
 		float m_mass_inverse;
+
+		bool m_is_static = false;
+		bool m_plain_collide = false;
 
 		// Holds overall force for every update pass
 		glm::vec2 m_force_accumulator{0.0f};
@@ -164,4 +173,5 @@ namespace Alchemist {
 
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
+	void resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
 }
