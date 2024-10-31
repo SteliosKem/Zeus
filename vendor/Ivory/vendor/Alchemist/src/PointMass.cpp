@@ -138,26 +138,53 @@ namespace Alchemist {
 		return Collision{};
 	}
 
-	static bool loop_through_vertices(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons) {
+	static bool loop_through_vertices(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons
+		, float& in_out_depth, glm::vec2& in_out_normal) {
 		for (int i = 0; i < first_polygons.size(); i++) {
 			glm::vec2 vertex_a = first_polygons[i];
 			glm::vec2 vertex_b = first_polygons[(i + 1) % first_polygons.size()];
 
 			glm::vec2 edge = vertex_b - vertex_a;
 			glm::vec2 seperating_axis = glm::vec2(-edge.y, edge.x);
+			seperating_axis = glm::normalize(seperating_axis);
 
 			glm::vec2 min_max_a = project_vertices(first_polygons, seperating_axis);
 			glm::vec2 min_max_b = project_vertices(second_polygons, seperating_axis);
 
 			if (min_max_a.x >= min_max_b.y || min_max_b.x >= min_max_a.y) return true;
+
+			float axis_depth = fmin(min_max_b.y - min_max_a.x, min_max_a.y - min_max_b.x);
+
+			if (axis_depth < in_out_depth) {
+				in_out_depth = axis_depth;
+				in_out_normal = seperating_axis;
+			}
 		}
 		return false;
 	}
 
+	glm::vec2 find_mean_vector(const std::vector<glm::vec2>& vectors) {
+		glm::vec2 to_ret;
+		for (auto& vec : vectors) {
+			to_ret += vec;
+		}
+		to_ret /= vectors.size();
+		return to_ret;
+	}
+
 	Collision check_sat_collision(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons) {
-		if (loop_through_vertices(first_polygons, second_polygons)) return Collision{};
-		if (loop_through_vertices(second_polygons, first_polygons)) return Collision{};
-		return Collision{1.0f};
+		float depth = std::numeric_limits<float>::max();
+		glm::vec2 normal{ 0.0f };
+		if (loop_through_vertices(first_polygons, second_polygons, depth, normal)) return Collision{};
+		if (loop_through_vertices(second_polygons, first_polygons, depth, normal)) return Collision{};
+
+		glm::vec2 center_a = find_mean_vector(first_polygons);
+		glm::vec2 center_b = find_mean_vector(second_polygons);
+
+		if (glm::dot(center_b - center_a, normal) > 0)
+			normal = -normal;
+		
+		return Collision{ depth, normal};
 	}
 
 	// Projects each point provided to a line for use in the SAT
@@ -176,12 +203,8 @@ namespace Alchemist {
 		return {min, max};
 	}
 
-	void resolve_plain_collision_circle(PointMass2D& first, PointMass2D& second, const Collision& collision) {
-		first.get_position() -= collision.collision_normal * collision.depth / 2.0f;
-		second.get_position() += collision.collision_normal * collision.depth / 2.0f;
-	}
-
-	void resolve_plain_collision_surface(PointMass2D& point_mass, const Collision& collision) {
-		point_mass.get_position() += collision.collision_normal * collision.depth;
+	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
+		first->set_position(first->get_position() - collision.collision_normal * collision.depth / 2.0f);
+		second->set_position(second->get_position() - collision.collision_normal * collision.depth / 2.0f);
 	}
 }

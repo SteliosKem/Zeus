@@ -69,7 +69,8 @@ namespace Ivory {
 		// Physics
 		Alchemist::ForceRegistry m_force_registry;
 		void on_update_physics(float dt);
-		
+		std::vector<entt::entity> m_point_mass_entities;
+
 		int32_t m_current_frame;
 		std::vector<CollisionInfo> m_collisions;
 	};

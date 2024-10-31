@@ -162,6 +162,5 @@ namespace Alchemist {
 
 
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
-	void resolve_plain_collision_circle(PointMass2D& first, PointMass2D& second, const Collision& collision);
-	void resolve_plain_collision_surface(PointMass2D& point_mass, const Collision& collision);
+	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
 }

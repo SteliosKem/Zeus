@@ -103,6 +103,7 @@ namespace Ivory {
 			for (auto& force : comp.forces) {
 				m_force_registry.add(&comp.point_mass, &force);
 			}
+			m_point_mass_entities.push_back(entity);
 		}
 		
 	}
@@ -347,41 +348,35 @@ namespace Ivory {
 
 		std::unordered_map<entt::entity, entt::entity> collision_history;
 
-		for (auto entity : view) {
+
+		for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
+			entt::entity entity = m_point_mass_entities[i];
 			auto& point_mass1 = view.get<PointMassComponent>(entity);
 			if (point_mass1.ignore_collisions)
 				continue;
-			for (auto entity2 : view) {
-				if (entity == entity2)
-					continue;
+			for (int j = i + 1; j < m_point_mass_entities.size(); j++) {
+				entt::entity entity2 = m_point_mass_entities[j];
 				auto& point_mass2 = view.get<PointMassComponent>(entity2);
 				if (point_mass2.ignore_collisions)
 					continue;
-				if (collision_history[entity] == entity2)
-					continue;
-
 				Alchemist::Collision collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
 				const auto& transform1 = m_registry.get<TransformComponent>(entity);
 				const auto& transform2 = m_registry.get<TransformComponent>(entity2);
 				Alchemist::Collision sat_collision = Alchemist::check_sat_collision(transform1.get_transformed_points(), transform2.get_transformed_points());
-				if (sat_collision.depth == 1) {
-					IV_ERROR("COLLIDED");
+
+				if (sat_collision.depth != 0) {
+					IV_INFO(point_mass2.point_mass.get_position().x);
+					Alchemist::resolve_plain_collision(&point_mass1.point_mass, &point_mass2.point_mass, sat_collision);
+					IV_ERROR(point_mass2.point_mass.get_position().x);
 				}
-				/*if (collision.depth != 0) {
-					collision_history[entity] = entity2;
-					collision_history[entity2] = entity;
-					//Alchemist::resolve_elastic_collision_circle(point_mass2.point_mass, point_mass1.point_mass);
-					Alchemist::resolve_plain_collision_circle(point_mass2.point_mass, point_mass1.point_mass, collision);
-					m_collisions.push_back({ m_current_frame });
-				}*/
 			}
 		}
+
+		
 		for (auto entity : view) {
 			auto& point_mass_component = view.get<PointMassComponent>(entity);
 			if (point_mass_component.will_update)
 				point_mass_component.point_mass.on_update(dt);
-			else
-				IV_INFO(point_mass_component.point_mass.get_acceleration().x);
 		}
 
 		
