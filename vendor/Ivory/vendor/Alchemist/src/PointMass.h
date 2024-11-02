@@ -24,6 +24,7 @@ namespace Alchemist {
 		void set_position(const glm::vec2& a) { m_position = a; }
 		void set_mass(float mass) { m_mass_inverse = 1 / mass; }
 		void set_damp(float damp) { m_damping = damp; }
+		void set_restitution(float res) { m_restitution = res; }
 
 		// Getters
 		glm::vec2 get_position() const { return m_position; }
@@ -37,6 +38,7 @@ namespace Alchemist {
 		float get_mass_inverse() const { return (m_is_static) ? 0 : m_mass_inverse; }
 		float get_damping() const { return m_damping; }
 		float& get_damping() { return m_damping; }
+		float& get_restitution() { return m_restitution; }
 
 		bool is_static() const { return m_is_static; }
 		void set_static(bool set) { m_is_static = set; }
@@ -65,6 +67,7 @@ namespace Alchemist {
 
 		// Holds the inverse of the point's mass, since it is more useful for calculations
 		float m_mass_inverse;
+		float m_restitution = 1.0f;
 
 		bool m_is_static = false;
 		bool m_plain_collide = false;

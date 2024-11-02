@@ -3,23 +3,48 @@ WorldSettings:
   GravityIntensity: 9.80000019
   TimeFactor: 1
 Entities:
+  - Entity: 10593945461872733494
+    TagComponent:
+      Tag: Object A - Copy - Copy
+    TransformComponent:
+      Translation: [79.3731918, 8.45925426, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.357404381, 0.739336491, 0.679602981, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Restitution: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
+      IsCircle: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
   - Entity: 5016671022983902527
     TagComponent:
       Tag: Cable Object 2
     TransformComponent:
-      Translation: [29.7192402, 9.27737427, 0]
+      Translation: [28, 3, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
     PointMassComponent:
-      Mass: 1
+      Mass: 2
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -28,7 +53,7 @@ Entities:
     TagComponent:
       Tag: Cable Object Anchor
     TransformComponent:
-      Translation: [29.6441212, 13.0779819, 0]
+      Translation: [35, 3, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
@@ -36,11 +61,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: true
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -49,7 +76,7 @@ Entities:
     TagComponent:
       Tag: Object A - Copy
     TransformComponent:
-      Translation: [71.281601, -4, 0]
+      Translation: [71.281601, -4.15436411, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
@@ -57,11 +84,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
-      Velocity: [7.4000001, 0, 0]
+      Restitution: 1
+      Velocity: [7.19999981, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -91,11 +120,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.808000028
       IsStatic: false
+      IsCircle: true
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -104,7 +135,7 @@ Entities:
     TagComponent:
       Tag: Object A
     TransformComponent:
-      Translation: [35.5260925, -4, 0]
+      Translation: [35, -4, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
@@ -112,11 +143,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
-      Velocity: [3.5, 0, 0]
+      Restitution: 0.600000024
+      Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -133,11 +166,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: true
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -167,11 +202,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.85799998
       IsStatic: false
+      IsCircle: true
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -188,11 +225,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: true
       Forces:
@@ -209,11 +248,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.808000028
       IsStatic: false
+      IsCircle: true
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -230,11 +271,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: true
       Forces:
@@ -251,11 +294,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 0.400000006
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.782999992
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -273,27 +318,17 @@ Entities:
       SpringConstant: 10
       FirstObjectID: 13511222993209992318
       SecondObjectID: 8614388294613269025
-  - Entity: 2881936915043500316
+  - Entity: 7261875691897594434
     TagComponent:
-      Tag: New Point Mass
+      Tag: New Cable
     TransformComponent:
-      Translation: [41.3046646, -2.19887161, 0]
-      Rotation: [0, -0, 0]
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 1, 1, 1]
-      TilingFactor: 1
-    PointMassComponent:
-      Mass: 1
-      Velocity: [0, 0, 0]
-      Acceleration: [0, 0, 0]
-      AffectedByGravity: true
-      Damping: 1
-      IsStatic: false
-      ForceIndex: 0
-      IgnoreCollisions: false
-      Forces:
-        {}
+    CableComponent:
+      MaxLength: 7
+      FirstObjectID: 10926334631825315704
+      SecondObjectID: 5016671022983902527
   - Entity: 6362102120313815515
     TagComponent:
       Tag: Floor - Copy
@@ -306,11 +341,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: true
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -327,11 +364,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: true
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -348,11 +387,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: true
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -369,11 +410,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -390,11 +433,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: true
       Forces:
@@ -403,7 +448,7 @@ Entities:
     TagComponent:
       Tag: Floor - Copy
     TransformComponent:
-      Translation: [80.9462967, -5, 0]
+      Translation: [80.9462967, -5.12597847, 0]
       Rotation: [0, -0, 0]
       Scale: [26.9770775, 0.99999994, 1]
     SpriteRendererComponent:
@@ -411,11 +456,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 0
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
       IsStatic: true
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -432,11 +479,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -453,11 +502,13 @@ Entities:
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
+      Restitution: 1
       Velocity: [0, 0, 0]
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
       IsStatic: false
+      IsCircle: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -475,14 +526,3 @@ Entities:
       SpringConstant: 11.1999998
       FirstObjectID: 11593423140514457340
       SecondObjectID: 9312372017686257066
-  - Entity: 7261875691897594434
-    TagComponent:
-      Tag: New Cable
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CableComponent:
-      MaxLength: 7.30000019
-      FirstObjectID: 10926334631825315704
-      SecondObjectID: 5016671022983902527

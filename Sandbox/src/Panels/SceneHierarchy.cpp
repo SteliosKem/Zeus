@@ -330,6 +330,7 @@ namespace Ivory {
 			float mass = component.point_mass.get_mass();
 			ImGui::DragFloat("Mass", &mass, 0.05f, 0.0f);
 			component.point_mass.set_mass(mass);
+			ImGui::DragFloat("Restitution", &component.point_mass.get_restitution(), 0.05f, 0.0f);
 
 			bool is_static = component.point_mass.is_static();
 			ImGui::Checkbox("Is Static", &is_static);

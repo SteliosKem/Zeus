@@ -372,6 +372,7 @@ namespace Ivory {
 		for (auto& e : cable_view) {
 			CableComponent cable = m_registry.get<CableComponent>(e);
 			Alchemist::Collision collision;
+			collision.restitution = 0.0f;
 			collision.first = cable.first_object;
 			collision.second = cable.second_object;
 			if (cable.cable.fill_collision(&collision, 1))
@@ -404,10 +405,12 @@ namespace Ivory {
 						collision = Alchemist::check_sat_circle_collision(point_mass2.point_mass.get_position(), 0.5f, transform1.get_transformed_points());
 				}
 
+
+				float restitution = fminf(point_mass1.point_mass.get_restitution(), point_mass2.point_mass.get_restitution());
+				collision.restitution = restitution;
+
 				if (collision.depth != 0) {
-					IV_INFO(point_mass2.point_mass.get_position().x);
 					Alchemist::resolve_collision(&point_mass1.point_mass, &point_mass2.point_mass, collision);
-					IV_ERROR(point_mass2.point_mass.get_position().x);
 				}
 			}
 		}
