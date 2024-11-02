@@ -285,8 +285,9 @@ namespace Alchemist {
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
 		if (first->is_static() && second->is_static())
 			return;
-		if(first->is_static())
+		if (first->is_static()) {
 			second->set_position(second->get_position() - collision.collision_normal * collision.depth);
+		}
 		else if(second->is_static())
 			first->set_position(first->get_position() + collision.collision_normal * collision.depth);
 		else {
@@ -302,10 +303,32 @@ namespace Alchemist {
 			return;
 		if (glm::dot(relative_velocity, collision.collision_normal) < 0)
 			return;
-		float restitution = 1.0f;
-		float impulse = ( - (1.0f + restitution) * glm::dot(relative_velocity, collision.collision_normal) )
-						/ ( 1.0f * first->get_mass_inverse() + (1.0f * second->get_mass_inverse()) );
+
+		std::cout << glm::dot(relative_velocity, collision.collision_normal);
+		float impulse = ( - (1.0f + collision.restitution) * glm::dot(relative_velocity, collision.collision_normal) )
+						/ ( first->get_mass_inverse() + second->get_mass_inverse() );
 		first->set_velocity(first->get_velocity() - impulse * first->get_mass_inverse() * collision.collision_normal);
 		second->set_velocity(second->get_velocity() + impulse * second->get_mass_inverse() * collision.collision_normal);
+	}
+
+	float Cable::get_current_length() const {
+		glm::vec2 relative_pos = first->get_position() - second->get_position();
+		return glm::length(relative_pos);
+	}
+
+	uint32_t Cable::fill_collision(Collision* collision, uint32_t limit) const {
+		float length = get_current_length();
+
+		if (length <= m_max_length)
+			return 0;
+
+		collision->first = first;
+		collision->second = second;
+		glm::vec2 normal = second->get_position() - first->get_position();
+		normal = glm::normalize(normal);
+		collision->collision_normal = normal;
+		collision->depth = length - m_max_length;
+
+		return 1;
 	}
 }

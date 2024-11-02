@@ -125,11 +125,22 @@ namespace Ivory {
 		Alchemist::PointMassSpring spring = {nullptr, 1.0f, 1.0f};
 		Alchemist::PointMass2D* first_object;
 		Alchemist::PointMass2D* second_object;
-		Uuid first_object_id;
-		Uuid second_object_id;
+		Uuid first_object_id{};
+		Uuid second_object_id{};
 
 		SpringComponent() = default;
 		SpringComponent(const SpringComponent&) = default;
+	};
+
+	struct CableComponent {
+		Alchemist::Cable cable{ 1.0f };
+		Alchemist::PointMass2D* first_object;
+		Alchemist::PointMass2D* second_object;
+		Uuid first_object_id{};
+		Uuid second_object_id{};
+
+		CableComponent() = default;
+		CableComponent(const CableComponent&) = default;
 	};
 
 	struct GravityComponent {

@@ -3,15 +3,15 @@ WorldSettings:
   GravityIntensity: 9.80000019
   TimeFactor: 1
 Entities:
-  - Entity: 7166567931552607578
+  - Entity: 5016671022983902527
     TagComponent:
-      Tag: Object A
+      Tag: Cable Object 2
     TransformComponent:
-      Translation: [35.5260925, 0.594731808, 0]
+      Translation: [29.7192402, 9.27737427, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
-      Color: [0.357404381, 0.739336491, 0.679602981, 1]
+      Color: [1, 1, 1, 1]
       TilingFactor: 1
     PointMassComponent:
       Mass: 1
@@ -19,6 +19,104 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: true
       Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 10926334631825315704
+    TagComponent:
+      Tag: Cable Object Anchor
+    TransformComponent:
+      Translation: [29.6441212, 13.0779819, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: true
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 11299607854061714097
+    TagComponent:
+      Tag: Object A - Copy
+    TransformComponent:
+      Translation: [71.281601, -4, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.357404381, 0.739336491, 0.679602981, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [7.4000001, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 12022456254476419489
+    TagComponent:
+      Tag: New Spring
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpringComponent:
+      RestLength: 5
+      BothObjectForce: false
+      SpringConstant: 10
+      FirstObjectID: 323090807179552775
+      SecondObjectID: 4093770369905943242
+  - Entity: 2341211022695801564
+    TagComponent:
+      Tag: S1 - Copy
+    TransformComponent:
+      Translation: [13.9422197, -0.456868291, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 1, 0.957345724, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 0.808000028
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 7166567931552607578
+    TagComponent:
+      Tag: Object A
+    TransformComponent:
+      Translation: [35.5260925, -4, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.357404381, 0.739336491, 0.679602981, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [3.5, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -27,9 +125,9 @@ Entities:
     TagComponent:
       Tag: Floor
     TransformComponent:
-      Translation: [39.591713, -5.01896381, 0]
+      Translation: [39.591713, -5, 0]
       Rotation: [0, -0, 0]
-      Scale: [14.1000004, 1, 1]
+      Scale: [14.1000004, 0.99999994, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
@@ -39,6 +137,7 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
+      IsStatic: true
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -60,7 +159,7 @@ Entities:
     TagComponent:
       Tag: Spring Object 1
     TransformComponent:
-      Translation: [3.55886316, -1.49011612e-08, 0]
+      Translation: [3.55886316, 0, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
@@ -72,6 +171,7 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.85799998
+      IsStatic: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -92,6 +192,7 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
+      IsStatic: false
       ForceIndex: 0
       IgnoreCollisions: true
       Forces:
@@ -100,7 +201,7 @@ Entities:
     TagComponent:
       Tag: S1
     TransformComponent:
-      Translation: [13.6026058, 0, 0]
+      Translation: [18.8440094, -3.76933718, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
     SpriteRendererComponent:
@@ -112,6 +213,7 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.808000028
+      IsStatic: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -132,6 +234,7 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 1
+      IsStatic: false
       ForceIndex: 0
       IgnoreCollisions: true
       Forces:
@@ -152,6 +255,7 @@ Entities:
       Acceleration: [0, 0, 0]
       AffectedByGravity: false
       Damping: 0.782999992
+      IsStatic: false
       ForceIndex: 0
       IgnoreCollisions: false
       Forces:
@@ -169,3 +273,216 @@ Entities:
       SpringConstant: 10
       FirstObjectID: 13511222993209992318
       SecondObjectID: 8614388294613269025
+  - Entity: 2881936915043500316
+    TagComponent:
+      Tag: New Point Mass
+    TransformComponent:
+      Translation: [41.3046646, -2.19887161, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 6362102120313815515
+    TagComponent:
+      Tag: Floor - Copy
+    TransformComponent:
+      Translation: [53.6530914, -13, 0]
+      Rotation: [0, -0, 0]
+      Scale: [14.1000004, 0.99999994, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      IsStatic: true
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 11201981770719729003
+    TagComponent:
+      Tag: Floor - Copy - Copy
+    TransformComponent:
+      Translation: [60.1691055, -8.44882774, 0]
+      Rotation: [0, -0, -1.57079637]
+      Scale: [9.7711277, 0.999991655, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      IsStatic: true
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 12875592022082184346
+    TagComponent:
+      Tag: Floor - Copy - Copy - Copy
+    TransformComponent:
+      Translation: [47.0797234, -8.9897604, 0]
+      Rotation: [0, -0, -1.57079637]
+      Scale: [8.93095207, 0.999995947, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      IsStatic: true
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 4093770369905943242
+    TagComponent:
+      Tag: Object A - Copy
+    TransformComponent:
+      Translation: [52, -8, 1.1920929e-07]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.357404381, 0.739336491, 0.679602981, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 323090807179552775
+    TagComponent:
+      Tag: Spring Anchor 3
+    TransformComponent:
+      Translation: [52, -13, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: true
+      Forces:
+        {}
+  - Entity: 17507831926093606878
+    TagComponent:
+      Tag: Floor - Copy
+    TransformComponent:
+      Translation: [80.9462967, -5, 0]
+      Rotation: [0, -0, 0]
+      Scale: [26.9770775, 0.99999994, 1]
+    SpriteRendererComponent:
+      Color: [1, 1, 1, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: false
+      Damping: 1
+      IsStatic: true
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 9312372017686257066
+    TagComponent:
+      Tag: Other Spring Object 1
+    TransformComponent:
+      Translation: [80, -4.14547157, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.366838932, 0.857819915, 0.101637438, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 11593423140514457340
+    TagComponent:
+      Tag: Other Spring Object 1 - Copy
+    TransformComponent:
+      Translation: [84, -4.14547157, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0.0289077107, 0.677725077, 0.317954242, 1]
+      TilingFactor: 1
+    PointMassComponent:
+      Mass: 1
+      Velocity: [0, 0, 0]
+      Acceleration: [0, 0, 0]
+      AffectedByGravity: true
+      Damping: 1
+      IsStatic: false
+      ForceIndex: 0
+      IgnoreCollisions: false
+      Forces:
+        {}
+  - Entity: 3340769833304985095
+    TagComponent:
+      Tag: New Spring
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpringComponent:
+      RestLength: 4
+      BothObjectForce: true
+      SpringConstant: 11.1999998
+      FirstObjectID: 11593423140514457340
+      SecondObjectID: 9312372017686257066
+  - Entity: 7261875691897594434
+    TagComponent:
+      Tag: New Cable
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CableComponent:
+      MaxLength: 7.30000019
+      FirstObjectID: 10926334631825315704
+      SecondObjectID: 5016671022983902527

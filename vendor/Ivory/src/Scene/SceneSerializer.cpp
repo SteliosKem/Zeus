@@ -187,6 +187,18 @@ namespace Ivory {
 			out << YAML::Value << (uint64_t)comp.second_object_id;
 			out << YAML::EndMap;
 		}
+		if (entity.has_component<CableComponent>()) {
+			CableComponent comp = entity.get_component<CableComponent>();
+			out << YAML::Key << "CableComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "MaxLength";
+			out << YAML::Value << comp.cable.get_max_length();
+			out << YAML::Key << "FirstObjectID";
+			out << YAML::Value << (uint64_t)comp.first_object_id;
+			out << YAML::Key << "SecondObjectID";
+			out << YAML::Value << (uint64_t)comp.second_object_id;
+			out << YAML::EndMap;
+		}
 		if (entity.has_component<GravityComponent>()) {
 			GravityComponent comp = entity.get_component<GravityComponent>();
 			out << YAML::Key << "GravityComponent";
@@ -331,6 +343,15 @@ namespace Ivory {
 					component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
 					component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
 					component.spring.first_object_affected(spring_component["BothObjectForce"].as<bool>());
+
+				}
+
+				auto cable_component = entity["CableComponent"];
+				if (cable_component) {
+					auto& component = deserialized_entity.add_component<CableComponent>();
+					component.cable.set_max_length(cable_component["MaxLength"].as<float>());
+					component.first_object_id = cable_component["FirstObjectID"].as<uint64_t>();
+					component.second_object_id = cable_component["SecondObjectID"].as<uint64_t>();
 
 				}
 

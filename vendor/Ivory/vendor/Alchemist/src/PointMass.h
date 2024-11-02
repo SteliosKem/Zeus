@@ -160,6 +160,10 @@ namespace Alchemist {
 	struct Collision {
 		float depth = 0;
 		glm::vec2 collision_normal{ 0.0f };
+		float restitution = 1.0f;
+
+		PointMass2D* first{ nullptr };
+		PointMass2D* second{ nullptr };
 	};
 
 	// Collision Detection
@@ -174,4 +178,21 @@ namespace Alchemist {
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
 	void resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
+
+	// Constraints
+
+	class Cable {
+	public:
+		Cable(float max_length = 0.0f) { m_max_length = max_length; }
+		uint32_t fill_collision(Collision* collision, uint32_t limit) const;
+		float get_current_length() const;
+
+		void set_max_length(float length) { m_max_length = length; }
+		float& get_max_length() { return m_max_length; }
+
+		PointMass2D* first{ nullptr }, * second{ nullptr };
+	private:
+		float m_max_length;
+		
+	};
 }

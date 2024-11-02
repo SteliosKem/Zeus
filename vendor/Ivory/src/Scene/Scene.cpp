@@ -56,12 +56,14 @@ namespace Ivory {
 		auto springs = m_registry.view<SpringComponent>();
 		for (auto& entity : springs) {
 			SpringComponent spring = m_registry.get<SpringComponent>(entity);
-			TransformComponent t1 = m_registry.get<TransformComponent>(get_by_uuid(spring.first_object_id));
-			t1.translation.z = 0;
-			TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(spring.second_object_id));
-			t2.translation.z = 0;
-			Renderer2D::draw_spring(t1.translation, t2.translation
-				, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			if (spring.first_object && spring.second_object) {
+				TransformComponent t1 = m_registry.get<TransformComponent>(get_by_uuid(spring.first_object_id));
+				t1.translation.z = 0;
+				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(spring.second_object_id));
+				t2.translation.z = 0;
+				Renderer2D::draw_spring(t1.translation, t2.translation
+					, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
 		}
 
 		if(m_selected)
@@ -87,6 +89,14 @@ namespace Ivory {
 			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
 			comp.spring.set_attached_object(comp.first_object);
 			m_force_registry.add(comp.second_object, &comp.spring);
+		}
+		auto cables = m_registry.view<CableComponent>();
+		for (auto entity : cables) {
+			auto& comp = cables.get<CableComponent>(entity);
+			comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
+			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
+			comp.cable.first = comp.first_object;
+			comp.cable.second = comp.second_object;
 		}
 		auto point_masses = m_registry.view<PointMassComponent>();
 		for (auto entity : point_masses) {
@@ -197,6 +207,12 @@ namespace Ivory {
 				, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
 
+		auto cables = m_registry.view<CableComponent>();
+		for (auto& entity : cables) {
+			Alchemist::Cable cable = m_registry.get<CableComponent>(entity).cable;
+			Renderer2D::draw_cable({ cable.first->get_position() , 0.0f }, { cable.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+		}
+
 		if (m_selected)
 			Renderer2D::draw_overlay(quad_transform, circ_select, (int)m_selected_entity);
 
@@ -255,6 +271,7 @@ namespace Ivory {
 		copy_component_if_exists<CScriptComponent>(entity, new_entity);
 		copy_component_if_exists<PointMassComponent>(entity, new_entity);
 		copy_component_if_exists<SpringComponent>(entity, new_entity);
+		copy_component_if_exists<CableComponent>(entity, new_entity);
 		copy_component_if_exists<GravityComponent>(entity, new_entity);
 
 		return new_entity;
@@ -298,6 +315,7 @@ namespace Ivory {
 		copy_component<CScriptComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<CableComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<GravityComponent>(source_scene_reg, dest_scene_reg, entity_map);
 
 		return new_scene;
@@ -332,6 +350,7 @@ namespace Ivory {
 		copy_component<CScriptComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<CableComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<GravityComponent>(source_scene_reg, dest_scene_reg, entity_map);
 
 		return new_scene;
@@ -349,6 +368,16 @@ namespace Ivory {
 		std::unordered_map<entt::entity, entt::entity> collision_history;
 
 
+		auto cable_view = m_registry.view<CableComponent>();
+		for (auto& e : cable_view) {
+			CableComponent cable = m_registry.get<CableComponent>(e);
+			Alchemist::Collision collision;
+			collision.first = cable.first_object;
+			collision.second = cable.second_object;
+			if (cable.cable.fill_collision(&collision, 1))
+				Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
+
+		}
 		for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
 			entt::entity entity = m_point_mass_entities[i];
 			auto& point_mass1 = view.get<PointMassComponent>(entity);
@@ -390,7 +419,6 @@ namespace Ivory {
 				point_mass_component.point_mass.on_update(dt);
 		}
 
-		
 	}
 
 	template<typename T>
@@ -426,6 +454,9 @@ namespace Ivory {
 
 	template<>
 	void Scene::on_component_add<SpringComponent>(Entity entity, SpringComponent& component) {}
+
+	template<>
+	void Scene::on_component_add<CableComponent>(Entity entity, CableComponent& component) {}
 
 	template<>
 	void Scene::on_component_add<GravityComponent>(Entity entity, GravityComponent& component) {}
