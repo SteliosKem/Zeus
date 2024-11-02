@@ -331,4 +331,33 @@ namespace Alchemist {
 
 		return 1;
 	}
+
+	float Rod::get_current_length() const {
+		glm::vec2 relative_pos = first->get_position() - second->get_position();
+		return glm::length(relative_pos);
+	}
+
+	uint32_t Rod::fill_collision(Collision* collision, uint32_t limit) const {
+		float length = get_current_length();
+
+		if (length == m_length)
+			return 0;
+
+		collision->first = first;
+		collision->second = second;
+		glm::vec2 normal = second->get_position() - first->get_position();
+		normal = glm::normalize(normal);
+		if (length > m_length) {
+			collision->collision_normal = normal;
+			collision->depth = length - m_length;
+		}
+		else {
+			collision->collision_normal = -normal;
+			collision->depth = m_length - length;
+		}
+
+		collision->restitution = 0;
+
+		return 1;
+	}
 }

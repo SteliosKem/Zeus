@@ -62,7 +62,7 @@ namespace Ivory {
 				cable.add_component<CableComponent>();
 			}if (ImGui::MenuItem("Add Rod")) {
 				Entity rod = m_context->create_entity("New Rod");
-				rod.add_component<CableComponent>();
+				rod.add_component<RodComponent>();
 			}
 			ImGui::EndPopup();
 		}
@@ -398,6 +398,28 @@ namespace Ivory {
 
 		draw_component<CableComponent>("Cable Component", entity, [](auto& component) {
 			ImGui::DragFloat("Max Length", &component.cable.get_max_length(), 0.1f, 0.0f);
+
+			ImGui::Button("Attached Object 1");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					Entity* entity_ = (Entity*)payload->Data;
+					component.first_object_id = entity_->get_component<IdComponent>().id;
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			ImGui::Button("Attached Object 2");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					Entity* entity_ = (Entity*)payload->Data;
+					component.second_object_id = entity_->get_component<IdComponent>().id;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			});
+
+		draw_component<RodComponent>("Rod Component", entity, [](auto& component) {
+			ImGui::DragFloat("Length", &component.rod.get_length(), 0.1f, 0.0f);
 
 			ImGui::Button("Attached Object 1");
 			if (ImGui::BeginDragDropTarget()) {

@@ -196,6 +196,19 @@ namespace Alchemist {
 		PointMass2D* first{ nullptr }, * second{ nullptr };
 	private:
 		float m_max_length;
-		
+	};
+
+	class Rod {
+	public:
+		Rod(float length = 0.0f) { m_length = length; }
+		uint32_t fill_collision(Collision* collision, uint32_t limit) const;
+		float get_current_length() const;
+
+		void set_length(float length) { m_length = length; }
+		float& get_length() { return m_length; }
+
+		PointMass2D* first{ nullptr }, * second{ nullptr };
+	private:
+		float m_length;
 	};
 }

@@ -203,6 +203,18 @@ namespace Ivory {
 			out << YAML::Value << (uint64_t)comp.second_object_id;
 			out << YAML::EndMap;
 		}
+		if (entity.has_component<RodComponent>()) {
+			RodComponent comp = entity.get_component<RodComponent>();
+			out << YAML::Key << "RodComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "Length";
+			out << YAML::Value << comp.rod.get_length();
+			out << YAML::Key << "FirstObjectID";
+			out << YAML::Value << (uint64_t)comp.first_object_id;
+			out << YAML::Key << "SecondObjectID";
+			out << YAML::Value << (uint64_t)comp.second_object_id;
+			out << YAML::EndMap;
+		}
 		if (entity.has_component<GravityComponent>()) {
 			GravityComponent comp = entity.get_component<GravityComponent>();
 			out << YAML::Key << "GravityComponent";
@@ -358,6 +370,15 @@ namespace Ivory {
 					component.cable.set_max_length(cable_component["MaxLength"].as<float>());
 					component.first_object_id = cable_component["FirstObjectID"].as<uint64_t>();
 					component.second_object_id = cable_component["SecondObjectID"].as<uint64_t>();
+
+				}
+
+				auto rod_component = entity["RodComponent"];
+				if (rod_component) {
+					auto& component = deserialized_entity.add_component<RodComponent>();
+					component.rod.set_length(rod_component["Length"].as<float>());
+					component.first_object_id = rod_component["FirstObjectID"].as<uint64_t>();
+					component.second_object_id = rod_component["SecondObjectID"].as<uint64_t>();
 
 				}
 

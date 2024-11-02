@@ -98,6 +98,14 @@ namespace Ivory {
 			comp.cable.first = comp.first_object;
 			comp.cable.second = comp.second_object;
 		}
+		auto rods = m_registry.view<RodComponent>();
+		for (auto entity : rods) {
+			auto& comp = rods.get<RodComponent>(entity);
+			comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
+			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
+			comp.rod.first = comp.first_object;
+			comp.rod.second = comp.second_object;
+		}
 		auto point_masses = m_registry.view<PointMassComponent>();
 		for (auto entity : point_masses) {
 			auto& trans = m_registry.get<TransformComponent>(entity);
@@ -213,6 +221,12 @@ namespace Ivory {
 			Renderer2D::draw_cable({ cable.first->get_position() , 0.0f }, { cable.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
 
+		auto rods = m_registry.view<RodComponent>();
+		for (auto& entity : rods) {
+			Alchemist::Rod rod = m_registry.get<RodComponent>(entity).rod;
+			Renderer2D::draw_cable({ rod.first->get_position() , 0.0f }, { rod.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+		}
+
 		if (m_selected)
 			Renderer2D::draw_overlay(quad_transform, circ_select, (int)m_selected_entity);
 
@@ -273,6 +287,7 @@ namespace Ivory {
 		copy_component_if_exists<SpringComponent>(entity, new_entity);
 		copy_component_if_exists<CableComponent>(entity, new_entity);
 		copy_component_if_exists<GravityComponent>(entity, new_entity);
+		copy_component_if_exists<RodComponent>(entity, new_entity);
 
 		return new_entity;
 	}
@@ -316,6 +331,7 @@ namespace Ivory {
 		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<CableComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<RodComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<GravityComponent>(source_scene_reg, dest_scene_reg, entity_map);
 
 		return new_scene;
@@ -351,6 +367,7 @@ namespace Ivory {
 		copy_component<PointMassComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<SpringComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<CableComponent>(source_scene_reg, dest_scene_reg, entity_map);
+		copy_component<RodComponent>(source_scene_reg, dest_scene_reg, entity_map);
 		copy_component<GravityComponent>(source_scene_reg, dest_scene_reg, entity_map);
 
 		return new_scene;
@@ -377,6 +394,16 @@ namespace Ivory {
 			collision.second = cable.second_object;
 			if (cable.cable.fill_collision(&collision, 1))
 				Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
+
+		}
+		auto rod_view = m_registry.view<RodComponent>();
+		for (auto& e : rod_view) {
+			RodComponent rod = m_registry.get<RodComponent>(e);
+			Alchemist::Collision collision;
+			collision.first = rod.first_object;
+			collision.second = rod.second_object;
+			if (rod.rod.fill_collision(&collision, 1))
+				Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
 
 		}
 		for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
@@ -460,6 +487,9 @@ namespace Ivory {
 
 	template<>
 	void Scene::on_component_add<CableComponent>(Entity entity, CableComponent& component) {}
+
+	template<>
+	void Scene::on_component_add<RodComponent>(Entity entity, RodComponent& component) {}
 
 	template<>
 	void Scene::on_component_add<GravityComponent>(Entity entity, GravityComponent& component) {}

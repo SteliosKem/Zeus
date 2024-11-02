@@ -138,9 +138,22 @@ namespace Ivory {
 		Alchemist::PointMass2D* second_object;
 		Uuid first_object_id{};
 		Uuid second_object_id{};
+		bool is_rod = false;
 
 		CableComponent() = default;
 		CableComponent(const CableComponent&) = default;
+	};
+
+	struct RodComponent {
+		Alchemist::Rod rod{ 1.0f };
+		Alchemist::PointMass2D* first_object;
+		Alchemist::PointMass2D* second_object;
+		Uuid first_object_id{};
+		Uuid second_object_id{};
+		bool is_rod = false;
+
+		RodComponent() = default;
+		RodComponent(const RodComponent&) = default;
 	};
 
 	struct GravityComponent {
