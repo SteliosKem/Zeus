@@ -437,7 +437,7 @@ namespace Ivory {
 				collision.restitution = restitution;
 
 				if (collision.depth != 0) {
-					Alchemist::resolve_collision(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+					Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
 				}
 			}
 		}

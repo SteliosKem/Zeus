@@ -39,6 +39,11 @@ namespace Alchemist {
 		float get_damping() const { return m_damping; }
 		float& get_damping() { return m_damping; }
 		float& get_restitution() { return m_restitution; }
+		float& get_static_friction_factor() { return m_static_friction; }
+		float& get_dynamic_friction_factor() { return m_dynamic_friction; }
+
+		void set_static_friction_factor(float f) { m_static_friction = f; }
+		void set_dynamic_friction_factor(float f) {  m_dynamic_friction = f; }
 
 		bool is_static() const { return m_is_static; }
 		void set_static(bool set) { m_is_static = set; }
@@ -68,6 +73,9 @@ namespace Alchemist {
 		// Holds the inverse of the point's mass, since it is more useful for calculations
 		float m_mass_inverse;
 		float m_restitution = 1.0f;
+
+		float m_static_friction = 0.0f;
+		float m_dynamic_friction = 0.0f;
 
 		bool m_is_static = false;
 		bool m_plain_collide = false;
@@ -181,6 +189,7 @@ namespace Alchemist {
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
 	void resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
+	void resolve_collision_with_friction(PointMass2D* first, PointMass2D* second, const Collision& collision);
 
 	// Constraints
 

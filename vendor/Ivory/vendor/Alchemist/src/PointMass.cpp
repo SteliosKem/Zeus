@@ -304,11 +304,40 @@ namespace Alchemist {
 		if (glm::dot(relative_velocity, collision.collision_normal) < 0)
 			return;
 
-		std::cout << glm::dot(relative_velocity, collision.collision_normal);
 		float impulse = ( - (1.0f + collision.restitution) * glm::dot(relative_velocity, collision.collision_normal) )
 						/ ( first->get_mass_inverse() + second->get_mass_inverse() );
 		first->set_velocity(first->get_velocity() - impulse * first->get_mass_inverse() * collision.collision_normal);
 		second->set_velocity(second->get_velocity() + impulse * second->get_mass_inverse() * collision.collision_normal);
+	}
+
+	void resolve_collision_with_friction(PointMass2D* first, PointMass2D* second, const Collision& collision) {
+		glm::vec2 relative_velocity = second->get_velocity() - first->get_velocity();
+		resolve_plain_collision(first, second, collision);
+		if (first->does_only_collide_plainly() || second->does_only_collide_plainly())
+			return;
+		if (glm::dot(relative_velocity, collision.collision_normal) < 0)
+			return;
+
+		float impulse = (-(1.0f + collision.restitution) * glm::dot(relative_velocity, collision.collision_normal))
+			/ (first->get_mass_inverse() + second->get_mass_inverse());
+		first->set_velocity(first->get_velocity() - impulse * first->get_mass_inverse() * collision.collision_normal);
+		second->set_velocity(second->get_velocity() + impulse * second->get_mass_inverse() * collision.collision_normal);
+		
+		glm::vec2 normal_tangent = relative_velocity - glm::dot(relative_velocity, collision.collision_normal) * collision.collision_normal;
+		float friction_impulse = -glm::dot(relative_velocity, normal_tangent)
+			/ (first->get_mass_inverse() + second->get_mass_inverse());
+		float dynamic_friction = fmaxf(first->get_dynamic_friction_factor(), second->get_dynamic_friction_factor());
+		float static_friction = fmaxf(first->get_static_friction_factor(), second->get_static_friction_factor());
+
+		glm::vec2 friction_vector;
+
+		if (fabs(friction_impulse) <= impulse * static_friction)
+			friction_vector = friction_impulse * normal_tangent;
+		else
+			friction_vector = impulse * normal_tangent * dynamic_friction;
+
+		first->set_velocity(first->get_velocity() - friction_vector * first->get_mass_inverse());
+		second->set_velocity(second->get_velocity() + friction_vector * second->get_mass_inverse());
 	}
 
 	float Cable::get_current_length() const {
