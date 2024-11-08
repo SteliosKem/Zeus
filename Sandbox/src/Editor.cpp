@@ -14,7 +14,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_attach() {
-        
+        m_hierarchy.start_up();
         m_hierarchy.set_allow_action_ptr(true);
         m_setup_window.show(false);
 

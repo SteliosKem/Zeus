@@ -1487,6 +1487,7 @@
     </ClInclude>
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
+    <ClInclude Include="src\ImGui\ImGuiStyle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">

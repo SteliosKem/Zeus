@@ -26,6 +26,7 @@
     </ClInclude>
     <ClInclude Include="src\Panels\WorldSettings.h" />
     <ClInclude Include="src\Panels\Timeline.h" />
+    <ClInclude Include="src\Panels\UI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AlchemistSandbox.cpp" />

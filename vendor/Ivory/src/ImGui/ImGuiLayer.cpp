@@ -15,6 +15,7 @@
 #include "IconsFontAwesome6.h"
 #include "fa_solid-900.h"
 #include <fstream>
+#include "ImGuiStyle.h"
 
 #include "ImGuizmo.h"
 
@@ -37,7 +38,8 @@ namespace Ivory {
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-        ImGui::Spectrum::StyleColorsSpectrum();
+        //ImGui::Spectrum::StyleColorsSpectrum();
+        SetupImGuiStyle();
         ImGui::Spectrum::LoadFont(18);
 
         Application& app = Application::get();

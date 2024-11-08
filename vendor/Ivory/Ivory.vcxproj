@@ -163,6 +163,7 @@
     <ClInclude Include="src\ImGui\IconsFontAwesome6.h" />
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\ImGui\ImGuiNotify.h" />
+    <ClInclude Include="src\ImGui\ImGuiStyle.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
     <ClInclude Include="src\ImGui\L2DFileDialog.h" />
