@@ -30,27 +30,24 @@ namespace Ivory {
 		Circle* circ_select{ nullptr };
 		glm::mat4* quad_transform{ nullptr };
 
-		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
 		for (auto entity : group) {
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
+			auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
+			if (point_mass.is_circle) {
+				Circle circ{};
+				circ.color = sprite.color;
+				circ.fade = 0;
+				circ.thickness = 1;
+				circ.transform = transform.get_transform();
+				circ.entity_id = (int)entity;
+				Renderer2D::draw_circle(circ);
+			}
+			else
+				Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
 			if (m_selected && entity == m_selected_entity) {
 				tsfm = transform.get_transform();
 				quad_transform = &tsfm;
 			}
-		}
-
-		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
-		for (auto entity : view) {
-			auto& [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-			circ.color = circle.color;
-			circ.fade = circle.fade;
-			circ.thickness = circle.thickness;
-			circ.transform = transform.get_transform();
-			circ.entity_id = (int)entity;
-			Renderer2D::draw_circle(circ);
-			if (m_selected && entity == m_selected_entity)
-				circ_select = &circ;
 		}
 
 		auto springs = m_registry.view<SpringComponent>();
@@ -188,24 +185,22 @@ namespace Ivory {
 		for (auto entity : group) {
 			auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
 			transform.translation = glm::vec3(point_mass.point_mass.get_position(), transform.translation.z);
+			if (point_mass.is_circle) {
+				Circle circ{};
+				circ.color = sprite.color;
+				circ.fade = 0;
+				circ.thickness = 1;
+				circ.transform = transform.get_transform();
+				circ.entity_id = (int)entity;
+				Renderer2D::draw_circle(circ);
+			}
+			else
+				Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
 			if (m_selected && entity == m_selected_entity) {
 				tsfm = transform.get_transform();
 				quad_transform = &tsfm;
 			}
-			Renderer2D::draw_sprite(transform.get_transform(), sprite, (int)entity);
-		}
-
-		auto view = m_registry.view<TransformComponent, CircleRendererComponent>();
-		for (auto entity : view) {
-			auto& [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-			Circle circ{};
-			circ.color = circle.color;
-			circ.fade = circle.fade;
-			circ.thickness = circle.thickness;
-			circ.transform = transform.get_transform();
-			circ.entity_id = (int)entity;
-			Renderer2D::draw_circle(circ);
-
+			
 		}
 
 		auto springs = m_registry.view<SpringComponent>();
