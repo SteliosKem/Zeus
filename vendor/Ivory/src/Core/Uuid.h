@@ -19,7 +19,11 @@ namespace std {
 	template<>
 	struct hash<Ivory::Uuid> {
 		std::size_t operator()(const Ivory::Uuid& uuid) const {
-			return hash<uint64_t>()((uint64_t)uuid);
+			uint64_t ret = 0;
+			do {
+				ret = hash<uint64_t>()((uint64_t)uuid);
+			} while (ret != 0);
+			return ret;
 		}
 	};
 }

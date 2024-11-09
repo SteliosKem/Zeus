@@ -53,7 +53,7 @@ namespace Ivory {
 		auto springs = m_registry.view<SpringComponent>();
 		for (auto& entity : springs) {
 			SpringComponent spring = m_registry.get<SpringComponent>(entity);
-			if (spring.first_object && spring.second_object) {
+			if (spring.first_object_id && spring.second_object_id) {
 				TransformComponent t1 = m_registry.get<TransformComponent>(get_by_uuid(spring.first_object_id));
 				t1.translation.z = 0;
 				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(spring.second_object_id));
@@ -82,26 +82,32 @@ namespace Ivory {
 		auto springs = m_registry.view<SpringComponent>();
 		for (auto entity : springs) {
 			auto& comp = springs.get<SpringComponent>(entity);
-			comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
-			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
-			comp.spring.set_attached_object(comp.first_object);
-			m_force_registry.add(comp.second_object, &comp.spring);
+			if (comp.first_object_id && comp.second_object_id) {
+				comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
+				comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
+				comp.spring.set_attached_object(comp.first_object);
+				m_force_registry.add(comp.second_object, &comp.spring);
+			}
 		}
 		auto cables = m_registry.view<CableComponent>();
 		for (auto entity : cables) {
 			auto& comp = cables.get<CableComponent>(entity);
-			comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
-			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
-			comp.cable.first = comp.first_object;
-			comp.cable.second = comp.second_object;
+			if (comp.first_object_id && comp.second_object_id) {
+				comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
+				comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
+				comp.cable.first = comp.first_object;
+				comp.cable.second = comp.second_object;
+			}
 		}
 		auto rods = m_registry.view<RodComponent>();
 		for (auto entity : rods) {
 			auto& comp = rods.get<RodComponent>(entity);
-			comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
-			comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
-			comp.rod.first = comp.first_object;
-			comp.rod.second = comp.second_object;
+			if (comp.first_object_id && comp.second_object_id) {
+				comp.first_object = &get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().point_mass;
+				comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
+				comp.rod.first = comp.first_object;
+				comp.rod.second = comp.second_object;
+			}
 		}
 		auto point_masses = m_registry.view<PointMassComponent>();
 		for (auto entity : point_masses) {
@@ -206,20 +212,23 @@ namespace Ivory {
 		auto springs = m_registry.view<SpringComponent>();
 		for (auto& entity : springs) {
 			SpringComponent spring = m_registry.get<SpringComponent>(entity);
-			Renderer2D::draw_spring(glm::vec3(spring.first_object->get_position(), 0.0f), glm::vec3(spring.second_object->get_position(), 0.0f)
+			if (spring.first_object_id && spring.second_object_id)
+				Renderer2D::draw_spring(glm::vec3(spring.first_object->get_position(), 0.0f), glm::vec3(spring.second_object->get_position(), 0.0f)
 				, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
 
 		auto cables = m_registry.view<CableComponent>();
 		for (auto& entity : cables) {
-			Alchemist::Cable cable = m_registry.get<CableComponent>(entity).cable;
-			Renderer2D::draw_cable({ cable.first->get_position() , 0.0f }, { cable.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			CableComponent cable = m_registry.get<CableComponent>(entity);
+			if (cable.first_object_id && cable.second_object_id)
+				Renderer2D::draw_cable({ cable.cable.first->get_position() , 0.0f }, { cable.cable.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
 
 		auto rods = m_registry.view<RodComponent>();
 		for (auto& entity : rods) {
-			Alchemist::Rod rod = m_registry.get<RodComponent>(entity).rod;
-			Renderer2D::draw_cable({ rod.first->get_position() , 0.0f }, { rod.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			RodComponent rod = m_registry.get<RodComponent>(entity);
+			if (rod.first_object_id && rod.second_object_id)
+				Renderer2D::draw_cable({ rod.rod.first->get_position() , 0.0f }, { rod.rod.second->get_position(), 0.0f }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
 
 		if (m_selected)
@@ -383,23 +392,25 @@ namespace Ivory {
 		auto cable_view = m_registry.view<CableComponent>();
 		for (auto& e : cable_view) {
 			CableComponent cable = m_registry.get<CableComponent>(e);
-			Alchemist::Collision collision;
-			collision.restitution = 0.0f;
-			collision.first = cable.first_object;
-			collision.second = cable.second_object;
-			if (cable.cable.fill_collision(&collision, 1))
-				Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
-
+			if (cable.first_object_id && cable.second_object_id) {
+				Alchemist::Collision collision;
+				collision.restitution = 0.0f;
+				collision.first = cable.first_object;
+				collision.second = cable.second_object;
+				if (cable.cable.fill_collision(&collision, 1))
+					Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
+			}
 		}
 		auto rod_view = m_registry.view<RodComponent>();
 		for (auto& e : rod_view) {
 			RodComponent rod = m_registry.get<RodComponent>(e);
-			Alchemist::Collision collision;
-			collision.first = rod.first_object;
-			collision.second = rod.second_object;
-			if (rod.rod.fill_collision(&collision, 1))
-				Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
-
+			if (rod.first_object_id && rod.second_object_id) {
+				Alchemist::Collision collision;
+				collision.first = rod.first_object;
+				collision.second = rod.second_object;
+				if (rod.rod.fill_collision(&collision, 1))
+					Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
+			}
 		}
 		for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
 			entt::entity entity = m_point_mass_entities[i];

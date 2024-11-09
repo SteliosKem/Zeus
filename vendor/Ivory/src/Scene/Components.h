@@ -125,8 +125,8 @@ namespace Ivory {
 		Alchemist::PointMassSpring spring = {nullptr, 1.0f, 1.0f};
 		Alchemist::PointMass2D* first_object;
 		Alchemist::PointMass2D* second_object;
-		Uuid first_object_id{};
-		Uuid second_object_id{};
+		Uuid first_object_id = 0;
+		Uuid second_object_id = 0;
 		bool has_first = false;
 		bool has_second = false;
 
@@ -138,8 +138,8 @@ namespace Ivory {
 		Alchemist::Cable cable{ 1.0f };
 		Alchemist::PointMass2D* first_object;
 		Alchemist::PointMass2D* second_object;
-		Uuid first_object_id{};
-		Uuid second_object_id{};
+		Uuid first_object_id = 0;
+		Uuid second_object_id = 0;
 		bool is_rod = false;
 
 		bool has_first = false;
@@ -153,8 +153,8 @@ namespace Ivory {
 		Alchemist::Rod rod{ 1.0f };
 		Alchemist::PointMass2D* first_object;
 		Alchemist::PointMass2D* second_object;
-		Uuid first_object_id{};
-		Uuid second_object_id{};
+		Uuid first_object_id = 0;
+		Uuid second_object_id = 0;
 		bool is_rod = false;
 
 		bool has_first = false;
