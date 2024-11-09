@@ -49,17 +49,21 @@ namespace Ivory {
 				Entity point_mass = m_context->create_entity("New Point Mass");
 				point_mass.add_component<SpriteRendererComponent>();
 				point_mass.add_component<PointMassComponent>();
+				set_selected(point_mass);
 			}
 			if (ImGui::MenuItem("Add Spring")) {
 				Entity spring = m_context->create_entity("New Spring", true);
 				spring.add_component<SpringComponent>();
+				set_selected(spring);
 			}
 			if (ImGui::MenuItem("Add Cable")) {
 				Entity cable = m_context->create_entity("New Cable", true);
 				cable.add_component<CableComponent>();
+				set_selected(cable);
 			}if (ImGui::MenuItem("Add Rod")) {
 				Entity rod = m_context->create_entity("New Rod", true);
 				rod.add_component<RodComponent>();
+				set_selected(rod);
 			}
 			ImGui::EndPopup();
 		}
@@ -200,56 +204,6 @@ namespace Ivory {
 			draw_vec3_control("Scale", component.scale, speed / 5, 1.0f);
 		});
 
-		/*draw_component<CameraComponent>("Camera Component", entity, [](auto& component) {
-			auto& camera = component.camera;
-
-			ImGui::Checkbox("Is Primary", &component.active);
-			const char* projection_types[2] = { "Perspective", "Orthographic" };
-			const char* projection_string = projection_types[(int)camera.get_projection_type()];
-			if (ImGui::BeginCombo("Projection Type", projection_string)) {
-				for (int i = 0; i < 2; i++) {
-					bool is_selected = projection_string == projection_types[i];
-					if (ImGui::Selectable(projection_types[i], is_selected)) {
-						camera.set_projection_type((SceneCamera::ProjectionType)i);
-					}
-
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
-				}
-
-				ImGui::EndCombo();
-			}
-
-			if (camera.get_projection_type() == SceneCamera::ProjectionType::Perspective) {
-				float fov = glm::degrees(camera.get_vertical_fov());
-				if (ImGui::DragFloat("Vertical FOV", &fov))
-					camera.set_vertical_fov(glm::radians(fov));
-
-				float near_clip = camera.get_perspective_near_clip();
-				if (ImGui::DragFloat("Near Clip", &near_clip))
-					camera.set_perspective_near_clip(near_clip);
-
-				float far_clip = camera.get_perspective_far_clip();
-				if (ImGui::DragFloat("Far Clip", &far_clip))
-					camera.set_perspective_far_clip(far_clip);
-			}
-			else if (camera.get_projection_type() == SceneCamera::ProjectionType::Orthographic) {
-				float ortho_size = camera.get_ortho_size();
-				if (ImGui::DragFloat("Size", &ortho_size))
-					camera.set_ortho_size(ortho_size);
-
-				float near_clip = camera.get_ortho_near_clip();
-				if (ImGui::DragFloat("Near Clip", &near_clip))
-					camera.set_ortho_near_clip(near_clip);
-
-				float far_clip = camera.get_ortho_far_clip();
-				if (ImGui::DragFloat("Far Clip", &far_clip))
-					camera.set_ortho_far_clip(far_clip);
-
-				ImGui::Checkbox("Has Fixed Aspect Ratio", &component.fixed_aspect_ratio);
-			}
-		});*/
-
 		draw_component<SpriteRendererComponent>("Sprite Renderer Component", entity, [](auto& component) {
 			ImGui::ColorPicker4("Color", glm::value_ptr(component.color));
 			//ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
@@ -314,7 +268,6 @@ namespace Ivory {
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					component.first_object_id = *(Uuid*)payload->Data;
-					std::cout << *(Uuid*)payload->Data << "\n";
 				}
 				ImGui::EndDragDropTarget();
 			}

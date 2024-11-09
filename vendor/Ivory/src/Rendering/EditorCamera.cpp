@@ -56,10 +56,6 @@ namespace Ivory {
 			mouse_pan(delta);
 			update_view();
 		}
-		else if (Input::is_mouse_button_pressed(IV_MOUSE_BUTTON_2)) {
-			mouse_rotate(delta);
-			update_view();
-		}
 	}
 
 	void EditorCamera::on_event(Event& e) {
@@ -80,9 +76,7 @@ namespace Ivory {
 	}
 
 	void EditorCamera::mouse_rotate(const glm::vec2& delta) {
-		float yaw_sign = get_up_direction().y < 0 ? -1.0f : 1.0f;
-		m_yaw += yaw_sign * delta.x * rotation_speed();
-		m_pitch += delta.y * rotation_speed();
+		
 	}
 
 	void EditorCamera::mouse_zoom(float delta) {

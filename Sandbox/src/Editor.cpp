@@ -228,7 +228,7 @@ namespace Zeus {
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
-
+        
 
         float tab_height = ImGui::GetWindowSize().y - ImGui::GetContentRegionAvail().y;
         auto viewport_offset = ImGui::GetCursorPos();
@@ -313,6 +313,102 @@ namespace Zeus {
 
 
         }
+        auto [mx, my] = ImGui::GetMousePos();
+        mx -= m_viewport_bounds[0].x;
+        my -= m_viewport_bounds[0].y;
+        glm::vec2 viewport_size = m_viewport_bounds[1] - m_viewport_bounds[0];
+
+        int mousex = (int)mx;
+        int mousey = (int)my;
+
+        if (ImGui::BeginPopupContextWindow(0)) {
+            glm::vec3 translation;
+
+            if (!selected) {
+                if (ImGui::MenuItem("Add Point Mass")) {
+                    if (mousex >= 0 && mousey >= 0 && mousex < (int)m_viewport_size.x && mousey < (int)m_viewport_size.y) {
+                        translation = glm::unProject(glm::vec3{ mx, my, 0.0f }, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), glm::vec4{ 0, 0, viewport_size.x, viewport_size.y });
+                        translation.z = 0;
+                    }
+                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    point_mass.get_component<TransformComponent>().translation = translation;
+                    point_mass.add_component<SpriteRendererComponent>();
+                    point_mass.add_component<PointMassComponent>();
+                    m_hierarchy.set_selected(point_mass);
+                }
+                if (ImGui::MenuItem("Add Spring")) {
+                    Entity spring = m_active_scene->create_entity("New Spring", true);
+                    spring.add_component<SpringComponent>();
+                    m_hierarchy.set_selected(spring);
+                }
+                if (ImGui::MenuItem("Add Cable")) {
+                    Entity cable = m_active_scene->create_entity("New Cable", true);
+                    cable.add_component<CableComponent>();
+                    m_hierarchy.set_selected(cable);
+                }if (ImGui::MenuItem("Add Rod")) {
+                    Entity rod = m_active_scene->create_entity("New Rod", true);
+                    rod.add_component<RodComponent>();
+                    m_hierarchy.set_selected(rod);
+                }
+            }
+            else {
+                if (m_tethered_entity) {
+                    if (ImGui::MenuItem("Attach Tether")) {
+                        std::string object_a = m_tethered_entity.get_component<TagComponent>().tag;
+                        std::string object_b = selected.get_component<TagComponent>().tag;
+                        glm::vec3 pos_a = m_tethered_entity.get_component<TransformComponent>().translation;
+                        glm::vec3 pos_b = selected.get_component<TransformComponent>().translation;
+                        switch (m_tether_type) {
+                        case TetherType::Spring: {
+                            Entity spring = m_active_scene->create_entity(object_a + " - " + object_b + " Spring", true);
+                            SpringComponent& comp = spring.add_component<SpringComponent>();
+                            comp.first_object_id = m_tethered_entity.get_component<IdComponent>().id;
+                            comp.second_object_id = selected.get_component<IdComponent>().id;
+                            comp.spring.set_rest_length(glm::length(pos_b - pos_a));
+                            m_hierarchy.set_selected(spring);
+                            break;
+                        }
+                        case TetherType::Cable: {
+                            Entity cable = m_active_scene->create_entity(object_a + " - " + object_b + " Cable", true);
+                            CableComponent& comp = cable.add_component<CableComponent>();
+                            comp.first_object_id = m_tethered_entity.get_component<IdComponent>().id;
+                            comp.second_object_id = selected.get_component<IdComponent>().id;
+                            comp.cable.set_max_length(glm::length(pos_b - pos_a));
+                            m_hierarchy.set_selected(cable);
+                            break;
+                        }
+                        case TetherType::Rod: {
+                            Entity rod = m_active_scene->create_entity(object_a + " - " + object_b + " Rod", true);
+                            RodComponent& comp = rod.add_component<RodComponent>();
+                            comp.first_object_id = m_tethered_entity.get_component<IdComponent>().id;
+                            comp.second_object_id = selected.get_component<IdComponent>().id;
+                            comp.rod.set_length(glm::length(pos_b - pos_a));
+                            m_hierarchy.set_selected(rod);
+                            break;
+                        }
+                            
+                        }
+                        m_tethered_entity = {};
+                    }
+                }
+                else {
+                    if (ImGui::MenuItem("Tether Spring")) {
+                        m_tethered_entity = selected;
+                        m_tether_type = TetherType::Spring;
+                    }
+                    if (ImGui::MenuItem("Tether Cable")) {
+                        m_tethered_entity = selected;
+                        m_tether_type = TetherType::Cable;
+                    }
+                    if (ImGui::MenuItem("Tether Rod")) {
+                        m_tethered_entity = selected;
+                        m_tether_type = TetherType::Rod;
+                    }
+                }
+            }
+            ImGui::EndPopup();
+        }
+        
 
         ImGui::End();
         ImGui::PopStyleVar();
@@ -474,7 +570,7 @@ namespace Zeus {
     }
 
     bool EditorLayer::on_mouse_button_pressed(MouseButtonPressedEvent& e) {
-        if (e.get_mouse_button() == IV_MOUSE_BUTTON_1 && m_viewport_hovered && m_entity_hovered && !ImGuizmo::IsOver()) {
+        if ((e.get_mouse_button() == IV_MOUSE_BUTTON_1 || e.get_mouse_button() == IV_MOUSE_BUTTON_2) && m_viewport_hovered && !ImGuizmo::IsOver()) {
             if (m_entity_hovered)
                 m_hierarchy.set_selected(m_entity_hovered);
             else
@@ -484,7 +580,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_deselect() {
-        m_hierarchy.set_selected({});
+        m_hierarchy.empty_selection();
     }
 
     void EditorLayer::open_scene() {

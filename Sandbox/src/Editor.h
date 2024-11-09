@@ -107,6 +107,14 @@ namespace Zeus {
 		bool m_willopen_project = false;
 		bool m_willsave_project = false;
 
+		Entity m_tethered_entity;
+		enum class TetherType {
+			Spring,
+			Cable,
+			Rod
+		};
+		TetherType m_tether_type;
+
 		bool m_new_project = false;
 
 		std::string m_current_scene_file = "";
