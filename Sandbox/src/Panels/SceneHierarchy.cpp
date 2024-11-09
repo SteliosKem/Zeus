@@ -48,14 +48,14 @@ namespace Ivory {
 				point_mass.add_component<PointMassComponent>();
 			}
 			if (ImGui::MenuItem("Add Spring")) {
-				Entity spring = m_context->create_entity("New Spring");
+				Entity spring = m_context->create_entity("New Spring", true);
 				spring.add_component<SpringComponent>();
 			}
 			if (ImGui::MenuItem("Add Cable")) {
-				Entity cable = m_context->create_entity("New Cable");
+				Entity cable = m_context->create_entity("New Cable", true);
 				cable.add_component<CableComponent>();
 			}if (ImGui::MenuItem("Add Rod")) {
-				Entity rod = m_context->create_entity("New Rod");
+				Entity rod = m_context->create_entity("New Rod", true);
 				rod.add_component<RodComponent>();
 			}
 			ImGui::EndPopup();

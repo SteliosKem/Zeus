@@ -8,14 +8,14 @@ namespace Ivory {
 	Scene::Scene() {
 	}
 
-	Entity Scene::create_entity(const std::string& name) {
-		return create_entity_with_uuid(Uuid(), name);
+	Entity Scene::create_entity(const std::string& name, bool no_transform) {
+		return create_entity_with_uuid(Uuid(), name, no_transform);
 	}
 
-	Entity Scene::create_entity_with_uuid(Uuid id, const std::string& name) {
+	Entity Scene::create_entity_with_uuid(Uuid id, const std::string& name, bool no_transform) {
 		Entity e{ m_registry.create(), this };
 		e.add_component<IdComponent>(id);
-		e.add_component<TransformComponent>();
+		if(!no_transform) e.add_component<TransformComponent>();
 		e.add_component<TagComponent>(name.empty() ? "New Entity" : name);
 		return e;
 	}
@@ -60,6 +60,30 @@ namespace Ivory {
 				t2.translation.z = 0;
 				Renderer2D::draw_spring(t1.translation, t2.translation
 					, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+		}
+
+		auto cables = m_registry.view<CableComponent>();
+		for (auto& entity : cables) {
+			CableComponent cable = m_registry.get<CableComponent>(entity);
+			if (cable.first_object_id && cable.second_object_id) {
+				TransformComponent t1 = m_registry.get<TransformComponent>(get_by_uuid(cable.first_object_id));
+				t1.translation.z = 0;
+				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(cable.second_object_id));
+				t2.translation.z = 0;
+				Renderer2D::draw_cable(t1.translation, t2.translation, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+		}
+
+		auto rods = m_registry.view<RodComponent>();
+		for (auto& entity : rods) {
+			RodComponent rod = m_registry.get<RodComponent>(entity);
+			if (rod.first_object_id && rod.second_object_id) {
+				TransformComponent t1 = m_registry.get<TransformComponent>(get_by_uuid(rod.first_object_id));
+				t1.translation.z = 0;
+				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(rod.second_object_id));
+				t2.translation.z = 0;
+				Renderer2D::draw_cable(t1.translation, t2.translation, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 			}
 		}
 

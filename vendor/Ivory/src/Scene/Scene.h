@@ -17,8 +17,8 @@ namespace Ivory {
 		Scene();
 		~Scene() {}
 
-		Entity create_entity(const std::string& name = "");
-		Entity create_entity_with_uuid(Uuid id, const std::string& name = "");
+		Entity create_entity(const std::string& name = "", bool no_transform = false);
+		Entity create_entity_with_uuid(Uuid id, const std::string& name = "", bool no_transform = false);
 		void destroy_entity(Entity entity);
 		void on_viewport_resize(uint32_t width, uint32_t height);
 		void clear_entities();

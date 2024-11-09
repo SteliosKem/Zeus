@@ -265,7 +265,7 @@ namespace Zeus {
         m_viewport_bounds[1] = { max_bound.x, max_bound.y };
 
         Entity selected = m_hierarchy.get_selected();
-        if (selected) {
+        if (selected && selected.has_component<TransformComponent>()) {
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
             float window_width = (float)ImGui::GetWindowWidth();
