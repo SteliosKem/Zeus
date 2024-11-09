@@ -19,7 +19,7 @@ namespace Ivory {
 		Entity get_selected() const { return m_selection_context; }
 		void set_selected(Entity entity);
 	private:
-		void draw_entity_node(Entity entity);
+		void draw_entity_node(Entity entity, bool even = false);
 		void draw_components(Entity entity);
 		bool m_is_playing;
 

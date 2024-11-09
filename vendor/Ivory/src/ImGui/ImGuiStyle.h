@@ -36,7 +36,7 @@ void SetupImGuiStyle()
 	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
 	style.SelectableTextAlign = ImVec2(0.0f, 0.0f);
 
-	style.Colors[ImGuiCol_Text] = ImVec4(0.7019608020782471f, 0.7019608020782471f, 0.7019608020782471f, 1.0f);
+	style.Colors[ImGuiCol_Text] = ImVec4(0.7843137383460999f, 0.7843137383460999f, 0.7843137383460999f, 1.0f);
 	style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.8588235378265381f, 0.929411768913269f, 0.886274516582489f, 0.2800000011920929f);
 	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1215686276555061f, 0.1215686276555061f, 0.1215686276555061f, 1.0f);
 	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);

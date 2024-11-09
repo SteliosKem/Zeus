@@ -36,8 +36,10 @@ namespace Ivory {
 		//if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 		//	m_selection_context = {};
 		auto view = m_context->m_registry.view<TagComponent>();
+		int i = 0;
 		for (auto entity : view) {
-			draw_entity_node({entity, m_context.get()});
+			draw_entity_node({entity, m_context.get()}, i % 2);
+			i++;
 		}
 
 		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
@@ -84,23 +86,22 @@ namespace Ivory {
 		ImGui::End();
 	}
 
-	void SceneHierarchy::draw_entity_node(Entity entity) {
+	void SceneHierarchy::draw_entity_node(Entity entity, bool even) {
 		ImGui::PushID((void*)(uint32_t)entity);
 		auto& tag = entity.get_component<TagComponent>();
 
 		ImGuiTreeNodeFlags flags = ((m_selection_context == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
-		static constexpr float button_size = 25;
+		static constexpr float button_size = 20;
 		bool to_set_context = false;
 
 		ImGui::AlignTextToFramePadding();
 		//bool opened = ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.tag.c_str());
 		bool opened = false;
-		hierarchy_item(tag.tag.c_str(), flags, ImGui::GetContentRegionAvail().x - button_size);
+		hierarchy_item(tag.tag.c_str(), flags, ImGui::GetContentRegionAvail().x - button_size, m_selection_context == entity, even);
 		if (ImGui::IsItemClicked()) {
-			to_set_context = true;
-			//m_selection_context = entity;
+			m_selection_context = entity;
 		}
 		bool deleted = false;
 		if (ImGui::BeginPopupContextItem()) {
@@ -118,14 +119,7 @@ namespace Ivory {
 		}
 
 		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - button_size);
-		if (ImGui::ImageButton((ImTextureID)m_knot_icon->get_rendererID(), ImVec2{ button_size, button_size }, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0)) {
-		//if(ImGui::Button("N", {button_size, button_size})) {
-			if (to_set_context) {
-				to_set_context = false;
-				
-			}
-			std::cout << "SET";
-		}
+		ImGui::ImageButton((ImTextureID)m_knot_icon->get_rendererID(), ImVec2{ button_size, button_size }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0);
 		if (ImGui::BeginDragDropSource()) {
 			ImGui::BeginTooltip();
 			ImGui::Text(tag.tag.c_str());
@@ -133,8 +127,7 @@ namespace Ivory {
 			ImGui::SetDragDropPayload("HIERARCHY_ITEM", &entity.get_component<IdComponent>().id, sizeof(Uuid*) + 8, ImGuiCond_Once);
 			ImGui::EndDragDropSource();
 		}
-		if(to_set_context)
-			m_selection_context = entity;
+		
 		if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop");
 
 		

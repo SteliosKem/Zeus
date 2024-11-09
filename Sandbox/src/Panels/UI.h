@@ -109,8 +109,17 @@ namespace Ivory {
 		ImGui::PopID();
 	}
 
-	inline bool hierarchy_item(const char* label, ImGuiTreeNodeFlags flags = 0, float width = 0.0f)
+	inline bool hierarchy_item(const char* label, ImGuiTreeNodeFlags flags = 0, float width = 0.0f, bool selected = false, bool even = false)
 	{
+		if (even) {
+			ImVec4 col = ImGui::GetStyle().Colors[ImGuiCol_Header];
+			col.x -= 0.025f;
+			col.y -= 0.025f;
+			col.z -= 0.025f;
+			ImGui::PushStyleColor(ImGuiCol_Header, col);
+		}
+		if (selected)
+			ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetStyle().Colors[ImGuiCol_HeaderActive]);
 		if (width == 0.0f)
 			return ImGui::CollapsingHeader(label, flags);
 
@@ -119,8 +128,13 @@ namespace Ivory {
 		ImGui::SetNextItemWidth(width);
 		float backup_work_max_x = window->WorkRect.Max.x;
 		window->WorkRect.Max.x = window->DC.CursorPos.x + ImGui::CalcItemWidth();
+		
 		bool ret = ImGui::CollapsingHeader(label, flags);
 		window->WorkRect.Max.x = backup_work_max_x;
+		if (selected)
+			ImGui::PopStyleColor();
+		if (even)
+			ImGui::PopStyleColor();
 		return ret;
 	}
 }
