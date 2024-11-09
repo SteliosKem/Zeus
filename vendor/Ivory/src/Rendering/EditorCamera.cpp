@@ -64,9 +64,11 @@ namespace Ivory {
 	}
 
 	bool EditorCamera::on_mouse_scroll(MouseScrollEvent& e) {
-		float delta = e.get_offset_y() * 0.1f;
-		mouse_zoom(delta);
-		update_view();
+		if (m_allow_scroll) {
+			float delta = e.get_offset_y() * 0.1f;
+			mouse_zoom(delta);
+			update_view();
+		}
 		return false;
 	}
 

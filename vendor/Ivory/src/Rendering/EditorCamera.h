@@ -14,6 +14,7 @@ namespace Ivory {
 
 		void on_update(Timestep ts);
 		void on_event(Event& e);
+		void allow_scroll(bool allow) { m_allow_scroll = allow; }
 
 		inline float get_distance() const { return m_distance; }
 		inline void set_distance(float distance) { m_distance = distance; }
@@ -55,5 +56,6 @@ namespace Ivory {
 		float m_distance = 10.0f, m_pitch = 0.0f, m_yaw = 0.0f;
 
 		float m_viewport_width = 1280, m_viewport_height = 720;
+		bool m_allow_scroll = false;
 	};
 }

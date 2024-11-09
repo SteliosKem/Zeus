@@ -236,6 +236,7 @@ namespace Zeus {
 
         m_viewport_focused = ImGui::IsWindowFocused();
         m_viewport_hovered = ImGui::IsWindowHovered();
+        m_editor_camera.allow_scroll(m_viewport_hovered);
         ImVec2 vp_size = ImGui::GetContentRegionAvail();
         if ((vp_size.x != m_viewport_size.x || vp_size.y != m_viewport_size.y) && vp_size.x > 0 && vp_size.y > 0) {
             m_viewport_size = { vp_size.x, vp_size.y };
