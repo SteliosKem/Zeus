@@ -5,11 +5,12 @@
 #include <imgui_internal.h>
 
 namespace Ivory {
-	inline void draw_label(const std::string& label, float& values, float speed, float reset_value = 0.0f, float column_width = 120.0f) {
+	inline void draw_label(const std::string& label, float& values, float speed, const std::string& tooltip = "", float reset_value = 0.0f, float column_width = 120.0f) {
 		ImGui::PushID(label.c_str());
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, column_width);
 		ImGui::Text(label.c_str());
+		if (ImGui::IsItemHovered() && !tooltip.empty()) ImGui::SetTooltip(tooltip.c_str());
 		ImGui::NextColumn();
 
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
@@ -20,6 +21,20 @@ namespace Ivory {
 
 
 		ImGui::PopStyleVar();
+
+		ImGui::Columns(1);
+		ImGui::PopID();
+	}
+
+	inline void draw_checkbox(const std::string& label, bool* value, const std::string& tooltip = "", float column_width = 120.0f) {
+		ImGui::PushID(label.c_str());
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, column_width);
+		ImGui::Text(label.c_str());
+		if (ImGui::IsItemHovered() && !tooltip.empty()) ImGui::SetTooltip(tooltip.c_str());
+		ImGui::NextColumn();
+
+		ImGui::Checkbox("##C", value);
 
 		ImGui::Columns(1);
 		ImGui::PopID();

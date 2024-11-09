@@ -259,20 +259,20 @@ namespace Ivory {
 
 		draw_component<PointMassComponent>("Point Mass Component", entity, [](auto& component) {
 			float mass = component.point_mass.get_mass();
-			draw_label("Mass", mass, 0.05f, 0.0f);
+			draw_label("Mass", mass, 0.05f);
 			component.point_mass.set_mass(mass);
-			draw_label("Restitution", component.point_mass.get_restitution(), 0.05f, 0.0f);
-			draw_label("Static Friction Factor", component.point_mass.get_static_friction_factor(), 0.05f, 0.0f);
-			draw_label("Dynamic Friction Factor", component.point_mass.get_dynamic_friction_factor(), 0.05f, 0.0f);
+			draw_label("Restitution", component.point_mass.get_restitution(), 0.05f, "The factor which determines the bounciness of the object", 1.0f);
+			draw_label("Static Friction", component.point_mass.get_static_friction_factor(), 0.05f, "Static Friction Factor (WIP)", 0.0f);
+			draw_label("Dynamic Friction", component.point_mass.get_dynamic_friction_factor(), 0.05f, "Dynamic Friction Factor (WIP)", 0.0f);
 
 			bool is_static = component.point_mass.is_static();
-			ImGui::Checkbox("Is Static", &is_static);
+			draw_checkbox("Is Static", &is_static, "Determines if the object will move at all throughout the simulation");
 			component.point_mass.set_static(is_static);
 
 			bool only_plain_collision = component.point_mass.does_only_collide_plainly();
-			ImGui::Checkbox("Does only collide plainly", &only_plain_collision);
+			draw_checkbox("Collide plainly", &only_plain_collision, "Determines if a collision with this object will only affect position");
 			component.point_mass.set_only_collide_plainly(only_plain_collision);
-			ImGui::Checkbox("Affected by Gravity", &component.affected_by_gravity);
+			draw_checkbox("Affected by Gravity", &component.affected_by_gravity);
 
 			//ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.1f);
 			glm::vec3 vel = { component.point_mass.get_velocity() , 0 };
@@ -281,10 +281,10 @@ namespace Ivory {
 			glm::vec3 acc = { component.point_mass.get_acceleration() , 0 };
 			draw_vec3_control("Acceleration", acc, 0.1 / 5, 1.0f);
 			component.point_mass.set_acceleration({ acc.x, acc.y });
-			draw_label("Damping", component.point_mass.get_damping(), 0.0025f);
+			draw_label("Damping", component.point_mass.get_damping(), 0.0025f, "Velocity will be multiplied by this factor every frame, simulating drag forces");
 
-			ImGui::Checkbox("Ignore Collisions", &component.ignore_collisions);
-			ImGui::Checkbox("Is Circle", &component.is_circle);
+			draw_checkbox("Ignore Collisions", &component.ignore_collisions, "Determines if the object will take part in collisions");
+			draw_checkbox("Is Circle", &component.is_circle, "Used for circle collisions and correct visual feedback");
 
 			if (ImGui::Button("Add Force")) {
 				component.forces_info["Force " + std::to_string(component.force_counter++)];
@@ -298,11 +298,12 @@ namespace Ivory {
 		});
 
 		draw_component<SpringComponent>("Spring Component", entity, [this](auto& component) {
-			draw_label("Rest Length", component.spring.get_rest_length(), 0.1f, 0.0f);
-			draw_label("Spring Constant", component.spring.get_constant(), 0.1f, 0.0f);
+			draw_label("Rest Length", component.spring.get_rest_length(), 0.1f, "The default length of the spring", 0.0f);
+			draw_label("Spring Constant", component.spring.get_constant(), 0.1f, "The hardness value of the spring", 0.0f);
 
-			ImGui::Checkbox("Force Acting on Both Objects", &component.spring.get_first_object_affected());
+			draw_checkbox("Force on Both Sides", &component.spring.get_first_object_affected(), "If this is set to true, the spring will excert force only on the second attached object, making the first one acting as an anchor");
 			ImGui::Text("Attached Object 1");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
 			ImGui::SameLine();
 			if(component.first_object_id)
 				ImGui::Button(m_context->get_by_uuid(component.first_object_id).get_component<TagComponent>().tag.c_str());
@@ -319,6 +320,7 @@ namespace Ivory {
 				ImGui::EndDragDropTarget();
 			}
 			ImGui::Text("Attached Object 2");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
 			ImGui::SameLine();
 			if (component.second_object_id)
 				ImGui::Button(m_context->get_by_uuid(component.second_object_id).get_component<TagComponent>().tag.c_str());
@@ -335,10 +337,16 @@ namespace Ivory {
 			}
 			});
 
-		draw_component<CableComponent>("Cable Component", entity, [](auto& component) {
-			draw_label("Max Length", component.cable.get_max_length(), 0.1f, 0.0f);
+		draw_component<CableComponent>("Cable Component", entity, [this](auto& component) {
+			draw_label("Max Length", component.cable.get_max_length(), 0.1f, "The Maximum length the cable can achieve before tugging non-static objects", 0.0f);
 
-			ImGui::Button("Attached Object 1");
+			ImGui::Text("Attached Object 1");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.first_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.first_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					Entity* entity_ = (Entity*)payload->Data;
@@ -346,8 +354,13 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
-
-			ImGui::Button("Attached Object 2");
+			ImGui::Text("Attached Object 2");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.second_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.second_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					Entity* entity_ = (Entity*)payload->Data;
@@ -357,10 +370,16 @@ namespace Ivory {
 			}
 			});
 
-		draw_component<RodComponent>("Rod Component", entity, [](auto& component) {
-			draw_label("Length", component.rod.get_length(), 0.1f, 0.0f);
+		draw_component<RodComponent>("Rod Component", entity, [this](auto& component) {
+			draw_label("Length", component.rod.get_length(), 0.1f, "The length of the solid rod", 0.0f);
 
-			ImGui::Button("Attached Object 1");
+			ImGui::Text("Attached Object 1");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.first_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.first_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					Entity* entity_ = (Entity*)payload->Data;
@@ -368,8 +387,13 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
-
-			ImGui::Button("Attached Object 2");
+			ImGui::Text("Attached Object 2");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.second_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.second_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
 					Entity* entity_ = (Entity*)payload->Data;

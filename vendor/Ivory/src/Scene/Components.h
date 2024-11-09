@@ -127,6 +127,8 @@ namespace Ivory {
 		Alchemist::PointMass2D* second_object;
 		Uuid first_object_id{};
 		Uuid second_object_id{};
+		bool has_first = false;
+		bool has_second = false;
 
 		SpringComponent() = default;
 		SpringComponent(const SpringComponent&) = default;
@@ -140,6 +142,9 @@ namespace Ivory {
 		Uuid second_object_id{};
 		bool is_rod = false;
 
+		bool has_first = false;
+		bool has_second = false;
+
 		CableComponent() = default;
 		CableComponent(const CableComponent&) = default;
 	};
@@ -151,6 +156,9 @@ namespace Ivory {
 		Uuid first_object_id{};
 		Uuid second_object_id{};
 		bool is_rod = false;
+
+		bool has_first = false;
+		bool has_second = false;
 
 		RodComponent() = default;
 		RodComponent(const RodComponent&) = default;
