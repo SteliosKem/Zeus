@@ -30,7 +30,8 @@ namespace Ivory {
 		}
 	}
 
-	void SceneHierarchy::on_imgui_render() {
+	void SceneHierarchy::on_imgui_render(bool is_playing) {
+		m_is_playing = is_playing;
 		ImGui::Begin("Scene Hierarchy");
 		//if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 		//	m_selection_context = {};
@@ -84,6 +85,7 @@ namespace Ivory {
 	}
 
 	void SceneHierarchy::draw_entity_node(Entity entity) {
+		ImGui::PushID((void*)(uint32_t)entity);
 		auto& tag = entity.get_component<TagComponent>();
 
 		ImGuiTreeNodeFlags flags = ((m_selection_context == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -93,18 +95,43 @@ namespace Ivory {
 		bool to_set_context = false;
 
 		ImGui::AlignTextToFramePadding();
-		bool opened = ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.tag.c_str());
+		//bool opened = ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.tag.c_str());
+		bool opened = false;
+		hierarchy_item(tag.tag.c_str(), flags, ImGui::GetContentRegionAvail().x - button_size);
 		if (ImGui::IsItemClicked()) {
 			to_set_context = true;
 			//m_selection_context = entity;
 		}
+		bool deleted = false;
+		if (ImGui::BeginPopupContextItem()) {
+			if (ImGui::MenuItem("Delete Entity")) {
+				if (!m_is_playing)
+					deleted = true;
+				else
+					ImGui::InsertNotification({ ImGuiToastType::Info, 3000, "Cannot delete entities while in runtime!" });
+			}
+			if (ImGui::MenuItem("Duplicate Entity")) {
+				if (m_allowed_to_action)
+					m_selection_context = m_context->copy_entity(entity);
+			}
+			ImGui::EndPopup();
+		}
+
 		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - button_size);
 		if (ImGui::ImageButton((ImTextureID)m_knot_icon->get_rendererID(), ImVec2{ button_size, button_size }, ImVec2{ 0,0 }, ImVec2{ 1,1 }, 0)) {
+		//if(ImGui::Button("N", {button_size, button_size})) {
 			if (to_set_context) {
 				to_set_context = false;
 				
 			}
 			std::cout << "SET";
+		}
+		if (ImGui::BeginDragDropSource()) {
+			ImGui::BeginTooltip();
+			ImGui::Text(tag.tag.c_str());
+			ImGui::EndTooltip();
+			ImGui::SetDragDropPayload("HIERARCHY_ITEM", &entity.get_component<IdComponent>().id, sizeof(Uuid*) + 8, ImGuiCond_Once);
+			ImGui::EndDragDropSource();
 		}
 		if(to_set_context)
 			m_selection_context = entity;
@@ -112,28 +139,9 @@ namespace Ivory {
 
 		
 
-		bool deleted = false;
-		if (ImGui::BeginPopupContextItem()) {
-			if (ImGui::MenuItem("Delete Entity"))
-				deleted = true;
-			if (ImGui::MenuItem("Duplicate Entity")) {
-				if(m_allowed_to_action)
-					m_selection_context = m_context->copy_entity(entity);
-			}
-			ImGui::EndPopup();
-		}
-
+		
 
 		if (opened) {
-			if (ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.tag.c_str())) {
-
-				if (ImGui::BeginDragDropSource()) {
-					Entity* entity_ = &entity;
-					ImGui::SetDragDropPayload("HIERARCHY_ITEM", entity_, sizeof(Entity*) + 8, ImGuiCond_Once);
-					ImGui::EndDragDropSource();
-				}
-				ImGui::TreePop();
-			}
 			ImGui::TreePop();
 		}
 
@@ -142,6 +150,7 @@ namespace Ivory {
 			if (m_selection_context == entity)
 				m_selection_context = {};
 		}
+		ImGui::PopID();
 	}
 
 
@@ -311,11 +320,8 @@ namespace Ivory {
 				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
-					Entity* entity_ = (Entity*)payload->Data;
-					//entity_->get_component<TransformComponent>();
-					//component.first_object = &entity_->get_component<PointMassComponent>().point_mass;
-					component.first_object_id = entity_->get_component<IdComponent>().id;
-					//component.first_object = entity_->get_component<PointMassComponent>().point_mass;
+					component.first_object_id = *(Uuid*)payload->Data;
+					std::cout << *(Uuid*)payload->Data << "\n";
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -328,10 +334,7 @@ namespace Ivory {
 				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
-					Entity* entity_ = (Entity*)payload->Data;
-					//component.second_object = &entity_->get_component<PointMassComponent>().point_mass;
-					component.second_object_id = entity_->get_component<IdComponent>().id;
-					//component.second_object = entity_->get_component<PointMassComponent>().point_mass;
+					component.second_object_id = *(Uuid*)payload->Data;
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -349,8 +352,7 @@ namespace Ivory {
 				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
-					Entity* entity_ = (Entity*)payload->Data;
-					component.first_object_id = entity_->get_component<IdComponent>().id;
+					component.first_object_id = *(Uuid*)payload->Data;
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -363,8 +365,7 @@ namespace Ivory {
 				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
-					Entity* entity_ = (Entity*)payload->Data;
-					component.second_object_id = entity_->get_component<IdComponent>().id;
+					component.second_object_id = *(Uuid*)payload->Data;
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -382,8 +383,7 @@ namespace Ivory {
 				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
-					Entity* entity_ = (Entity*)payload->Data;
-					component.first_object_id = entity_->get_component<IdComponent>().id;
+					component.first_object_id = *(Uuid*)payload->Data;
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -396,8 +396,7 @@ namespace Ivory {
 				ImGui::Button("None");
 			if (ImGui::BeginDragDropTarget()) {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
-					Entity* entity_ = (Entity*)payload->Data;
-					component.second_object_id = entity_->get_component<IdComponent>().id;
+					component.second_object_id = *(Uuid*)payload->Data;
 				}
 				ImGui::EndDragDropTarget();
 			}

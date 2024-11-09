@@ -108,4 +108,19 @@ namespace Ivory {
 		ImGui::Columns(1);
 		ImGui::PopID();
 	}
+
+	inline bool hierarchy_item(const char* label, ImGuiTreeNodeFlags flags = 0, float width = 0.0f)
+	{
+		if (width == 0.0f)
+			return ImGui::CollapsingHeader(label, flags);
+
+		ImGuiContext& g = *GImGui;
+		ImGuiWindow* window = g.CurrentWindow;
+		ImGui::SetNextItemWidth(width);
+		float backup_work_max_x = window->WorkRect.Max.x;
+		window->WorkRect.Max.x = window->DC.CursorPos.x + ImGui::CalcItemWidth();
+		bool ret = ImGui::CollapsingHeader(label, flags);
+		window->WorkRect.Max.x = backup_work_max_x;
+		return ret;
+	}
 }

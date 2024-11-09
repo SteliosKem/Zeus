@@ -219,7 +219,7 @@ namespace Zeus {
             ImGui::EndMenuBar();
         }
 
-        m_hierarchy.on_imgui_render();
+        m_hierarchy.on_imgui_render(m_scene_state == SceneState::Play);
         m_world_settings.on_imgui_render();
         m_timeline.on_imgui_render();
         //m_content_browser.on_imgui_render();
