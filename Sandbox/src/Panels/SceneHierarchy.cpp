@@ -271,6 +271,9 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##1"))
+				component.first_object_id = 0;
 			ImGui::Text("Attached Object 2");
 			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
 			ImGui::SameLine();
@@ -284,6 +287,10 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			
+			if (ImGui::Button("X##2"))
+				component.second_object_id = 0;
 			});
 
 		draw_component<CableComponent>("Cable Component", entity, [this](auto& component) {
@@ -302,6 +309,9 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##1"))
+				component.first_object_id = 0;
 			ImGui::Text("Attached Object 2");
 			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
 			ImGui::SameLine();
@@ -315,6 +325,9 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##2"))
+				component.second_object_id = 0;
 			});
 
 		draw_component<RodComponent>("Rod Component", entity, [this](auto& component) {
@@ -333,6 +346,9 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##1"))
+				component.first_object_id = 0;
 			ImGui::Text("Attached Object 2");
 			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
 			ImGui::SameLine();
@@ -346,6 +362,9 @@ namespace Ivory {
 				}
 				ImGui::EndDragDropTarget();
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##2"))
+				component.second_object_id = 0;
 			});
 
 		draw_component<GravityComponent>("Gravity Component", entity, [](auto& component) {

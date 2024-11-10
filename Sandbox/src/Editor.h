@@ -27,6 +27,7 @@ const std::string shader_path = "Assets/shaders/shader.glsl";
 
 namespace Zeus {
 	using namespace Ivory;
+
 	class EditorLayer : public Ivory::Layer {
 	public:
 		EditorLayer();
@@ -131,7 +132,7 @@ namespace Zeus {
 
 		std::string current_path;
 
-
+		glm::vec2 m_first_mouse_coords{ 0.0f };
 
 		std::vector<std::shared_ptr<Scene>> m_scene_snapshots;
 	};
