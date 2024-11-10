@@ -20,6 +20,7 @@
 #include "Windows/ProjectSetupWindow.h"
 
 #include "PointMass.h"
+#include "Snapshot.h"
 
 
 const std::string icon_path = "Assets/Zeus.png";
@@ -133,8 +134,7 @@ namespace Zeus {
 		std::string current_path;
 
 		glm::vec2 m_first_mouse_coords{ 0.0f };
-
-		std::vector<std::shared_ptr<Scene>> m_scene_snapshots;
+		SnapshotManager m_snapshot_manager{nullptr};
 	};
 
 	class Editor : public Application {

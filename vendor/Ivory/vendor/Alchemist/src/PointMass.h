@@ -13,6 +13,7 @@ namespace Alchemist {
 
 	class PointMass2D {
 	public:
+		PointMass2D() = default;
 		PointMass2D(float mass_inverse, float damping = 1, const glm::vec2& acceleration = {0.0f, 0.0f}, 
 			const glm::vec2& velocity = { 0.0f, 0.0f }, const glm::vec2& position = { 0.0f, 0.0f })
 			: m_acceleration{ acceleration }, m_velocity{ velocity }, m_position{ position }

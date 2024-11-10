@@ -140,6 +140,7 @@
     <ClInclude Include="src\Panels\SceneHierarchy.h" />
     <ClInclude Include="src\Panels\Timeline.h" />
     <ClInclude Include="src\Panels\WorldSettings.h" />
+    <ClInclude Include="src\Snapshot.h" />
     <ClInclude Include="src\Test2D.h" />
     <ClInclude Include="src\Panels\UI.h" />
     <ClInclude Include="src\Windows\Dialogs.h" />

@@ -46,6 +46,8 @@ namespace Ivory {
 		void set_time_factor(float factor) { m_time_factor = factor; }
 		float& get_time_factor() { return m_time_factor; }
 		const std::vector<CollisionInfo>& get_collisions() { return m_collisions; }
+		entt::registry& get_registry() { return m_registry; }
+		std::vector<entt::entity>& get_point_mass_entities() { return m_point_mass_entities; }
 	private:
 		template<typename T>
 		void on_component_add(Entity entity, T& component);

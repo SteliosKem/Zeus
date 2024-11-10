@@ -34,6 +34,7 @@ namespace Zeus {
         m_hierarchy.set_context(m_active_scene);
 
         m_editor_camera = EditorCamera(30.0f, 16.0f / 9.0f, 0.01f, 1000.0f);
+        m_snapshot_manager = SnapshotManager(m_active_scene);
     }
     void EditorLayer::on_detach() {}
 
@@ -71,8 +72,8 @@ namespace Zeus {
             m_editor_camera.on_update(dt);
 
             m_active_scene->on_update_editor(dt, m_editor_camera);
-            //if (!m_scene_snapshots.empty())
-            //    m_active_scene = m_scene_snapshots[m_timeline.get_current_time()];
+            if (!m_snapshot_manager.empty())
+                m_snapshot_manager.retrieve_snapshot(m_timeline.get_current_time(), m_active_scene);
             break;
         }
         case SceneState::Play: {
@@ -80,7 +81,7 @@ namespace Zeus {
             m_editor_camera.on_update(dt);
             m_timeline.increment(1);
             m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
-            m_scene_snapshots.push_back(Scene::copy(m_active_scene));
+            m_snapshot_manager.record_snapshot(m_active_scene);
             break;
         }
         }
@@ -320,17 +321,20 @@ namespace Zeus {
         mx -= m_viewport_bounds[0].x;
         my -= m_viewport_bounds[0].y;
         glm::vec2 viewport_size = m_viewport_bounds[1] - m_viewport_bounds[0];
+        my = m_viewport_size.y - my;
 
         int mousex = (int)mx;
         int mousey = (int)my;
-
+        std::cout << mousex << " " << mousey << "\n";
         if (ImGui::BeginPopupContextWindow(0)) {
             glm::vec3 translation;
 
             if (!selected) {
                 if (ImGui::MenuItem("Add Point Mass")) {
                     if (mousex >= 0 && mousey >= 0 && mousex < (int)m_viewport_size.x && mousey < (int)m_viewport_size.y) {
-                        translation = glm::unProject(glm::vec3{ mx, my, 0.0f }, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), glm::vec4{ 0, 0, viewport_size.x, viewport_size.y });
+                        float depth;
+                        
+                        translation = glm::unProject(glm::vec3{ mousex, mousey, 0.0f }, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), glm::vec4{ 0, 0, viewport_size.x, viewport_size.y });
                         translation.z = 0;
                     }
                     Entity point_mass = m_active_scene->create_entity("New Point Mass");
@@ -445,7 +449,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_scene_play() {
-        m_scene_snapshots.clear();
+        m_snapshot_manager.reset();
         if (m_scene_state == SceneState::Paused) {
             m_scene_state = SceneState::Play;
             m_active_scene->unpause();
@@ -453,14 +457,14 @@ namespace Zeus {
         }
         m_scene_state = SceneState::Play;
         m_active_scene = Scene::copy(m_editor_scene);
-        
+        m_snapshot_manager.set_scene(m_editor_scene);
         m_hierarchy.set_allow_action_ptr(false);
         m_hierarchy.set_context(m_active_scene);
         m_active_scene->on_play();
         m_timeline.set_scene_ptr(m_active_scene);
         m_timeline.set_is_playing(true);
         m_timeline.reset();
-        m_scene_snapshots.push_back(Scene::copy(m_active_scene));
+        m_snapshot_manager.first_snapshot();
     }
 
     void EditorLayer::on_scene_pause() {
