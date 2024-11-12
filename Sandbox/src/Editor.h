@@ -59,9 +59,12 @@ namespace Zeus {
 		void save_project(bool save_as);
 		void save_project(const std::filesystem::path& path);
 
-		void on_scene_play();
+		void on_scene_record();
 		void on_scene_pause();
+		void on_scene_simulate();
+		void on_scene_play();
 		void on_scene_stop();
+		void clear_recording();
 
 		void on_duplicate_entity();
 
@@ -79,12 +82,16 @@ namespace Zeus {
 		enum class SceneState {
 			Edit,
 			Play,
-			Paused
+			Paused,
+			Simulate,
+			Recording
 		};
 
 		SceneState m_scene_state = SceneState::Edit;
 
 		std::shared_ptr<Ivory::Texture2D> m_play_icon;
+		std::shared_ptr<Ivory::Texture2D> m_record_icon;
+		std::shared_ptr<Ivory::Texture2D> m_simulate_icon;
 		std::shared_ptr<Ivory::Texture2D> m_stop_icon;
 		std::shared_ptr<Ivory::Texture2D> m_pause_icon;
 

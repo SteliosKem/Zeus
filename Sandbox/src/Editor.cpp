@@ -19,6 +19,8 @@ namespace Zeus {
         m_setup_window.show(false);
 
         m_play_icon = Texture2D::create("Assets/EditorIcons/play.png");
+        m_record_icon = Texture2D::create("Assets/EditorIcons/record.png");
+        m_simulate_icon = Texture2D::create("Assets/EditorIcons/simulate.png");
         m_stop_icon = Texture2D::create("Assets/EditorIcons/stop.png");
         m_pause_icon = Texture2D::create("Assets/EditorIcons/pause.png");
 
@@ -76,12 +78,32 @@ namespace Zeus {
                 m_snapshot_manager.retrieve_snapshot(m_timeline.get_current_time(), m_active_scene);
             break;
         }
-        case SceneState::Play: {
+        case SceneState::Recording: {
             m_camera_controller.on_update(dt);
             m_editor_camera.on_update(dt);
             m_timeline.increment(1);
             m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
             m_snapshot_manager.record_snapshot(m_active_scene);
+            break;
+        }
+        case SceneState::Play: {
+            m_camera_controller.on_update(dt);
+            m_editor_camera.on_update(dt);
+            if (m_timeline.get_current_frame() < m_timeline.get_time_played()) {
+                m_timeline.increment(1);
+                //m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
+                m_active_scene->on_update_editor(dt, m_editor_camera);
+                m_snapshot_manager.retrieve_snapshot(m_timeline.get_current_time(), m_active_scene);
+            }
+            else {
+                on_scene_pause();
+            }
+            break;
+        }
+        case SceneState::Simulate: {
+            m_camera_controller.on_update(dt);
+            m_editor_camera.on_update(dt);
+            m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
             break;
         }
         }
@@ -220,9 +242,36 @@ namespace Zeus {
             ImGui::EndMenuBar();
         }
 
-        m_hierarchy.on_imgui_render(m_scene_state == SceneState::Play);
+        m_hierarchy.on_imgui_render(m_scene_state == SceneState::Recording || m_scene_state == SceneState::Play);
         m_world_settings.on_imgui_render();
-        m_timeline.on_imgui_render();
+
+
+        ImGui::Begin("Timeline");
+        if (m_snapshot_manager.empty()) {
+            ImGui::Text("Record a Scene to access the timeline");
+        }
+        else {
+            bool not_allowed_to_play = (m_scene_state != SceneState::Edit && m_scene_state != SceneState::Play) || m_snapshot_manager.empty();
+            std::shared_ptr<Texture2D> icon = (m_scene_state == SceneState::Play ? m_pause_icon : m_play_icon);
+
+            if (not_allowed_to_play)
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ 20, 20 }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
+                if (m_scene_state == SceneState::Play)
+                    on_scene_pause();
+
+                else if (m_scene_state == SceneState::Edit)
+                    on_scene_play();
+            }
+            if (not_allowed_to_play)
+                ImGui::PopItemFlag();
+            ImGui::SameLine();
+            if (ImGui::Button("Clear Recording"))
+                clear_recording();
+            m_timeline.on_imgui_render();
+            
+        }
+        ImGui::End();
         //m_content_browser.on_imgui_render();
 
         // VIEWPORT
@@ -299,8 +348,16 @@ namespace Zeus {
 
             if (ImGuizmo::IsUsing()) {
                 selected.get_component<PointMassComponent>().will_update = false;
-                if (alt && m_using_gizmo == false)
-                    on_duplicate_entity();
+                if (alt && m_using_gizmo == false) {
+                    if (m_snapshot_manager.empty())
+                        on_duplicate_entity();
+                    else if (m_timeline.get_current_frame() == 0) {
+                        clear_recording();
+                        on_duplicate_entity();
+                    }
+                    else
+                        log_and_notify("Cannot duplicate entities while viewing a recording!", LogType::Info);
+                }
                 m_using_gizmo = true;
                 glm::vec3 translation, rotation, scale;
                 decompose_transform(transform, translation, rotation, scale);
@@ -448,14 +505,9 @@ namespace Zeus {
         }
     }
 
-    void EditorLayer::on_scene_play() {
+    void EditorLayer::on_scene_record() {
         m_snapshot_manager.reset();
-        if (m_scene_state == SceneState::Paused) {
-            m_scene_state = SceneState::Play;
-            m_active_scene->unpause();
-            return;
-        }
-        m_scene_state = SceneState::Play;
+        m_scene_state = SceneState::Recording;
         m_active_scene = Scene::copy(m_editor_scene);
         m_snapshot_manager.set_scene(m_editor_scene);
         m_hierarchy.set_allow_action_ptr(false);
@@ -467,9 +519,42 @@ namespace Zeus {
         m_snapshot_manager.first_snapshot();
     }
 
+    void EditorLayer::clear_recording() {
+        //m_snapshot_manager.retrieve_snapshot(0, m_active_scene);
+        m_snapshot_manager.reset();
+        m_snapshot_manager.set_scene(m_active_scene);
+    }
+
+    void EditorLayer::on_scene_play() {
+        m_scene_state = SceneState::Play;
+        //m_active_scene = Scene::copy(m_editor_scene);
+        //m_snapshot_manager.set_scene(m_editor_scene);
+        m_hierarchy.set_allow_action_ptr(false);
+        m_hierarchy.set_context(m_active_scene);
+        m_active_scene->on_play();
+        m_timeline.set_scene_ptr(m_active_scene);
+        if (m_timeline.get_current_frame() == m_timeline.get_time_played()) {
+            m_timeline.set_frame(0);
+        }
+    }
+
+    void EditorLayer::on_scene_simulate() {
+        m_scene_state = SceneState::Simulate;
+        m_active_scene = Scene::copy(m_editor_scene);
+        m_hierarchy.set_allow_action_ptr(false);
+        m_hierarchy.set_context(m_active_scene);
+        m_active_scene->on_play();
+        m_timeline.reset();
+        clear_recording();
+    }
+
     void EditorLayer::on_scene_pause() {
-        m_scene_state = SceneState::Paused;
-        m_active_scene->pause();
+        m_scene_state = SceneState::Edit;
+
+        m_active_scene = m_editor_scene;
+        m_snapshot_manager.retrieve_snapshot(m_timeline.get_current_time(), m_active_scene);
+        m_hierarchy.set_allow_action_ptr(true);
+        m_hierarchy.set_context(m_active_scene);
     }
 
     void EditorLayer::on_scene_stop() {
@@ -484,6 +569,9 @@ namespace Zeus {
     }
 
     void EditorLayer::ui_toolbar() {
+        bool not_allowed_to_record = m_scene_state == SceneState::Play;
+        bool not_allowed_to_play = (m_scene_state != SceneState::Edit && m_scene_state != SceneState::Play) || m_snapshot_manager.empty();
+        bool not_allowed_to_simulate = m_scene_state != SceneState::Edit && m_scene_state != SceneState::Simulate;
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 2 });
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2{ 0, 0 });
 
@@ -496,15 +584,47 @@ namespace Zeus {
 
         ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         float size = ImGui::GetWindowHeight() - 4.0f;
-        std::shared_ptr<Texture2D> icon = (m_scene_state == SceneState::Play ? m_stop_icon : m_play_icon);
-        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - size * 0.5f);
-        if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{size, size }, ImVec2{0,0}, ImVec2{1,1}, 0)) {
-            if (m_scene_state == SceneState::Play)
+        std::shared_ptr<Texture2D> icon = (m_scene_state == SceneState::Recording ? m_stop_icon : m_record_icon);
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - size * 1.5f);
+        if (not_allowed_to_record)
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+        if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{size, size }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
+            if (m_scene_state == SceneState::Recording)
                 on_scene_stop();
+
+            else //if (m_scene_state == SceneState::Edit)
+                on_scene_record();
+        }
+        if (not_allowed_to_record)
+            ImGui::PopItemFlag();
+        icon = (m_scene_state == SceneState::Play ? m_pause_icon : m_play_icon);
+        ImGui::SameLine();
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - size * 0.5f);
+        if (not_allowed_to_play)
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+        if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ size, size }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
+            if (m_scene_state == SceneState::Play)
+                on_scene_pause();
 
             else if (m_scene_state == SceneState::Edit)
                 on_scene_play();
         }
+        if (not_allowed_to_play)
+            ImGui::PopItemFlag();
+        icon = (m_scene_state == SceneState::Simulate ? m_stop_icon : m_simulate_icon);
+        ImGui::SameLine();
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) + size * 0.5f);
+        if(not_allowed_to_simulate)
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+        if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ size, size }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
+            if (m_scene_state == SceneState::Simulate)
+                on_scene_stop();
+
+            else if (m_scene_state == SceneState::Edit)
+                on_scene_simulate();
+        }
+        if (not_allowed_to_simulate)
+            ImGui::PopItemFlag();
         
         ImGui::PopStyleColor(3);
         ImGui::PopStyleVar(2);
@@ -532,7 +652,7 @@ namespace Zeus {
                 m_willopen_scene = false;
                 m_willsave_scene = true;
             }
-                
+
             else if (control)
                 save_scene();
             break;
@@ -550,7 +670,7 @@ namespace Zeus {
             break;
 
         case IV_KEY_Q:
-            if(!m_using_gizmo)
+            if (!m_using_gizmo)
                 m_gizmo = ImGuizmo::OPERATION::TRANSLATE;
             break;
         case IV_KEY_W:
@@ -566,12 +686,31 @@ namespace Zeus {
                 m_gizmo = -1;
             break;
         case IV_KEY_D:
-            if(control)
-                on_duplicate_entity();
+            if (control) {
+                if (m_snapshot_manager.empty())
+                    on_duplicate_entity();
+                else if (m_timeline.get_current_frame() == 0) {
+                    clear_recording();
+                    on_duplicate_entity();
+                }
+                else
+                    log_and_notify("Cannot duplicate entities while viewing a recording!", LogType::Info);
+            }
             break;
         case IV_KEY_DELETE:
-            m_active_scene->destroy_entity(m_hierarchy.get_selected());
-            m_hierarchy.empty_selection();
+            if (m_snapshot_manager.empty())
+            {
+                m_active_scene->destroy_entity(m_hierarchy.get_selected());
+                m_hierarchy.empty_selection();
+            }
+            else if (m_timeline.get_current_frame() == 0) {
+                clear_recording();
+                m_active_scene->destroy_entity(m_hierarchy.get_selected());
+                m_hierarchy.empty_selection();
+            }
+            else {
+                log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);
+            }
             break;
         }
     }

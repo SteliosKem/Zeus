@@ -8,7 +8,8 @@ namespace Ivory {
 	public:
 		Snapshot() = default;
 		Snapshot(const std::shared_ptr<Scene>& scene, bool first = false) : m_scene_context{ scene } {
-			for (auto& e : m_scene_context->get_point_mass_entities()) {
+			auto view = scene->get_registry().view<PointMassComponent>();
+			for (auto& e : view) {
 				Alchemist::PointMass2D* point_mass = &scene->get_registry().get<PointMassComponent>(e).point_mass;
 				if (point_mass->is_static())
 					continue;
@@ -42,7 +43,6 @@ namespace Ivory {
 			m_snapshots[frame].retrieve(scene);
 		}
 		void reset() {
-			m_first.retrieve();
 			m_snapshots.clear();
 		}
 		bool empty() const {

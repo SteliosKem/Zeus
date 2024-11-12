@@ -436,41 +436,42 @@ namespace Ivory {
 					Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
 			}
 		}
-		for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
-			entt::entity entity = m_point_mass_entities[i];
-			auto& point_mass1 = view.get<PointMassComponent>(entity);
-			if (point_mass1.ignore_collisions)
-				continue;
-			for (int j = i + 1; j < m_point_mass_entities.size(); j++) {
-				entt::entity entity2 = m_point_mass_entities[j];
-				auto& point_mass2 = view.get<PointMassComponent>(entity2);
-				if (point_mass2.ignore_collisions)
+		if(m_point_mass_entities.size())
+			for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
+				entt::entity entity = m_point_mass_entities[i];
+				auto& point_mass1 = view.get<PointMassComponent>(entity);
+				if (point_mass1.ignore_collisions)
 					continue;
-				if (point_mass1.point_mass.is_static() && point_mass2.point_mass.is_static())
-					continue;
-				const auto& transform1 = m_registry.get<TransformComponent>(entity);
-				const auto& transform2 = m_registry.get<TransformComponent>(entity2);
-				Alchemist::Collision collision;
-				if (point_mass1.is_circle && point_mass2.is_circle)
-					collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
-				else if(!point_mass1.is_circle && !point_mass2.is_circle)
-					collision = Alchemist::check_sat_collision(transform1.get_transformed_points(), transform2.get_transformed_points());
-				else {
-					if (point_mass1.is_circle)
-						collision = Alchemist::check_sat_circle_collision(point_mass1.point_mass.get_position(), 0.5f, transform2.get_transformed_points());
-					else
-						collision = Alchemist::check_sat_circle_collision(point_mass2.point_mass.get_position(), 0.5f, transform1.get_transformed_points());
-				}
+				for (int j = i + 1; j < m_point_mass_entities.size(); j++) {
+					entt::entity entity2 = m_point_mass_entities[j];
+					auto& point_mass2 = view.get<PointMassComponent>(entity2);
+					if (point_mass2.ignore_collisions)
+						continue;
+					if (point_mass1.point_mass.is_static() && point_mass2.point_mass.is_static())
+						continue;
+					const auto& transform1 = m_registry.get<TransformComponent>(entity);
+					const auto& transform2 = m_registry.get<TransformComponent>(entity2);
+					Alchemist::Collision collision;
+					if (point_mass1.is_circle && point_mass2.is_circle)
+						collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
+					else if(!point_mass1.is_circle && !point_mass2.is_circle)
+						collision = Alchemist::check_sat_collision(transform1.get_transformed_points(), transform2.get_transformed_points());
+					else {
+						if (point_mass1.is_circle)
+							collision = Alchemist::check_sat_circle_collision(point_mass1.point_mass.get_position(), 0.5f, transform2.get_transformed_points());
+						else
+							collision = Alchemist::check_sat_circle_collision(point_mass2.point_mass.get_position(), 0.5f, transform1.get_transformed_points());
+					}
 
 
-				float restitution = fminf(point_mass1.point_mass.get_restitution(), point_mass2.point_mass.get_restitution());
-				collision.restitution = restitution;
+					float restitution = fminf(point_mass1.point_mass.get_restitution(), point_mass2.point_mass.get_restitution());
+					collision.restitution = restitution;
 
-				if (collision.depth != 0) {
-					Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+					if (collision.depth != 0) {
+						Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+					}
 				}
 			}
-		}
 
 		
 		for (auto entity : view) {

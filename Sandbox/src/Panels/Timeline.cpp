@@ -9,7 +9,6 @@ namespace Zeus {
 		static bool a = false;
 		std::vector<int32_t> collisions;
 
-		ImGui::Begin("Timeline");
 		if (ImGui::BeginNeoSequencer("Timeline", (m_is_playing) ? &current_frame : &m_current_time, & start_frame, &end_frame)) {
 			ImGui::BeginNeoTimeline("Collisions", collisions);
 			if(m_scene)
@@ -20,6 +19,5 @@ namespace Zeus {
 			ImGui::EndNeoTimeLine();
 			ImGui::EndNeoSequencer();
 		}
-		ImGui::End();
 	}
 }
