@@ -54,6 +54,7 @@ namespace Ivory {
 		static void draw_cable(const glm::vec3& pos_a, const glm::vec3& pos_b, const glm::vec4& color, int entity_id);
 
 		static void draw_overlay(glm::mat4* transform, Circle* circle, int entity_id);
+		//static void apply_vignette(uint32_t id, float strength);
 
 		static void set_line_width(float width);
 		static float get_line_width();

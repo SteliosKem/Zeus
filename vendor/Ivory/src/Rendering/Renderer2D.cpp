@@ -6,6 +6,7 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "RenderCommand.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Ivory {
 	struct QuadVertex {
@@ -78,13 +79,24 @@ namespace Ivory {
 
 		Renderer2D::Statistics statistics;
 
+		std::shared_ptr<Shader> vignette_shader;
+
 		// Overlay
 		glm::mat4* overlay_transform;
 		Circle* overlay_circle;
 		int overlay_entity_id;
 	};
 
+	
+
 	static Renderer2DStorage s_data;
+
+	//void Renderer2D::apply_vignette(uint32_t id, const glm::vec2& res, float strength) {
+	//	s_data.vignette_shader = Shader::create("Assets/shaders/vignette.glsl");
+	//	s_data.vignette_shader->bind();
+	//	glBindTexture(GL_TEXTURE_2D, id);
+	//	s_data.vignette_shader->set_vec2();
+	//}
 
 	void Renderer2D::draw_overlay(glm::mat4* transform, Circle* circle, int entity_id) {
 		s_data.overlay_transform = transform;

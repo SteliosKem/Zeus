@@ -1,0 +1,6 @@
+Scene: Name
+WorldSettings:
+  GravityIntensity: 9.80000019
+  TimeFactor: 1
+Entities:
+  []

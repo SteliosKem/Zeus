@@ -183,6 +183,10 @@ namespace Ivory {
 		upload_uniform_vec3(name, vec);
 	}
 
+	void OpenGLShader::set_vec2(const std::string& name, const glm::vec2& vec) {
+		upload_uniform_vec2(name, vec);
+	}
+
 	void OpenGLShader::set_int(const std::string& name, int num) {
 		upload_uniform_int(name, num);
 	}

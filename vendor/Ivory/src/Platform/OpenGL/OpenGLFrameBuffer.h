@@ -8,6 +8,7 @@ namespace Ivory {
 		virtual ~OpenGLFrameBuffer();
 
 		void bind() override;
+		void bind_tex() override;
 		void unbind() override;
 
 		void resize(uint32_t width, uint32_t height) override;

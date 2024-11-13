@@ -286,6 +286,9 @@ namespace Zeus {
         auto viewport_offset = ImGui::GetCursorPos();
         viewport_offset.y -= tab_height;
 
+        static bool record_mouse_pos = false;
+        static glm::vec2 old_mouse_pos = Input::mouse_pos();
+
         m_viewport_focused = ImGui::IsWindowFocused();
         m_viewport_hovered = ImGui::IsWindowHovered();
         m_editor_camera.allow_scroll(m_viewport_hovered);
@@ -347,6 +350,13 @@ namespace Zeus {
                 , nullptr, snap ? snap_values : nullptr);
 
             if (ImGuizmo::IsUsing()) {
+                if (record_mouse_pos && (m_scene_state == SceneState::Simulate || m_scene_state == SceneState::Recording)) {
+                    if (!selected.get_component<PointMassComponent>().point_mass.is_static()) {
+                        glm::vec2 vel = { Input::mouse_pos().x - old_mouse_pos.x, old_mouse_pos.y - Input::mouse_pos().y };
+                        selected.get_component<PointMassComponent>().point_mass.set_velocity(vel);
+                    }
+                }
+                record_mouse_pos = true;
                 selected.get_component<PointMassComponent>().will_update = false;
                 if (alt && m_using_gizmo == false) {
                     if (m_snapshot_manager.empty())
@@ -367,6 +377,13 @@ namespace Zeus {
                 selected.get_component<PointMassComponent>().point_mass.set_position(translation);
             }
             else {
+                if (record_mouse_pos && (m_scene_state == SceneState::Simulate || m_scene_state == SceneState::Recording)) {
+                    if (!selected.get_component<PointMassComponent>().point_mass.is_static()) {
+                        glm::vec2 vel = { Input::mouse_pos().x - old_mouse_pos.x, old_mouse_pos.y - Input::mouse_pos().y };
+                        selected.get_component<PointMassComponent>().point_mass.set_velocity(vel);
+                    }
+                }
+                record_mouse_pos = false;
                 m_using_gizmo = false;
                 if(selected.has_component<PointMassComponent>())
                     selected.get_component<PointMassComponent>().will_update = true;
@@ -472,6 +489,8 @@ namespace Zeus {
             }
             ImGui::EndPopup();
         }
+
+        old_mouse_pos = Input::mouse_pos();
         
 
         ImGui::End();

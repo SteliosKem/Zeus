@@ -156,12 +156,17 @@ namespace Ivory {
 		IV_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Frame buffer is incomplete");
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	}
 
 	void OpenGLFrameBuffer::bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, m_rendererID);
 		glViewport(0, 0, m_specification.width, m_specification.height);
 
+	}
+
+	void OpenGLFrameBuffer::bind_tex() {
+		glBindTexture(GL_TEXTURE_2D, get_color_attachment_rendererID());
 	}
 
 	void OpenGLFrameBuffer::unbind() {
