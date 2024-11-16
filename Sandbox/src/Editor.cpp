@@ -202,45 +202,27 @@ namespace Zeus {
                 
 
                 if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {
-                    FileDialogs::set_open(true);
-                    m_willopen_scene = true;
-                    m_willsave_scene = false;
-                   
+                    open_scene();
                 }
 
                 
                 if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S")) {
-                    FileDialogs::set_open(true);
-                    m_willopen_scene = false;
-                    m_willsave_scene = true;
-                    
+                    save_scene_as();
                 }
-                ImGui::MenuItem("Save Scene", "Ctrl+S");
+                if(ImGui::MenuItem("Save Scene", "Ctrl+S")) {
+                    save_scene();
+                }
 
                 ImGui::Separator();
 
-                if (ImGui::MenuItem("New Project", "Ctrl+Alt+N")) {
-                    
-                    m_setup_window.show(true);
-                    m_new_project = true;
-                }
-
-
-                if (ImGui::MenuItem("Open Project", "Ctrl+Alt+O")) {
-                    FileDialogs::set_open(true);
-                    m_willopen_project = true;
-                    m_willsave_project = false;
-
-                }
-
-                ImGui::MenuItem("Save Project", "Ctrl+Alt+S");
-                
+                ImGui::MenuItem("Exit", "Alt+F4");
                 ImGui::EndMenu();
 
                 
             }
             ImGui::EndMenuBar();
         }
+
 
         m_hierarchy.on_imgui_render(m_scene_state == SceneState::Recording || m_scene_state == SceneState::Play);
         m_world_settings.on_imgui_render();
@@ -257,12 +239,19 @@ namespace Zeus {
             if (not_allowed_to_play)
                 ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
             if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ 20, 20 }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
-                if (m_scene_state == SceneState::Play)
+                if (m_scene_state == SceneState::Play) {
                     on_scene_pause();
+                    
+                }
 
                 else if (m_scene_state == SceneState::Edit)
                     on_scene_play();
             }
+            if(m_scene_state == SceneState::Play)
+                ImGui::SetTooltip("Pause");
+            else if (m_scene_state == SceneState::Edit)
+                ImGui::SetTooltip("Play");
+
             if (not_allowed_to_play)
                 ImGui::PopItemFlag();
             ImGui::SameLine();
@@ -614,6 +603,10 @@ namespace Zeus {
             else //if (m_scene_state == SceneState::Edit)
                 on_scene_record();
         }
+        if (m_scene_state == SceneState::Recording)
+            ImGui::SetTooltip("Stop");
+        else
+            ImGui::SetTooltip("Record");
         if (not_allowed_to_record)
             ImGui::PopItemFlag();
         icon = (m_scene_state == SceneState::Play ? m_pause_icon : m_play_icon);
@@ -621,6 +614,7 @@ namespace Zeus {
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - size * 0.5f);
         if (not_allowed_to_play)
             ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+
         if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ size, size }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
             if (m_scene_state == SceneState::Play)
                 on_scene_pause();
@@ -628,8 +622,13 @@ namespace Zeus {
             else if (m_scene_state == SceneState::Edit)
                 on_scene_play();
         }
+        if (m_scene_state == SceneState::Play)
+            ImGui::SetTooltip("Pause");
+        else if (m_scene_state == SceneState::Edit)
+            ImGui::SetTooltip("Play");
         if (not_allowed_to_play)
             ImGui::PopItemFlag();
+        
         icon = (m_scene_state == SceneState::Simulate ? m_stop_icon : m_simulate_icon);
         ImGui::SameLine();
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) + size * 0.5f);
@@ -642,6 +641,10 @@ namespace Zeus {
             else if (m_scene_state == SceneState::Edit)
                 on_scene_simulate();
         }
+        if (m_scene_state == SceneState::Simulate)
+            ImGui::SetTooltip("Stop Simulation");
+        else
+            ImGui::SetTooltip("Start Simulation");
         if (not_allowed_to_simulate)
             ImGui::PopItemFlag();
         
