@@ -22,6 +22,7 @@
 #include "PointMass.h"
 #include "Snapshot.h"
 #include "Panels/Grapher.h"
+#include "Panels/WaveViewport.h"
 
 
 const std::string icon_path = "Assets/Zeus.png";
@@ -52,7 +53,7 @@ namespace Zeus {
 		void open_scene(const std::filesystem::path& path);
 		void save_scene();
 		void save_scene_as();
-		void new_scene();
+		void new_scene(Scene::SceneType scene_type = Scene::PointMasses);
 
 		void new_project(const std::filesystem::path& path, const std::string& name = "");
 		void open_project();
@@ -140,6 +141,8 @@ namespace Zeus {
 		WorldSettings m_world_settings;
 		Timeline m_timeline;
 		Grapher m_grapher;
+		WaveViewport m_wave_viewport;
+		
 
 		std::string current_path;
 

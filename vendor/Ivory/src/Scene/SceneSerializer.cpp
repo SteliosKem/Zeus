@@ -232,26 +232,40 @@ namespace Ivory {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Scene";
 		out << YAML::Value << "Name";
-		out << YAML::Key << "WorldSettings";
-		out << YAML::BeginMap;
-		out << YAML::Key << "GravityIntensity";
-		out << YAML::Value << m_scene->get_gravity();
-		out << YAML::Key << "TimeFactor";
-		out << YAML::Value << m_scene->get_time_factor();
-		out << YAML::EndMap;
-
-		out << YAML::Key << "Entities";
-		out << YAML::Value << YAML::BeginSeq;
-		auto view = m_scene->m_registry.view<Entity::all_entities>();
-		for (auto entityid : view) {
-			Entity entity{ entityid, m_scene.get() };
-			if (!entity)
-				break;
-
-			serialize_entity(out, entity);
+		out << YAML::Key << "Type";
+		std::string type;
+		switch (m_scene->m_scene_type) {
+		case Scene::PointMasses:
+			type = "PointMasses";
+			break;
+		case Scene::Wave:
+			type = "Wave";
+			break;
 		}
+		out << YAML::Value << type;
+		if (m_scene->m_scene_type == Scene::PointMasses) {
+			out << YAML::Key << "WorldSettings";
+			out << YAML::BeginMap;
+			out << YAML::Key << "GravityIntensity";
+			out << YAML::Value << m_scene->get_gravity();
+			out << YAML::Key << "TimeFactor";
+			out << YAML::Value << m_scene->get_time_factor();
+			out << YAML::EndMap;
 
-		out << YAML::EndSeq;
+			out << YAML::Key << "Entities";
+			out << YAML::Value << YAML::BeginSeq;
+			auto view = m_scene->m_registry.view<Entity::all_entities>();
+			for (auto entityid : view) {
+				Entity entity{ entityid, m_scene.get() };
+				if (!entity)
+					break;
+
+				serialize_entity(out, entity);
+			}
+
+			out << YAML::EndSeq;
+		}
+		else if (m_scene->m_scene_type == Scene::Wave);
 		out << YAML::EndMap;
 
 		std::ofstream fout(filepath);
@@ -271,123 +285,130 @@ namespace Ivory {
 			return false;
 		std::string scene_name = data["Scene"].as<std::string>();
 		IV_CORE_TRACE("Deserializing scene '{0}'", scene_name);
-		auto world_settings = data["WorldSettings"];
-		m_scene->set_time_factor(world_settings["TimeFactor"].as<float>());
-		m_scene->set_gravity(world_settings["GravityIntensity"].as<float>());
+		std::string scene_type = data["Type"].as<std::string>();
+		if (scene_type == "PointMasses") {
+			m_scene->m_scene_type = Scene::PointMasses;
+			auto world_settings = data["WorldSettings"];
+			m_scene->set_time_factor(world_settings["TimeFactor"].as<float>());
+			m_scene->set_gravity(world_settings["GravityIntensity"].as<float>());
 
-		auto entities = data["Entities"];
-		if (entities) {
-			for (auto entity : entities) {
-				uint64_t uuid = entity["Entity"].as<uint64_t>();
+			auto entities = data["Entities"];
+			if (entities) {
+				for (auto entity : entities) {
+					uint64_t uuid = entity["Entity"].as<uint64_t>();
 
-				std::string name;
-				auto tag_component = entity["TagComponent"];
-				if (tag_component)
-					name = tag_component["Tag"].as<std::string>();
+					std::string name;
+					auto tag_component = entity["TagComponent"];
+					if (tag_component)
+						name = tag_component["Tag"].as<std::string>();
 
-				IV_CORE_TRACE("Deserialized entity with ID = {0} and name = {1}", uuid, name);
-			
-				Entity deserialized_entity = m_scene->create_entity_with_uuid(uuid, name);
-				IV_INFO((uint64_t)deserialized_entity.get_component<IdComponent>().id);
+					IV_CORE_TRACE("Deserialized entity with ID = {0} and name = {1}", uuid, name);
 
-				auto transform_component = entity["TransformComponent"];
-				if (transform_component) {
-					auto& component = deserialized_entity.get_component<TransformComponent>();
-					component.translation = transform_component["Translation"].as<glm::vec3>();
-					component.rotation = transform_component["Rotation"].as<glm::vec3>();
-					component.scale = transform_component["Scale"].as<glm::vec3>();
-				}
+					Entity deserialized_entity = m_scene->create_entity_with_uuid(uuid, name);
+					IV_INFO((uint64_t)deserialized_entity.get_component<IdComponent>().id);
 
-				auto camera_component = entity["CameraComponent"];
-				if (camera_component) {
-					auto& camera_props = camera_component["Camera"];
-					auto& component = deserialized_entity.add_component<CameraComponent>();
-					component.active = camera_component["Primary"].as<bool>();
-					component.fixed_aspect_ratio = camera_component["FixedAspectRation"].as<bool>();
+					auto transform_component = entity["TransformComponent"];
+					if (transform_component) {
+						auto& component = deserialized_entity.get_component<TransformComponent>();
+						component.translation = transform_component["Translation"].as<glm::vec3>();
+						component.rotation = transform_component["Rotation"].as<glm::vec3>();
+						component.scale = transform_component["Scale"].as<glm::vec3>();
+					}
 
-					component.camera.set_ortho_far_clip(camera_props["OrthoFar"].as<float>());
-					component.camera.set_ortho_near_clip(camera_props["OrthoNear"].as<float>());
-					component.camera.set_ortho_size(camera_props["OrthoSize"].as<float>());
+					auto camera_component = entity["CameraComponent"];
+					if (camera_component) {
+						auto& camera_props = camera_component["Camera"];
+						auto& component = deserialized_entity.add_component<CameraComponent>();
+						component.active = camera_component["Primary"].as<bool>();
+						component.fixed_aspect_ratio = camera_component["FixedAspectRation"].as<bool>();
 
-					component.camera.set_perspective_far_clip(camera_props["PerspectiveFar"].as<float>());
-					component.camera.set_perspective_near_clip(camera_props["PerspectiveNear"].as<float>());
-					component.camera.set_vertical_fov(camera_props["PerspectiveFOV"].as<float>());
+						component.camera.set_ortho_far_clip(camera_props["OrthoFar"].as<float>());
+						component.camera.set_ortho_near_clip(camera_props["OrthoNear"].as<float>());
+						component.camera.set_ortho_size(camera_props["OrthoSize"].as<float>());
 
-					component.camera.set_projection_type((SceneCamera::ProjectionType)camera_props["ProjectionType"].as<int>());
-				}
+						component.camera.set_perspective_far_clip(camera_props["PerspectiveFar"].as<float>());
+						component.camera.set_perspective_near_clip(camera_props["PerspectiveNear"].as<float>());
+						component.camera.set_vertical_fov(camera_props["PerspectiveFOV"].as<float>());
 
-				auto sprite_renderer_component = entity["SpriteRendererComponent"];
-				if (sprite_renderer_component) {
-					auto& component = deserialized_entity.add_component<SpriteRendererComponent>();
-					component.color = sprite_renderer_component["Color"].as<glm::vec4>();
-					if(sprite_renderer_component["TexturePath"])
-						component.texture = Texture2D::create((Project::get_assets_dir() / sprite_renderer_component["TexturePath"].as<std::string>()).string());
-					component.tiling_factor = sprite_renderer_component["TilingFactor"].as<float>();
-				}
+						component.camera.set_projection_type((SceneCamera::ProjectionType)camera_props["ProjectionType"].as<int>());
+					}
 
-				auto circle_renderer_component = entity["CircleRendererComponent"];
-				if (circle_renderer_component) {
-					auto& component = deserialized_entity.add_component<CircleRendererComponent>();
-					component.color = circle_renderer_component["Color"].as<glm::vec4>();
-					component.fade = circle_renderer_component["Fade"].as<float>();
-					component.thickness = circle_renderer_component["Thickness"].as<float>();
-				}
+					auto sprite_renderer_component = entity["SpriteRendererComponent"];
+					if (sprite_renderer_component) {
+						auto& component = deserialized_entity.add_component<SpriteRendererComponent>();
+						component.color = sprite_renderer_component["Color"].as<glm::vec4>();
+						if (sprite_renderer_component["TexturePath"])
+							component.texture = Texture2D::create((Project::get_assets_dir() / sprite_renderer_component["TexturePath"].as<std::string>()).string());
+						component.tiling_factor = sprite_renderer_component["TilingFactor"].as<float>();
+					}
 
-				auto point_mass_component = entity["PointMassComponent"];
-				if (point_mass_component) {
-					auto& component = deserialized_entity.add_component<PointMassComponent>();
-					component.affected_by_gravity = point_mass_component["AffectedByGravity"].as<bool>();
-					component.point_mass.set_mass(point_mass_component["Mass"].as<float>());
-					component.point_mass.set_velocity(point_mass_component["Velocity"].as<glm::vec3>());
-					component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
-					component.point_mass.set_damp(point_mass_component["Damping"].as<float>());
-					component.point_mass.set_static(point_mass_component["IsStatic"].as<bool>());
-					component.point_mass.set_restitution(point_mass_component["Restitution"].as<float>());
-					component.force_counter = point_mass_component["ForceIndex"].as<int>();
-					component.ignore_collisions = point_mass_component["IgnoreCollisions"].as<bool>();
-					component.is_circle = point_mass_component["IsCircle"].as<bool>();
-					auto forces = point_mass_component["Forces"];
-					
-					for (auto& i : forces) {
-						component.forces_info[i.first.as<std::string>()] = PointMassComponent::ForceInfo{ i.second.as<glm::vec3>() };
+					auto circle_renderer_component = entity["CircleRendererComponent"];
+					if (circle_renderer_component) {
+						auto& component = deserialized_entity.add_component<CircleRendererComponent>();
+						component.color = circle_renderer_component["Color"].as<glm::vec4>();
+						component.fade = circle_renderer_component["Fade"].as<float>();
+						component.thickness = circle_renderer_component["Thickness"].as<float>();
+					}
+
+					auto point_mass_component = entity["PointMassComponent"];
+					if (point_mass_component) {
+						auto& component = deserialized_entity.add_component<PointMassComponent>();
+						component.affected_by_gravity = point_mass_component["AffectedByGravity"].as<bool>();
+						component.point_mass.set_mass(point_mass_component["Mass"].as<float>());
+						component.point_mass.set_velocity(point_mass_component["Velocity"].as<glm::vec3>());
+						component.point_mass.set_acceleration(point_mass_component["Acceleration"].as<glm::vec3>());
+						component.point_mass.set_damp(point_mass_component["Damping"].as<float>());
+						component.point_mass.set_static(point_mass_component["IsStatic"].as<bool>());
+						component.point_mass.set_restitution(point_mass_component["Restitution"].as<float>());
+						component.force_counter = point_mass_component["ForceIndex"].as<int>();
+						component.ignore_collisions = point_mass_component["IgnoreCollisions"].as<bool>();
+						component.is_circle = point_mass_component["IsCircle"].as<bool>();
+						auto forces = point_mass_component["Forces"];
+
+						for (auto& i : forces) {
+							component.forces_info[i.first.as<std::string>()] = PointMassComponent::ForceInfo{ i.second.as<glm::vec3>() };
+						}
+					}
+
+					auto spring_component = entity["SpringComponent"];
+					if (spring_component) {
+						auto& component = deserialized_entity.add_component<SpringComponent>();
+						component.spring.set_constant(spring_component["SpringConstant"].as<float>());
+						component.spring.set_rest_length(spring_component["RestLength"].as<float>());
+						component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
+						component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
+						component.spring.first_object_affected(spring_component["BothObjectForce"].as<bool>());
+
+					}
+
+					auto cable_component = entity["CableComponent"];
+					if (cable_component) {
+						auto& component = deserialized_entity.add_component<CableComponent>();
+						component.cable.set_max_length(cable_component["MaxLength"].as<float>());
+						component.first_object_id = cable_component["FirstObjectID"].as<uint64_t>();
+						component.second_object_id = cable_component["SecondObjectID"].as<uint64_t>();
+
+					}
+
+					auto rod_component = entity["RodComponent"];
+					if (rod_component) {
+						auto& component = deserialized_entity.add_component<RodComponent>();
+						component.rod.set_length(rod_component["Length"].as<float>());
+						component.first_object_id = rod_component["FirstObjectID"].as<uint64_t>();
+						component.second_object_id = rod_component["SecondObjectID"].as<uint64_t>();
+
+					}
+
+					auto gravity_component = entity["GravityComponent"];
+					if (gravity_component) {
+						auto& component = deserialized_entity.add_component<GravityComponent>();
+						component.gravity.set_gravity(gravity_component["GravityIntensity"].as<glm::vec3>());
 					}
 				}
-
-				auto spring_component = entity["SpringComponent"];
-				if (spring_component) {
-					auto& component = deserialized_entity.add_component<SpringComponent>();
-					component.spring.set_constant(spring_component["SpringConstant"].as<float>());
-					component.spring.set_rest_length(spring_component["RestLength"].as<float>());
-					component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
-					component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
-					component.spring.first_object_affected(spring_component["BothObjectForce"].as<bool>());
-
-				}
-
-				auto cable_component = entity["CableComponent"];
-				if (cable_component) {
-					auto& component = deserialized_entity.add_component<CableComponent>();
-					component.cable.set_max_length(cable_component["MaxLength"].as<float>());
-					component.first_object_id = cable_component["FirstObjectID"].as<uint64_t>();
-					component.second_object_id = cable_component["SecondObjectID"].as<uint64_t>();
-
-				}
-
-				auto rod_component = entity["RodComponent"];
-				if (rod_component) {
-					auto& component = deserialized_entity.add_component<RodComponent>();
-					component.rod.set_length(rod_component["Length"].as<float>());
-					component.first_object_id = rod_component["FirstObjectID"].as<uint64_t>();
-					component.second_object_id = rod_component["SecondObjectID"].as<uint64_t>();
-
-				}
-
-				auto gravity_component = entity["GravityComponent"];
-				if (gravity_component) {
-					auto& component = deserialized_entity.add_component<GravityComponent>();
-					component.gravity.set_gravity(gravity_component["GravityIntensity"].as<glm::vec3>());
-				}
 			}
+		}
+		else if (scene_type == "Wave") {
+			m_scene->m_scene_type = Scene::Wave;
 		}
 		return true;
 	}

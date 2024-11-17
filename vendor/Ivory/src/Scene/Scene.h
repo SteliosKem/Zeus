@@ -10,11 +10,15 @@ namespace Ivory {
 
 	class Scene {
 	public:
+		enum SceneType {
+			PointMasses,
+			Wave
+		};
 		struct CollisionInfo {
 			int32_t frame;
 		};
 
-		Scene();
+		Scene(SceneType scene_type = PointMasses);
 		~Scene() {}
 
 		Entity create_entity(const std::string& name = "", bool no_transform = false);
@@ -49,6 +53,10 @@ namespace Ivory {
 		entt::registry& get_registry() { return m_registry; }
 		std::vector<entt::entity>& get_point_mass_entities() { return m_point_mass_entities; }
 	private:
+		
+
+		SceneType m_scene_type;
+
 		template<typename T>
 		void on_component_add(Entity entity, T& component);
 

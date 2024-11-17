@@ -5,7 +5,7 @@
 #include "Components.h"
 
 namespace Ivory {
-	Scene::Scene() {
+	Scene::Scene(SceneType scene_type) : m_scene_type{scene_type} {
 	}
 
 	Entity Scene::create_entity(const std::string& name, bool no_transform) {
@@ -337,6 +337,7 @@ namespace Ivory {
 
 		new_scene->m_gravity_force = scene->m_gravity_force;
 		new_scene->m_time_factor = scene->m_time_factor;
+		new_scene->m_scene_type = scene->m_scene_type;
 
 		std::unordered_map<Uuid, entt::entity> entity_map;
 

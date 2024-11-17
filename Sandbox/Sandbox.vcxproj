@@ -140,6 +140,7 @@
     <ClInclude Include="src\Panels\Grapher.h" />
     <ClInclude Include="src\Panels\SceneHierarchy.h" />
     <ClInclude Include="src\Panels\Timeline.h" />
+    <ClInclude Include="src\Panels\WaveViewport.h" />
     <ClInclude Include="src\Panels\WorldSettings.h" />
     <ClInclude Include="src\Snapshot.h" />
     <ClInclude Include="src\Test2D.h" />
@@ -154,6 +155,7 @@
     <ClCompile Include="src\Panels\Grapher.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchy.cpp" />
     <ClCompile Include="src\Panels\Timeline.cpp" />
+    <ClCompile Include="src\Panels\WaveViewport.cpp" />
     <ClCompile Include="src\Panels\WorldSettings.cpp" />
     <ClCompile Include="src\Test2D.cpp" />
     <ClCompile Include="src\Windows\Dialogs.cpp" />

@@ -38,6 +38,7 @@ namespace Zeus {
 
         m_editor_camera = EditorCamera(30.0f, 16.0f / 9.0f, 0.01f, 1000.0f);
         m_snapshot_manager = SnapshotManager(m_active_scene);
+        m_wave_viewport.create_wave("Default Wave", 1.0f, 0.2f, 1.0f, 5.0f);
     }
     void EditorLayer::on_detach() {}
 
@@ -94,6 +95,7 @@ namespace Zeus {
             m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
             m_grapher.update();
             m_snapshot_manager.record_snapshot(m_active_scene);
+            m_wave_viewport.on_update(dt);
             break;
         }
         case SceneState::Play: {
@@ -208,7 +210,9 @@ namespace Zeus {
                 if (ImGui::MenuItem("New Scene", "Ctrl+N")) {
                     new_scene();
                 }
-
+                if (ImGui::MenuItem("New Wave Scene", "Ctrl+N")) {
+                    new_scene(Scene::Wave);
+                }
                 
 
                 if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {
@@ -278,6 +282,8 @@ namespace Zeus {
 
         if (m_show_grapher)
             m_grapher.on_imgui_render(!m_snapshot_manager.empty(), m_timeline.get_current_frame());
+
+        m_wave_viewport.on_imgui_render();
 
         if (m_show_timeline) {
             ImGui::Begin("Timeline");
@@ -570,6 +576,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_scene_record() {
+        m_wave_viewport.reset();
         m_snapshot_manager.reset();
         m_snapshot_manager.set_scene(m_active_scene);
         m_grapher.clear_lists();
@@ -590,7 +597,7 @@ namespace Zeus {
         //m_snapshot_manager.retrieve_snapshot(0, m_active_scene);
         m_snapshot_manager.reset();
         m_snapshot_manager.set_scene(m_active_scene);
-        m_grapher.clear_lists();
+        m_grapher.reset();
     }
 
     void EditorLayer::on_scene_play() {
@@ -882,8 +889,8 @@ namespace Zeus {
             serializer.serialize(file_path);
         }
     }
-    void EditorLayer::new_scene() {
-        m_active_scene = std::make_shared<Scene>();
+    void EditorLayer::new_scene(Scene::SceneType scene_type) {
+        m_active_scene = std::make_shared<Scene>(scene_type);
         m_active_scene->on_viewport_resize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
         m_hierarchy.set_context(m_active_scene);
     }
