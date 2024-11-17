@@ -164,6 +164,8 @@
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\ImGui\ImGuiNotify.h" />
     <ClInclude Include="src\ImGui\ImGuiStyle.h" />
+    <ClInclude Include="src\ImGui\ImPlot\implot.h" />
+    <ClInclude Include="src\ImGui\ImPlot\implot_internal.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
     <ClInclude Include="src\ImGui\L2DFileDialog.h" />
@@ -627,6 +629,8 @@
     <ClCompile Include="src\Core\Uuid.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLoad.cpp" />
+    <ClCompile Include="src\ImGui\ImPlot\implot.cpp" />
+    <ClCompile Include="src\ImGui\ImPlot\implot_items.cpp" />
     <ClCompile Include="src\ImGui\Sequencer\imgui_neo_internal.cpp" />
     <ClCompile Include="src\ImGui\Sequencer\imgui_neo_sequencer.cpp" />
     <ClCompile Include="src\ImGui\imgui_spectrum.cpp" />

@@ -17,6 +17,99 @@ namespace Ivory {
 		m_context = scene;
 		m_selection_context = {};
 	}
+	void SceneHierarchy::draw_vec3_internal(Entity entity, const std::string& label, glm::vec3& values, float speed, float reset_value, float column_width) {
+		Quantity quant;
+		ImGui::PushID(label.c_str());
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, column_width);
+		ImGui::Text(label.c_str());
+		if (label == "Velocity")
+			add_to_graph(entity, "Velocity", Quantity::Velocity);
+		else if (label == "Acceleration")
+			add_to_graph(entity, "Acceleration", Quantity::Acceleration);
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0,0 });
+
+		float line_height = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 button_size = { line_height + 3.0f, line_height };
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.6f, 0.2f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.6f, 0.2f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.6f, 0.2f, 0.2f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 1.0f, 94 / 256.0f, 113 / 256.0f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.0f, 94 / 256.0f, 113 / 256.0f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 1.0f, 94 / 256.0f, 113 / 256.0f, 1.0f });
+
+		if (ImGui::Button("X", button_size))
+			values.x = reset_value;
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##X", &values.x, speed);
+		if(label == "Translation")
+			add_to_graph(entity, "Horizontal Position", Quantity::HorizontalPosition);
+		else if (label == "Velocity")
+			add_to_graph(entity, "Horizontal Velocity", Quantity::HorizontalVelocity);
+		else if (label == "Acceleration")
+			add_to_graph(entity, "Horizontal Acceleration", Quantity::HorizontalAcceleration);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.6f, 0.2f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.6f, 0.2f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.6f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 37 / 256.0f, 170 / 256.0f, 37 / 256.0f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 37 / 256.0f, 170 / 256.0f, 37 / 256.0f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 37 / 256.0f, 170 / 256.0f, 37 / 256.0f, 1.0f });
+
+		if (ImGui::Button("Y", button_size))
+			values.y = reset_value;
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##Y", &values.y, speed);
+		if (label == "Translation")
+			add_to_graph(entity, "Vertical Position", Quantity::VerticalPosition);
+		else if (label == "Velocity")
+			add_to_graph(entity, "Vertical Velocity", Quantity::VerticalVelocity);
+		else if (label == "Acceleration")
+			add_to_graph(entity, "Vertical Acceleration", Quantity::VerticalAcceleration);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		//ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.2f, 0.6f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.2f, 0.6f, 1.0f });
+		//ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.2f, 0.6f, 1.0f });
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.476f, 0.39f, 0.92f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.476f, 0.39f, 0.92f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.476f, 0.39f, 0.92f, 1.0f });
+		if (ImGui::Button("Z", button_size))
+			values.z = reset_value;
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##Z", &values.z, speed);
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PopStyleVar();
+
+		ImGui::Columns(1);
+		ImGui::PopID();
+	}
+
+	void SceneHierarchy::add_to_graph(Entity entity, const std::string& quantity, Quantity quantity_type) {
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GRAPH")) {
+				std::string name = entity.get_component<TagComponent>().tag + " " + quantity;
+				m_grapher->add(entity, name, quantity_type);
+			}
+			ImGui::EndDragDropTarget();
+		}
+	}
 
 	template<typename T, typename UIFunction>
 	static void draw_component(const std::string& name, Entity entity, UIFunction ui_func) {
@@ -194,11 +287,11 @@ namespace Ivory {
 			ImGui::EndPopup();
 		}*/
 
-		draw_component<TransformComponent>("Transform Component", entity, [](auto& component) {
+		draw_component<TransformComponent>("Transform Component", entity, [entity, this](auto& component) {
 			float speed = 0.1f;
 
 			//glm::vec2 translation{component.translation.x, component.translation.y};
-			draw_vec3_control("Translation", component.translation, speed / 2);
+			draw_vec3_internal(entity, "Translation", component.translation, speed / 2);
 			//component.translation = { translation, 0.0f };
 
 
@@ -217,7 +310,7 @@ namespace Ivory {
 			ImGui::ColorPicker4("Color", glm::value_ptr(component.color));
 			});
 
-		draw_component<PointMassComponent>("Point Mass Component", entity, [](auto& component) {
+		draw_component<PointMassComponent>("Point Mass Component", entity, [entity, this](auto& component) {
 			float mass = component.point_mass.get_mass();
 			draw_label("Mass", mass, 0.05f);
 			component.point_mass.set_mass(mass);
@@ -236,10 +329,10 @@ namespace Ivory {
 
 			//ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.1f);
 			glm::vec3 vel = { component.point_mass.get_velocity() , 0 };
-			draw_vec3_control("Velocity", vel, 0.1/5, 1.0f);
+			draw_vec3_internal(entity, "Velocity", vel, 0.1/5);
 			component.point_mass.set_velocity({ vel.x, vel.y });
 			glm::vec3 acc = { component.point_mass.get_acceleration() , 0 };
-			draw_vec3_control("Acceleration", acc, 0.1 / 5, 1.0f);
+			draw_vec3_internal(entity, "Acceleration", acc, 0.1 / 5);
 			component.point_mass.set_acceleration({ acc.x, acc.y });
 			draw_label("Damping", component.point_mass.get_damping(), 0.0025f, "Velocity will be multiplied by this factor every frame, simulating drag forces");
 

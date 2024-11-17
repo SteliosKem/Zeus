@@ -3,6 +3,8 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <imgui_internal.h>
+#include <functional>
+#include "Scene/Entity.h"
 
 namespace Ivory {
 	inline void draw_label(const std::string& label, float& values, float speed, const std::string& tooltip = "", float reset_value = 0.0f, float column_width = 120.0f) {

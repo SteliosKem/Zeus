@@ -137,6 +137,7 @@
     <ClInclude Include="src\AlchemistSandbox.h" />
     <ClInclude Include="src\Editor.h" />
     <ClInclude Include="src\Panels\ContentBrowser.h" />
+    <ClInclude Include="src\Panels\Grapher.h" />
     <ClInclude Include="src\Panels\SceneHierarchy.h" />
     <ClInclude Include="src\Panels\Timeline.h" />
     <ClInclude Include="src\Panels\WorldSettings.h" />
@@ -150,6 +151,7 @@
     <ClCompile Include="src\AlchemistSandbox.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\Panels\ContentBrowser.cpp" />
+    <ClCompile Include="src\Panels\Grapher.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchy.cpp" />
     <ClCompile Include="src\Panels\Timeline.cpp" />
     <ClCompile Include="src\Panels\WorldSettings.cpp" />

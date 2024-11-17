@@ -1488,6 +1488,8 @@
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
     <ClInclude Include="src\ImGui\ImGuiStyle.h" />
+    <ClInclude Include="src\ImGui\ImPlot\implot.h" />
+    <ClInclude Include="src\ImGui\ImPlot\implot_internal.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1600,6 +1602,8 @@
     </ClCompile>
     <ClCompile Include="src\ImGui\Sequencer\imgui_neo_internal.cpp" />
     <ClCompile Include="src\ImGui\Sequencer\imgui_neo_sequencer.cpp" />
+    <ClCompile Include="src\ImGui\ImPlot\implot.cpp" />
+    <ClCompile Include="src\ImGui\ImPlot\implot_items.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ImGui\fa-regular-400.ttf">

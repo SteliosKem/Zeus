@@ -18,6 +18,7 @@
 #include "ImGuiStyle.h"
 
 #include "ImGuizmo.h"
+#include "ImPlot/implot.h"
 
 namespace Ivory {
 #define BIND_EVENT_FN(x) std::bind(&ImGuiLayer::x, this, std::placeholders::_1)
@@ -31,6 +32,7 @@ namespace Ivory {
         // ImGui initialization on attach
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
+        ImPlot::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
 
         // Enable these config flags
@@ -62,6 +64,7 @@ namespace Ivory {
 	void ImGuiLayer::on_detach() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
+        ImPlot::DestroyContext();
         ImGui::DestroyContext();
 	}
 

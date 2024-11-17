@@ -14,6 +14,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_attach() {
+        m_hierarchy.set_grapher(&m_grapher);
         m_hierarchy.start_up();
         m_hierarchy.set_allow_action_ptr(true);
         m_setup_window.show(false);
@@ -46,6 +47,7 @@ namespace Zeus {
         vec.y = 1 - 2 * coords.y / window_size.y;
         return vec;
     }
+
 
     void EditorLayer::on_update(Timestep dt) {
         /*FrameBufferSpecification spec = m_frame_buffer->get_spec();
@@ -90,6 +92,7 @@ namespace Zeus {
             m_editor_camera.on_update(dt);
             m_timeline.increment(1);
             m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
+            m_grapher.update();
             m_snapshot_manager.record_snapshot(m_active_scene);
             break;
         }
@@ -209,15 +212,28 @@ namespace Zeus {
                 
 
                 if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {
+                    FileDialogs::set_open(true);
+                    m_willopen_scene = true;
+                    m_willsave_scene = false;
                     open_scene();
                 }
 
                 
                 if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S")) {
-                    save_scene_as();
+                    FileDialogs::set_open(true);
+                    m_willopen_scene = false;
+                    m_willsave_scene = true;
                 }
                 if(ImGui::MenuItem("Save Scene", "Ctrl+S")) {
                     save_scene();
+                }
+
+                ImGui::Separator();
+
+                if (ImGui::MenuItem("Open Project", "Ctrl+Alt+O")) {
+                    FileDialogs::set_open(true);
+                    m_willopen_project = true;
+                    m_willsave_project = false;
                 }
 
                 ImGui::Separator();
@@ -247,6 +263,7 @@ namespace Zeus {
                 ImGui::MenuItem("Show Hierarchy", "", &m_show_hierarchy);
                 ImGui::MenuItem("Show Inspector", "", &m_show_inspector);
                 ImGui::MenuItem("Show World Settings", "", &m_show_world_settings);
+                ImGui::MenuItem("Show Grapher", "", &m_show_grapher);
 
                 ImGui::EndMenu();
 
@@ -258,6 +275,9 @@ namespace Zeus {
         m_hierarchy.on_imgui_render(m_scene_state == SceneState::Recording || m_scene_state == SceneState::Play, m_show_inspector, m_show_hierarchy);
         if(m_show_world_settings)
             m_world_settings.on_imgui_render();
+
+        if (m_show_grapher)
+            m_grapher.on_imgui_render(!m_snapshot_manager.empty(), m_timeline.get_current_frame());
 
         if (m_show_timeline) {
             ImGui::Begin("Timeline");
@@ -551,6 +571,8 @@ namespace Zeus {
 
     void EditorLayer::on_scene_record() {
         m_snapshot_manager.reset();
+        m_snapshot_manager.set_scene(m_active_scene);
+        m_grapher.clear_lists();
         m_scene_state = SceneState::Recording;
         m_active_scene = Scene::copy(m_editor_scene);
         m_snapshot_manager.set_scene(m_editor_scene);
@@ -561,12 +583,14 @@ namespace Zeus {
         m_timeline.set_is_playing(true);
         m_timeline.reset();
         m_snapshot_manager.first_snapshot();
+        m_grapher.start(m_active_scene);
     }
 
     void EditorLayer::clear_recording() {
         //m_snapshot_manager.retrieve_snapshot(0, m_active_scene);
         m_snapshot_manager.reset();
         m_snapshot_manager.set_scene(m_active_scene);
+        m_grapher.clear_lists();
     }
 
     void EditorLayer::on_scene_play() {

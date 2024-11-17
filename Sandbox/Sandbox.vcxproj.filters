@@ -28,6 +28,7 @@
     <ClInclude Include="src\Panels\Timeline.h" />
     <ClInclude Include="src\Panels\UI.h" />
     <ClInclude Include="src\Snapshot.h" />
+    <ClInclude Include="src\Panels\Grapher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AlchemistSandbox.cpp" />
@@ -47,5 +48,6 @@
     </ClCompile>
     <ClCompile Include="src\Panels\WorldSettings.cpp" />
     <ClCompile Include="src\Panels\Timeline.cpp" />
+    <ClCompile Include="src\Panels\Grapher.cpp" />
   </ItemGroup>
 </Project>

@@ -21,6 +21,7 @@
 
 #include "PointMass.h"
 #include "Snapshot.h"
+#include "Panels/Grapher.h"
 
 
 const std::string icon_path = "Assets/Zeus.png";
@@ -69,6 +70,7 @@ namespace Zeus {
 		void on_duplicate_entity();
 
 		void ui_toolbar();
+
 
 		// Editor Debugging Tools
 		enum class LogType {
@@ -137,6 +139,7 @@ namespace Zeus {
 		ProjectSetupWindow m_setup_window;
 		WorldSettings m_world_settings;
 		Timeline m_timeline;
+		Grapher m_grapher;
 
 		std::string current_path;
 
