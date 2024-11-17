@@ -15,7 +15,7 @@ namespace Ivory {
 		void empty_selection() { m_selection_context = {}; }
 		void start_up() { m_knot_icon = Texture2D::create("Assets/EditorIcons/knot.png"); }
 
-		void on_imgui_render(bool is_playing);
+		void on_imgui_render(bool is_playing, bool show_inspector, bool show_hierarchy);
 		Entity get_selected() const { return m_selection_context; }
 		void set_selected(Entity entity);
 	private:

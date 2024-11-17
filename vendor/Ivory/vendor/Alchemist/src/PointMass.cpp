@@ -82,13 +82,8 @@ namespace Alchemist {
 		point_mass->add_force(force);
 	}
 
+	// Unused
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second) {
-		/*glm::vec2 relative_velocity = second.get_velocity() - first.get_velocity();
-		glm::vec2 distance_from_centers_vec = second.get_position() - first.get_position();
-		glm::vec2 normal = distance_from_centers_vec /
-			sqrtf(distance_from_centers_vec.x * distance_from_centers_vec.x + distance_from_centers_vec.y * distance_from_centers_vec.y);
-		float normal_velocity = 
-		*/
 		float m1 = first.get_mass();
 		float m2 = second.get_mass();
 		glm::vec2& v1 = first.get_velocity();
@@ -114,18 +109,6 @@ namespace Alchemist {
 		return false;
 	}
 
-	bool check_collision(const PointMass2D& first, const PointMass2D& second) {
-		// Check if circles intercept, so check if the distance of their centers is
-		// less than the sum of their radi
-		float distance_of_centers_squared = (first.get_position().x - second.get_position().x) * (first.get_position().x - second.get_position().x)
-			+ (first.get_position().y - second.get_position().y) * (first.get_position().y - second.get_position().y);
-
-		float sum_of_radi_squared = (first.get_shape().radius + second.get_shape().radius) * (first.get_shape().radius + second.get_shape().radius);
-		if (distance_of_centers_squared < sum_of_radi_squared)
-			return true;
-		return false;
-	}
-
 	Collision check_circle_collision_depth(const PointMass2D& first, const PointMass2D& second) {
 		// Check if circles intercept, so check if the distance of their centers is
 		// less than the sum of their radi
@@ -140,9 +123,11 @@ namespace Alchemist {
 
 	static bool loop_through_vertices(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons
 		, float& in_out_depth, glm::vec2& in_out_normal) {
+		// Find if there is a seperating axis
+		// If not, output the depth and normal of the collision
 		for (int i = 0; i < first_polygons.size(); i++) {
 			glm::vec2 vertex_a = first_polygons[i];
-			glm::vec2 vertex_b = first_polygons[(i + 1) % first_polygons.size()];
+			glm::vec2 vertex_b = first_polygons[(i + 1) % first_polygons.size()];	// <-- loop back if i exceeds the size of first_polygons
 
 			glm::vec2 edge = vertex_b - vertex_a;
 			glm::vec2 seperating_axis = glm::vec2(-edge.y, edge.x);
@@ -175,6 +160,8 @@ namespace Alchemist {
 	Collision check_sat_collision(const std::vector<glm::vec2>& first_polygons, const std::vector<glm::vec2>& second_polygons) {
 		float depth = std::numeric_limits<float>::max();
 		glm::vec2 normal{ 0.0f };
+		
+		// If seperating axis are found return no collision
 		if (loop_through_vertices(first_polygons, second_polygons, depth, normal)) return Collision{};
 		if (loop_through_vertices(second_polygons, first_polygons, depth, normal)) return Collision{};
 
@@ -282,14 +269,20 @@ namespace Alchemist {
 		return {min, max};
 	}
 
+	// Adjusts position of each colliding body accordingly
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
+		// If both objects are static then don't do anything
 		if (first->is_static() && second->is_static())
 			return;
+
+		// If one object is static move the other by the full collision depth
 		if (first->is_static()) {
 			second->set_position(second->get_position() - collision.collision_normal * collision.depth);
 		}
 		else if(second->is_static())
 			first->set_position(first->get_position() + collision.collision_normal * collision.depth);
+
+		// Else move both objects half of the collision depth
 		else {
 			first->set_position(first->get_position() + collision.collision_normal * collision.depth / 2.0f);
 			second->set_position(second->get_position() - collision.collision_normal * collision.depth / 2.0f);

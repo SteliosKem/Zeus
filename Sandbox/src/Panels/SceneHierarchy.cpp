@@ -30,64 +30,68 @@ namespace Ivory {
 		}
 	}
 
-	void SceneHierarchy::on_imgui_render(bool is_playing) {
+	void SceneHierarchy::on_imgui_render(bool is_playing, bool show_inspector, bool show_hierarchy) {
 		m_is_playing = is_playing;
-		ImGui::Begin("Scene Hierarchy");
-		//if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-		//	m_selection_context = {};
-		auto view = m_context->m_registry.view<TagComponent>();
-		int i = 0;
-		for (auto entity : view) {
-			draw_entity_node({entity, m_context.get()}, i % 2);
-			i++;
-		}
-
-		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
-			//if (ImGui::MenuItem("Create Entity"))
-			//	m_context->create_entity();
-			if (ImGui::MenuItem("Add Point Mass")) {
-				Entity point_mass = m_context->create_entity("New Point Mass");
-				point_mass.add_component<SpriteRendererComponent>();
-				point_mass.add_component<PointMassComponent>();
-				set_selected(point_mass);
+		if (show_hierarchy) {
+			ImGui::Begin("Scene Hierarchy");
+			//if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			//	m_selection_context = {};
+			auto view = m_context->m_registry.view<TagComponent>();
+			int i = 0;
+			for (auto entity : view) {
+				draw_entity_node({ entity, m_context.get() }, i % 2);
+				i++;
 			}
-			if (ImGui::MenuItem("Add Spring")) {
-				Entity spring = m_context->create_entity("New Spring", true);
-				spring.add_component<SpringComponent>();
-				set_selected(spring);
-			}
-			if (ImGui::MenuItem("Add Cable")) {
-				Entity cable = m_context->create_entity("New Cable", true);
-				cable.add_component<CableComponent>();
-				set_selected(cable);
-			}if (ImGui::MenuItem("Add Rod")) {
-				Entity rod = m_context->create_entity("New Rod", true);
-				rod.add_component<RodComponent>();
-				set_selected(rod);
-			}
-			ImGui::EndPopup();
-		}
 
-		ImGui::End();
-
-		ImGui::Begin("Inspector");
-		if (m_selection_context) {
 			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
-				if (ImGui::MenuItem("Add Component"))
-					ImGui::OpenPopup("AddComponent");
+				//if (ImGui::MenuItem("Create Entity"))
+				//	m_context->create_entity();
+				if (ImGui::MenuItem("Add Point Mass")) {
+					Entity point_mass = m_context->create_entity("New Point Mass");
+					point_mass.add_component<SpriteRendererComponent>();
+					point_mass.add_component<PointMassComponent>();
+					set_selected(point_mass);
+				}
+				if (ImGui::MenuItem("Add Spring")) {
+					Entity spring = m_context->create_entity("New Spring", true);
+					spring.add_component<SpringComponent>();
+					set_selected(spring);
+				}
+				if (ImGui::MenuItem("Add Cable")) {
+					Entity cable = m_context->create_entity("New Cable", true);
+					cable.add_component<CableComponent>();
+					set_selected(cable);
+				}if (ImGui::MenuItem("Add Rod")) {
+					Entity rod = m_context->create_entity("New Rod", true);
+					rod.add_component<RodComponent>();
+					set_selected(rod);
+				}
 				ImGui::EndPopup();
 			}
-			draw_components(m_selection_context);
 
-			
+			ImGui::End();
 		}
-		else {
-			ImVec2 cursor = ImGui::GetCursorPos();
-			cursor.y += 5.0f;
-			ImGui::SetCursorPos(cursor);
-			ImGui::Text("Select a scene entity to inspect its elements"); 
+
+		if (show_inspector) {
+			ImGui::Begin("Inspector");
+			if (m_selection_context) {
+				if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
+					if (ImGui::MenuItem("Add Component"))
+						ImGui::OpenPopup("AddComponent");
+					ImGui::EndPopup();
+				}
+				draw_components(m_selection_context);
+
+
+			}
+			else {
+				ImVec2 cursor = ImGui::GetCursorPos();
+				cursor.y += 5.0f;
+				ImGui::SetCursorPos(cursor);
+				ImGui::Text("Select a scene entity to inspect its elements");
+			}
+			ImGui::End();
 		}
-		ImGui::End();
 	}
 
 	void SceneHierarchy::draw_entity_node(Entity entity, bool even) {

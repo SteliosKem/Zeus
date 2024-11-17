@@ -142,6 +142,14 @@ namespace Zeus {
 
 		glm::vec2 m_first_mouse_coords{ 0.0f };
 		SnapshotManager m_snapshot_manager{nullptr};
+
+		bool m_show_viewport = true;
+		bool m_show_timeline = true;
+		bool m_show_hierarchy = true;
+		bool m_show_world_settings = true;
+		bool m_show_inspector = true;
+		bool m_show_grapher = true;
+		bool m_show_scene_graph = true;
 	};
 
 	class Editor : public Application {

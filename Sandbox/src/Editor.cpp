@@ -40,6 +40,13 @@ namespace Zeus {
     }
     void EditorLayer::on_detach() {}
 
+    glm::vec2 normalize_coordinates(const glm::vec2& coords, const glm::vec2& window_size) {
+        glm::vec2 vec;
+        vec.x = 2 * coords.x / window_size.x - 1;
+        vec.y = 1 - 2 * coords.y / window_size.y;
+        return vec;
+    }
+
     void EditorLayer::on_update(Timestep dt) {
         /*FrameBufferSpecification spec = m_frame_buffer->get_spec();
         if (m_viewport_size.x > 0.0f && m_viewport_size.y > 0.0f && (spec.width != m_viewport_size.x || spec.height != m_viewport_size.y)) {
@@ -220,49 +227,74 @@ namespace Zeus {
 
                 
             }
+            if (ImGui::BeginMenu("Edit"))
+            {
+                if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
+                    new_scene();
+                }
+                if (ImGui::MenuItem("Redo", "Ctrl+Y")) {
+                    new_scene();
+                }
+
+                ImGui::EndMenu();
+
+
+            }
+            if (ImGui::BeginMenu("Window"))
+            {
+                ImGui::MenuItem("Show Viewport", "", &m_show_viewport);
+                ImGui::MenuItem("Show Timeline", "", &m_show_timeline);
+                ImGui::MenuItem("Show Hierarchy", "", &m_show_hierarchy);
+                ImGui::MenuItem("Show Inspector", "", &m_show_inspector);
+                ImGui::MenuItem("Show World Settings", "", &m_show_world_settings);
+
+                ImGui::EndMenu();
+
+
+            }
             ImGui::EndMenuBar();
         }
 
+        m_hierarchy.on_imgui_render(m_scene_state == SceneState::Recording || m_scene_state == SceneState::Play, m_show_inspector, m_show_hierarchy);
+        if(m_show_world_settings)
+            m_world_settings.on_imgui_render();
 
-        m_hierarchy.on_imgui_render(m_scene_state == SceneState::Recording || m_scene_state == SceneState::Play);
-        m_world_settings.on_imgui_render();
-
-
-        ImGui::Begin("Timeline");
-        if (m_snapshot_manager.empty()) {
-            ImGui::Text("Record a Scene to access the timeline");
-        }
-        else {
-            bool not_allowed_to_play = (m_scene_state != SceneState::Edit && m_scene_state != SceneState::Play) || m_snapshot_manager.empty();
-            std::shared_ptr<Texture2D> icon = (m_scene_state == SceneState::Play ? m_pause_icon : m_play_icon);
-
-            if (not_allowed_to_play)
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-            if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ 20, 20 }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
-                if (m_scene_state == SceneState::Play) {
-                    on_scene_pause();
-                    
-                }
-
-                else if (m_scene_state == SceneState::Edit)
-                    on_scene_play();
+        if (m_show_timeline) {
+            ImGui::Begin("Timeline");
+            if (m_snapshot_manager.empty()) {
+                ImGui::Text("Record a Scene to access the timeline");
             }
-            if(m_scene_state == SceneState::Play)
-                ImGui::SetTooltip("Pause");
-            else if (m_scene_state == SceneState::Edit)
-                ImGui::SetTooltip("Play");
+            else {
+                bool not_allowed_to_play = (m_scene_state != SceneState::Edit && m_scene_state != SceneState::Play) || m_snapshot_manager.empty();
+                std::shared_ptr<Texture2D> icon = (m_scene_state == SceneState::Play ? m_pause_icon : m_play_icon);
 
-            if (not_allowed_to_play)
-                ImGui::PopItemFlag();
-            ImGui::SameLine();
-            if (ImGui::Button("Clear Recording"))
-                clear_recording();
-            m_timeline.on_imgui_render();
-            
+                if (not_allowed_to_play)
+                    ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                if (ImGui::ImageButton((ImTextureID)icon->get_rendererID(), ImVec2{ 20, 20 }, ImVec2{ 0,1 }, ImVec2{ 1,0 }, 0)) {
+                    if (m_scene_state == SceneState::Play) {
+                        on_scene_pause();
+
+                    }
+
+                    else if (m_scene_state == SceneState::Edit)
+                        on_scene_play();
+                }
+                if (ImGui::IsItemHovered())
+                    if (m_scene_state == SceneState::Play)
+                        ImGui::SetTooltip("Pause");
+                    else if (m_scene_state == SceneState::Edit)
+                        ImGui::SetTooltip("Play");
+
+                if (not_allowed_to_play)
+                    ImGui::PopItemFlag();
+                ImGui::SameLine();
+                if (ImGui::Button("Clear Recording"))
+                    clear_recording();
+                m_timeline.on_imgui_render();
+
+            }
+            ImGui::End();
         }
-        ImGui::End();
-        //m_content_browser.on_imgui_render();
-
         // VIEWPORT
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -384,20 +416,24 @@ namespace Zeus {
         mx -= m_viewport_bounds[0].x;
         my -= m_viewport_bounds[0].y;
         glm::vec2 viewport_size = m_viewport_bounds[1] - m_viewport_bounds[0];
-        my = m_viewport_size.y - my;
+        my = viewport_size.y - my;
 
         int mousex = (int)mx;
         int mousey = (int)my;
+
         std::cout << mousex << " " << mousey << "\n";
         if (ImGui::BeginPopupContextWindow(0)) {
+            glm::vec4 normalized_coords = { normalize_coordinates({mx, my}, viewport_size), -1.0f, 1.0f };
+            //my = viewport_size.y - my;
             glm::vec3 translation;
 
             if (!selected) {
                 if (ImGui::MenuItem("Add Point Mass")) {
                     if (mousex >= 0 && mousey >= 0 && mousex < (int)m_viewport_size.x && mousey < (int)m_viewport_size.y) {
-                        float depth;
-                        
-                        translation = glm::unProject(glm::vec3{ mousex, mousey, 0.0f }, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), glm::vec4{ 0, 0, viewport_size.x, viewport_size.y });
+                        const glm::vec4 viewport{0.0f, 0.0f, viewport_size.x, viewport_size.y};
+                        const glm::vec3 screen_position{mx, my, 0.5f};
+                        glm::vec3 world_pos = glm::unProject(screen_position, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), viewport);
+                        translation = world_pos;
                         translation.z = 0;
                     }
                     Entity point_mass = m_active_scene->create_entity("New Point Mass");
@@ -603,10 +639,11 @@ namespace Zeus {
             else //if (m_scene_state == SceneState::Edit)
                 on_scene_record();
         }
-        if (m_scene_state == SceneState::Recording)
-            ImGui::SetTooltip("Stop");
-        else
-            ImGui::SetTooltip("Record");
+        if (ImGui::IsItemHovered())
+            if (m_scene_state == SceneState::Recording)
+                ImGui::SetTooltip("Stop");
+            else
+                ImGui::SetTooltip("Record");
         if (not_allowed_to_record)
             ImGui::PopItemFlag();
         icon = (m_scene_state == SceneState::Play ? m_pause_icon : m_play_icon);
@@ -622,10 +659,11 @@ namespace Zeus {
             else if (m_scene_state == SceneState::Edit)
                 on_scene_play();
         }
-        if (m_scene_state == SceneState::Play)
-            ImGui::SetTooltip("Pause");
-        else if (m_scene_state == SceneState::Edit)
-            ImGui::SetTooltip("Play");
+        if (ImGui::IsItemHovered())
+            if (m_scene_state == SceneState::Play)
+                ImGui::SetTooltip("Pause");
+            else if (m_scene_state == SceneState::Edit)
+                ImGui::SetTooltip("Play");
         if (not_allowed_to_play)
             ImGui::PopItemFlag();
         
@@ -641,10 +679,11 @@ namespace Zeus {
             else if (m_scene_state == SceneState::Edit)
                 on_scene_simulate();
         }
-        if (m_scene_state == SceneState::Simulate)
-            ImGui::SetTooltip("Stop Simulation");
-        else
-            ImGui::SetTooltip("Start Simulation");
+        if (ImGui::IsItemHovered())
+            if (m_scene_state == SceneState::Simulate)
+                ImGui::SetTooltip("Stop Simulation");
+            else
+                ImGui::SetTooltip("Start Simulation");
         if (not_allowed_to_simulate)
             ImGui::PopItemFlag();
         
