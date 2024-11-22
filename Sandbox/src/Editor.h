@@ -23,6 +23,9 @@
 #include "Snapshot.h"
 #include "Panels/Grapher.h"
 #include "Panels/WaveViewport.h"
+#include "Panels/Items.h"
+
+#include "Action.h"
 
 
 const std::string icon_path = "Assets/Zeus.png";
@@ -142,6 +145,9 @@ namespace Zeus {
 		Timeline m_timeline;
 		Grapher m_grapher;
 		WaveViewport m_wave_viewport;
+		Items m_items;
+
+		ActionManager m_action_manager;
 		
 
 		std::string current_path;

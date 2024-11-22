@@ -13,10 +13,26 @@
 #include "PointMass.h"
 
 namespace Ivory {
+	enum PhysicsObjectType {
+		PointMassCircle,
+		PointMassSquare,
+		Wall,
+		Floor,
+		Spring,
+		Rope,
+		Rod
+	};
+
 	struct IdComponent {
 		Uuid id;
 		IdComponent() = default;
 		IdComponent(const IdComponent&) = default;
+	};
+
+	struct ObjectTypeComponent {
+		PhysicsObjectType type;
+		ObjectTypeComponent() = default;
+		ObjectTypeComponent(const ObjectTypeComponent&) = default;
 	};
 
 	struct TagComponent {
@@ -132,16 +148,37 @@ namespace Ivory {
 		SpringComponent(const SpringComponent&) = default;
 	};
 
+	struct AnchoredSpringComponent {
+		Alchemist::PointMassSpring spring = { nullptr, 1.0f, 1.0f };
+		Alchemist::PointMass2D default_object;
+		Alchemist::PointMass2D anchor_object;
+		Alchemist::PointMass2D* attached_object;
+		Uuid attached_object_id = 0;
+
+		AnchoredSpringComponent() = default;
+		AnchoredSpringComponent(const AnchoredSpringComponent&) = default;
+	};
+
 	struct CableComponent {
 		Alchemist::Cable cable{ 1.0f };
 		Alchemist::PointMass2D* first_object;
 		Alchemist::PointMass2D* second_object;
 		Uuid first_object_id = 0;
 		Uuid second_object_id = 0;
-		bool is_rod = false;
 
 		CableComponent() = default;
 		CableComponent(const CableComponent&) = default;
+	};
+
+	struct AnchoredCableComponent {
+		Alchemist::Cable cable{ 1.0f };
+		Alchemist::PointMass2D default_object;
+		Alchemist::PointMass2D anchor_object;
+		Alchemist::PointMass2D* attached_object;
+		Uuid attached_object_id = 0;
+
+		AnchoredCableComponent() = default;
+		AnchoredCableComponent(const AnchoredCableComponent&) = default;
 	};
 
 	struct RodComponent {
@@ -150,10 +187,20 @@ namespace Ivory {
 		Alchemist::PointMass2D* second_object;
 		Uuid first_object_id = 0;
 		Uuid second_object_id = 0;
-		bool is_rod = false;
 
 		RodComponent() = default;
 		RodComponent(const RodComponent&) = default;
+	};
+
+	struct AnchoredRodComponent {
+		Alchemist::Rod rod{ 1.0f };
+		Alchemist::PointMass2D default_object;
+		Alchemist::PointMass2D anchor_object;
+		Alchemist::PointMass2D* attached_object;
+		Uuid attached_object_id = 0;
+
+		AnchoredRodComponent() = default;
+		AnchoredRodComponent(const AnchoredRodComponent&) = default;
 	};
 
 	struct GravityComponent {

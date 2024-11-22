@@ -63,6 +63,25 @@ namespace Ivory {
 			}
 		}
 
+		auto anchored_springs = m_registry.view<AnchoredSpringComponent>();
+		for (auto& entity : anchored_springs) {
+			AnchoredSpringComponent spring = m_registry.get<AnchoredSpringComponent>(entity);
+			TransformComponent t1 = m_registry.get<TransformComponent>(entity);
+			
+			t1.translation.z = 0;
+			spring.anchor_object.set_position(t1.translation);
+			if (spring.attached_object_id) {
+				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(spring.attached_object_id));
+				t2.translation.z = 0;
+				Renderer2D::draw_spring(t1.translation, t2.translation
+					, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+			else {
+				Renderer2D::draw_spring(t1.translation, { spring.default_object.get_position(), 0 }
+					, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+		}
+
 		auto cables = m_registry.view<CableComponent>();
 		for (auto& entity : cables) {
 			CableComponent cable = m_registry.get<CableComponent>(entity);
@@ -75,6 +94,23 @@ namespace Ivory {
 			}
 		}
 
+		auto anchored_cables = m_registry.view<AnchoredCableComponent>();
+		for (auto& entity : anchored_cables) {
+			TransformComponent t1 = m_registry.get<TransformComponent>(entity);
+			t1.translation.z = 0;
+			AnchoredCableComponent cable = m_registry.get<AnchoredCableComponent>(entity);
+			cable.anchor_object.set_position(t1.translation);
+
+			if (cable.attached_object_id) {
+				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(cable.attached_object_id));
+				t2.translation.z = 0;
+				Renderer2D::draw_cable(t1.translation, t2.translation, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+			else {
+				Renderer2D::draw_cable(t1.translation, { cable.default_object.get_position(), 0 }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+		}
+
 		auto rods = m_registry.view<RodComponent>();
 		for (auto& entity : rods) {
 			RodComponent rod = m_registry.get<RodComponent>(entity);
@@ -84,6 +120,23 @@ namespace Ivory {
 				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(rod.second_object_id));
 				t2.translation.z = 0;
 				Renderer2D::draw_cable(t1.translation, t2.translation, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+		}
+
+		auto anchored_rods = m_registry.view<AnchoredRodComponent>();
+		for (auto& entity : anchored_rods) {
+			AnchoredRodComponent rod = m_registry.get<AnchoredRodComponent>(entity);
+			TransformComponent t1 = m_registry.get<TransformComponent>(entity);
+			t1.translation.z = 0;
+			rod.anchor_object.set_position(t1.translation);
+
+			if (rod.attached_object_id) {
+				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(rod.attached_object_id));
+				t2.translation.z = 0;
+				Renderer2D::draw_cable(t1.translation, t2.translation, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+			}
+			else {
+				Renderer2D::draw_cable(t1.translation, { rod.default_object.get_position(), 0 }, (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 			}
 		}
 
@@ -113,6 +166,19 @@ namespace Ivory {
 				m_force_registry.add(comp.second_object, &comp.spring);
 			}
 		}
+		auto anchored_springs = m_registry.view<AnchoredSpringComponent>();
+		for (auto entity : anchored_springs) {
+			auto& comp = anchored_springs.get<AnchoredSpringComponent>(entity);
+			if (comp.attached_object_id) {
+				comp.attached_object = &get_by_uuid(comp.attached_object_id).get_component<PointMassComponent>().point_mass;
+				comp.spring.set_attached_object(&comp.anchor_object);
+				m_force_registry.add(comp.attached_object, &comp.spring);
+			}
+			else {
+				comp.spring.set_attached_object(&comp.anchor_object);
+				m_force_registry.add(&comp.default_object, &comp.spring);
+			}
+		}
 		auto cables = m_registry.view<CableComponent>();
 		for (auto entity : cables) {
 			auto& comp = cables.get<CableComponent>(entity);
@@ -123,6 +189,19 @@ namespace Ivory {
 				comp.cable.second = comp.second_object;
 			}
 		}
+		auto anchored_cables = m_registry.view<AnchoredCableComponent>();
+		for (auto entity : anchored_cables) {
+			auto& comp = anchored_cables.get<AnchoredCableComponent>(entity);
+			if (comp.attached_object_id) {
+				comp.attached_object = &get_by_uuid(comp.attached_object_id).get_component<PointMassComponent>().point_mass;
+				comp.cable.second = comp.attached_object;
+				comp.cable.first = &comp.anchor_object;
+			}
+			else {
+				comp.cable.second = &comp.default_object;
+				comp.cable.first = &comp.anchor_object;
+			}
+		}
 		auto rods = m_registry.view<RodComponent>();
 		for (auto entity : rods) {
 			auto& comp = rods.get<RodComponent>(entity);
@@ -131,6 +210,19 @@ namespace Ivory {
 				comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
 				comp.rod.first = comp.first_object;
 				comp.rod.second = comp.second_object;
+			}
+		}
+		auto anchored_rods = m_registry.view<AnchoredRodComponent>();
+		for (auto entity : anchored_rods) {
+			auto& comp = anchored_rods.get<AnchoredRodComponent>(entity);
+			if (comp.attached_object_id) {
+				comp.attached_object = &get_by_uuid(comp.attached_object_id).get_component<PointMassComponent>().point_mass;
+				comp.rod.second = comp.attached_object;
+				comp.rod.first = &comp.anchor_object;
+			}
+			else {
+				comp.rod.second = &comp.default_object;
+				comp.rod.first = &comp.anchor_object;
 			}
 		}
 		auto point_masses = m_registry.view<PointMassComponent>();
@@ -314,8 +406,11 @@ namespace Ivory {
 		copy_component_if_exists<PointMassComponent>(entity, new_entity);
 		copy_component_if_exists<SpringComponent>(entity, new_entity);
 		copy_component_if_exists<CableComponent>(entity, new_entity);
+		copy_component_if_exists<AnchoredSpringComponent>(entity, new_entity);
+		copy_component_if_exists<AnchoredCableComponent>(entity, new_entity);
 		copy_component_if_exists<GravityComponent>(entity, new_entity);
 		copy_component_if_exists<RodComponent>(entity, new_entity);
+		copy_component_if_exists<AnchoredRodComponent>(entity, new_entity);
 
 		return new_entity;
 	}
@@ -518,10 +613,19 @@ namespace Ivory {
 	void Scene::on_component_add<SpringComponent>(Entity entity, SpringComponent& component) {}
 
 	template<>
+	void Scene::on_component_add<AnchoredSpringComponent>(Entity entity, AnchoredSpringComponent& component) {}
+
+	template<>
 	void Scene::on_component_add<CableComponent>(Entity entity, CableComponent& component) {}
 
 	template<>
+	void Scene::on_component_add<AnchoredCableComponent>(Entity entity, AnchoredCableComponent& component) {}
+
+	template<>
 	void Scene::on_component_add<RodComponent>(Entity entity, RodComponent& component) {}
+
+	template<>
+	void Scene::on_component_add<AnchoredRodComponent>(Entity entity, AnchoredRodComponent& component) {}
 
 	template<>
 	void Scene::on_component_add<GravityComponent>(Entity entity, GravityComponent& component) {}

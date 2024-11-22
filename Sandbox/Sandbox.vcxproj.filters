@@ -30,6 +30,8 @@
     <ClInclude Include="src\Snapshot.h" />
     <ClInclude Include="src\Panels\Grapher.h" />
     <ClInclude Include="src\Panels\WaveViewport.h" />
+    <ClInclude Include="src\Action.h" />
+    <ClInclude Include="src\Panels\Items.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AlchemistSandbox.cpp" />
@@ -51,5 +53,7 @@
     <ClCompile Include="src\Panels\Timeline.cpp" />
     <ClCompile Include="src\Panels\Grapher.cpp" />
     <ClCompile Include="src\Panels\WaveViewport.cpp" />
+    <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\Panels\Items.cpp" />
   </ItemGroup>
 </Project>

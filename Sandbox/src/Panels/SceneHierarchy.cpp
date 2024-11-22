@@ -150,13 +150,29 @@ namespace Ivory {
 					spring.add_component<SpringComponent>();
 					set_selected(spring);
 				}
+				if (ImGui::MenuItem("Add Anchored Spring")) {
+					Entity spring = m_context->create_entity("New Anchored Spring");
+					spring.add_component<AnchoredSpringComponent>();
+					set_selected(spring);
+				}
 				if (ImGui::MenuItem("Add Cable")) {
 					Entity cable = m_context->create_entity("New Cable", true);
 					cable.add_component<CableComponent>();
 					set_selected(cable);
-				}if (ImGui::MenuItem("Add Rod")) {
+				}
+				if (ImGui::MenuItem("Add Anchored Cable")) {
+					Entity cable = m_context->create_entity("New Anchored Cable");
+					cable.add_component<AnchoredCableComponent>();
+					set_selected(cable);
+				}
+				if (ImGui::MenuItem("Add Rod")) {
 					Entity rod = m_context->create_entity("New Rod", true);
 					rod.add_component<RodComponent>();
+					set_selected(rod);
+				}
+				if (ImGui::MenuItem("Add Anchored Rod")) {
+					Entity rod = m_context->create_entity("New Anchored Rod");
+					rod.add_component<AnchoredRodComponent>();
 					set_selected(rod);
 				}
 				ImGui::EndPopup();
@@ -390,6 +406,28 @@ namespace Ivory {
 				component.second_object_id = 0;
 			});
 
+		draw_component<AnchoredSpringComponent>("Anchored Spring Component", entity, [this](auto& component) {
+			draw_label("Rest Length", component.spring.get_rest_length(), 0.1f, "The default length of the spring", 0.0f);
+			draw_label("Spring Constant", component.spring.get_constant(), 0.1f, "The hardness value of the spring", 0.0f);
+
+			ImGui::Text("Attached Object");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.attached_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.attached_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					component.attached_object_id = *(Uuid*)payload->Data;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##1"))
+				component.attached_object_id = 0;
+			});
+
 		draw_component<CableComponent>("Cable Component", entity, [this](auto& component) {
 			draw_label("Max Length", component.cable.get_max_length(), 0.1f, "The Maximum length the cable can achieve before tugging non-static objects", 0.0f);
 
@@ -427,6 +465,27 @@ namespace Ivory {
 				component.second_object_id = 0;
 			});
 
+		draw_component<AnchoredCableComponent>("Anchored Cable Component", entity, [this](auto& component) {
+			draw_label("Max Length", component.cable.get_max_length(), 0.1f, "The Maximum length the cable can achieve before tugging non-static objects", 0.0f);
+
+			ImGui::Text("Attached Object");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.attached_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.attached_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					component.attached_object_id = *(Uuid*)payload->Data;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##1"))
+				component.attached_object_id = 0;
+			});
+
 		draw_component<RodComponent>("Rod Component", entity, [this](auto& component) {
 			draw_label("Length", component.rod.get_length(), 0.1f, "The length of the solid rod", 0.0f);
 
@@ -462,6 +521,27 @@ namespace Ivory {
 			ImGui::SameLine();
 			if (ImGui::Button("X##2"))
 				component.second_object_id = 0;
+			});
+
+		draw_component<AnchoredRodComponent>("Anchored Rod Component", entity, [this](auto& component) {
+			draw_label("Length", component.rod.get_length(), 0.1f, "The length of the solid rod", 0.0f);
+
+			ImGui::Text("Attached Object 1");
+			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");
+			ImGui::SameLine();
+			if (component.attached_object_id)
+				ImGui::Button(m_context->get_by_uuid(component.attached_object_id).get_component<TagComponent>().tag.c_str());
+			else
+				ImGui::Button("None");
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+					component.attached_object_id = *(Uuid*)payload->Data;
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("X##1"))
+				component.attached_object_id = 0;
 			});
 
 		draw_component<GravityComponent>("Gravity Component", entity, [](auto& component) {

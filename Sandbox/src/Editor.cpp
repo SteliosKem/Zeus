@@ -14,6 +14,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_attach() {
+        m_action_manager.set_snapshot_manager(&m_snapshot_manager);
         m_hierarchy.set_grapher(&m_grapher);
         m_hierarchy.start_up();
         m_hierarchy.set_allow_action_ptr(true);
@@ -250,10 +251,10 @@ namespace Zeus {
             if (ImGui::BeginMenu("Edit"))
             {
                 if (ImGui::MenuItem("Undo", "Ctrl+Z")) {
-                    new_scene();
+                    m_action_manager.undo();
                 }
                 if (ImGui::MenuItem("Redo", "Ctrl+Y")) {
-                    new_scene();
+                    m_action_manager.redo();
                 }
 
                 ImGui::EndMenu();
@@ -284,6 +285,7 @@ namespace Zeus {
             m_grapher.on_imgui_render(!m_snapshot_manager.empty(), m_timeline.get_current_frame());
 
         m_wave_viewport.on_imgui_render();
+        m_items.on_imgui_render();
 
         if (m_show_timeline) {
             ImGui::Begin("Timeline");
@@ -355,6 +357,68 @@ namespace Zeus {
                 const wchar_t* path = (const wchar_t*)payload->Data;
                 open_scene(Project::get_assets_dir() / path);
             }
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ADD_ITEM")) {
+                PhysicsObjectType type = *(PhysicsObjectType*)payload->Data;
+                switch (type)
+                {
+                case Ivory::PointMassCircle: {
+                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    point_mass.add_component<SpriteRendererComponent>();
+                    point_mass.add_component<PointMassComponent>();
+                    m_action_manager.action(m_active_scene, { Create, point_mass });
+                    m_hierarchy.set_selected(point_mass);
+                }
+                    break;
+                case Ivory::PointMassSquare: {
+                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    point_mass.add_component<SpriteRendererComponent>();
+                    point_mass.add_component<PointMassComponent>();
+                    m_action_manager.action(m_active_scene, { Create, point_mass });
+                    m_hierarchy.set_selected(point_mass);
+                }
+                    break;
+                case Ivory::Wall: {
+                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    point_mass.add_component<SpriteRendererComponent>();
+                    point_mass.add_component<PointMassComponent>();
+                    m_action_manager.action(m_active_scene, { Create, point_mass });
+                    m_hierarchy.set_selected(point_mass);
+                }
+                    break;
+                case Ivory::Floor: {
+                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    //point_mass.get_component<TransformComponent>().translation = translation;
+                    point_mass.add_component<SpriteRendererComponent>();
+                    point_mass.add_component<PointMassComponent>();
+                    m_action_manager.action(m_active_scene, { Create, point_mass });
+                    m_hierarchy.set_selected(point_mass);
+                }
+                    break;
+                case Ivory::Spring: {
+                    Entity spring = m_active_scene->create_entity("New Spring", true);
+                    spring.add_component<SpringComponent>();
+                    m_action_manager.action(m_active_scene, { Create, spring });
+                    m_hierarchy.set_selected(spring);
+                }
+                    break;
+                case Ivory::Rope: {
+                    Entity cable = m_active_scene->create_entity("New Cable", true);
+                    cable.add_component<CableComponent>();
+                    m_action_manager.action(m_active_scene, { Create, cable });
+                    m_hierarchy.set_selected(cable);
+                }
+                    break;
+                case Ivory::Rod: {
+                    Entity rod = m_active_scene->create_entity("New Rod", true);
+                    rod.add_component<RodComponent>();
+                    m_action_manager.action(m_active_scene, { Create, rod });
+                    m_hierarchy.set_selected(rod);
+                }
+                    break;
+                default:
+                    break;
+                }
+            }
             ImGui::EndDragDropTarget();
         }
 
@@ -404,7 +468,8 @@ namespace Zeus {
                     }
                 }
                 record_mouse_pos = true;
-                selected.get_component<PointMassComponent>().will_update = false;
+                if(has_point_mass_component)
+                    selected.get_component<PointMassComponent>().will_update = false;
                 if (alt && m_using_gizmo == false) {
                     if (m_snapshot_manager.empty())
                         on_duplicate_entity();
@@ -417,11 +482,12 @@ namespace Zeus {
                 }
                 m_using_gizmo = true;
                 glm::vec3 translation, rotation, scale;
-                decompose_transform(transform, translation, rotation, scale);
+                Ivory::decompose_transform(transform, translation, rotation, scale);
                 transform_component.translation = translation;
                 transform_component.rotation = rotation;
                 transform_component.scale = scale;
-                selected.get_component<PointMassComponent>().point_mass.set_position(translation);
+                if(has_point_mass_component)
+                    selected.get_component<PointMassComponent>().point_mass.set_position(translation);
             }
             else {
                 if (record_mouse_pos && (m_scene_state == SceneState::Simulate || m_scene_state == SceneState::Recording)) {
@@ -466,20 +532,43 @@ namespace Zeus {
                     point_mass.get_component<TransformComponent>().translation = translation;
                     point_mass.add_component<SpriteRendererComponent>();
                     point_mass.add_component<PointMassComponent>();
+                    m_action_manager.action(m_active_scene, { Create, point_mass });
                     m_hierarchy.set_selected(point_mass);
                 }
                 if (ImGui::MenuItem("Add Spring")) {
                     Entity spring = m_active_scene->create_entity("New Spring", true);
                     spring.add_component<SpringComponent>();
+                    m_action_manager.action(m_active_scene, { Create, spring });
+                    m_hierarchy.set_selected(spring);
+                }
+                if (ImGui::MenuItem("Add Anchored Spring")) {
+                    Entity spring = m_active_scene->create_entity("New Anchored Spring");
+                    spring.add_component<AnchoredSpringComponent>();
+                    m_action_manager.action(m_active_scene, { Create, spring });
                     m_hierarchy.set_selected(spring);
                 }
                 if (ImGui::MenuItem("Add Cable")) {
                     Entity cable = m_active_scene->create_entity("New Cable", true);
                     cable.add_component<CableComponent>();
+                    m_action_manager.action(m_active_scene, { Create, cable });
                     m_hierarchy.set_selected(cable);
-                }if (ImGui::MenuItem("Add Rod")) {
+                }
+                if (ImGui::MenuItem("Add Anchored Cable")) {
+                    Entity cable = m_active_scene->create_entity("New Anchored Cable");
+                    cable.add_component<AnchoredCableComponent>();
+                    m_action_manager.action(m_active_scene, { Create, cable });
+                    m_hierarchy.set_selected(cable);
+                }
+                if (ImGui::MenuItem("Add Rod")) {
                     Entity rod = m_active_scene->create_entity("New Rod", true);
                     rod.add_component<RodComponent>();
+                    m_action_manager.action(m_active_scene, { Create, rod });
+                    m_hierarchy.set_selected(rod);
+                }
+                if (ImGui::MenuItem("Add Anchored Rod")) {
+                    Entity rod = m_active_scene->create_entity("New Anchored Rod");
+                    rod.add_component<AnchoredRodComponent>();
+                    m_action_manager.action(m_active_scene, { Create, rod });
                     m_hierarchy.set_selected(rod);
                 }
             }
@@ -804,7 +893,16 @@ namespace Zeus {
                 log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);
             }
             break;
+        case IV_KEY_Z:
+            if (control)
+                m_action_manager.undo();
+            break;
+        case IV_KEY_Y:
+            if (control)
+                m_action_manager.redo();
+            break;
         }
+        
     }
 
     bool EditorLayer::on_mouse_button_pressed(MouseButtonPressedEvent& e) {
@@ -904,6 +1002,7 @@ namespace Zeus {
         if (m_hierarchy.get_selected()) {
             Entity entity = m_editor_scene->copy_entity(m_hierarchy.get_selected());
             m_hierarchy.set_selected(entity);
+            m_action_manager.action(m_active_scene, Action(Create, entity));
         }
     }
 

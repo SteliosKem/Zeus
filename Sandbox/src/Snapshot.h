@@ -31,6 +31,7 @@ namespace Ivory {
 
 	class SnapshotManager {
 	public:
+		SnapshotManager() = default;
 		SnapshotManager(const std::shared_ptr<Scene>& scene) : m_scene_context{ scene } {}
 		void first_snapshot() {
 			m_first = Snapshot(m_scene_context, true);
