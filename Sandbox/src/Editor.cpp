@@ -142,6 +142,29 @@ namespace Zeus {
         m_frame_buffer->unbind();
     }
 
+    glm::vec2 EditorLayer::get_world_pos_from_mouse() {
+        auto [mx, my] = ImGui::GetMousePos();
+        mx -= m_viewport_bounds[0].x;
+        my -= m_viewport_bounds[0].y;
+        glm::vec2 viewport_size = m_viewport_bounds[1] - m_viewport_bounds[0];
+        my = viewport_size.y - my;
+
+        return get_world_pos_from_mouse({mx, my});
+    }
+
+    glm::vec2 EditorLayer::get_world_pos_from_mouse(const glm::vec2& mouse_coords) {
+        glm::vec2 viewport_size = m_viewport_bounds[1] - m_viewport_bounds[0];
+        const glm::vec4 viewport{ 0.0f, 0.0f, viewport_size.x, viewport_size.y };
+        const glm::vec3 screen_position{ mouse_coords.x, mouse_coords.y, 0.5f };
+        glm::vec3 world_pos = glm::unProject(screen_position, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), viewport);
+
+        float l = -m_editor_camera.get_position().z / (world_pos.z - m_editor_camera.get_position().z);
+        float a = m_editor_camera.get_position().x + l * (world_pos.x - m_editor_camera.get_position().x);
+        float b = m_editor_camera.get_position().y + l * (world_pos.y - m_editor_camera.get_position().y);
+
+        return { a, b };
+    }
+
     void EditorLayer::on_imgui_render() {
         m_setup_window.on_imgui_render();
 
@@ -362,34 +385,39 @@ namespace Zeus {
                 switch (type)
                 {
                 case Ivory::PointMassCircle: {
-                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    Entity point_mass = m_active_scene->create_entity("New Circle Point Mass");
                     point_mass.add_component<SpriteRendererComponent>();
                     point_mass.add_component<PointMassComponent>();
+                    point_mass.get_component<PointMassComponent>().is_circle = true;
+                    point_mass.get_component<TransformComponent>().translation = {get_world_pos_from_mouse(), 0};
                     m_action_manager.action(m_active_scene, { Create, point_mass });
                     m_hierarchy.set_selected(point_mass);
                 }
                     break;
                 case Ivory::PointMassSquare: {
-                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    Entity point_mass = m_active_scene->create_entity("New Square Point Mass");
                     point_mass.add_component<SpriteRendererComponent>();
                     point_mass.add_component<PointMassComponent>();
+                    point_mass.get_component<TransformComponent>().translation = { get_world_pos_from_mouse(), 0 };
                     m_action_manager.action(m_active_scene, { Create, point_mass });
                     m_hierarchy.set_selected(point_mass);
                 }
                     break;
                 case Ivory::Wall: {
-                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    Entity point_mass = m_active_scene->create_entity("New Wall");
                     point_mass.add_component<SpriteRendererComponent>();
                     point_mass.add_component<PointMassComponent>();
+                    point_mass.get_component<TransformComponent>().translation = { get_world_pos_from_mouse(), 0 };
                     m_action_manager.action(m_active_scene, { Create, point_mass });
                     m_hierarchy.set_selected(point_mass);
                 }
                     break;
                 case Ivory::Floor: {
-                    Entity point_mass = m_active_scene->create_entity("New Point Mass");
+                    Entity point_mass = m_active_scene->create_entity("New Floor");
                     //point_mass.get_component<TransformComponent>().translation = translation;
                     point_mass.add_component<SpriteRendererComponent>();
                     point_mass.add_component<PointMassComponent>();
+                    point_mass.get_component<TransformComponent>().translation = { get_world_pos_from_mouse(), 0 };
                     m_action_manager.action(m_active_scene, { Create, point_mass });
                     m_hierarchy.set_selected(point_mass);
                 }
@@ -515,18 +543,12 @@ namespace Zeus {
 
         std::cout << mousex << " " << mousey << "\n";
         if (ImGui::BeginPopupContextWindow(0)) {
-            glm::vec4 normalized_coords = { normalize_coordinates({mx, my}, viewport_size), -1.0f, 1.0f };
-            //my = viewport_size.y - my;
             glm::vec3 translation;
 
             if (!selected) {
                 if (ImGui::MenuItem("Add Point Mass")) {
                     if (mousex >= 0 && mousey >= 0 && mousex < (int)m_viewport_size.x && mousey < (int)m_viewport_size.y) {
-                        const glm::vec4 viewport{0.0f, 0.0f, viewport_size.x, viewport_size.y};
-                        const glm::vec3 screen_position{mx, my, 0.5f};
-                        glm::vec3 world_pos = glm::unProject(screen_position, m_editor_camera.get_view_matrix(), m_editor_camera.get_projection(), viewport);
-                        translation = world_pos;
-                        translation.z = 0;
+                        translation = { get_world_pos_from_mouse({mx, my}), 0 };
                     }
                     Entity point_mass = m_active_scene->create_entity("New Point Mass");
                     point_mass.get_component<TransformComponent>().translation = translation;
