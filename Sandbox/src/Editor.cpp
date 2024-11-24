@@ -926,19 +926,19 @@ namespace Zeus {
             break;
 
         case IV_KEY_Q:
-            if (!m_using_gizmo)
+            if (!m_using_gizmo && m_viewport_focused)
                 m_gizmo = ImGuizmo::OPERATION::TRANSLATE;
             break;
         case IV_KEY_W:
-            if (!m_using_gizmo)
+            if (!m_using_gizmo && m_viewport_focused)
                 m_gizmo = ImGuizmo::OPERATION::ROTATE;
             break;
         case IV_KEY_E:
-            if (!m_using_gizmo)
+            if (!m_using_gizmo && m_viewport_focused)
                 m_gizmo = ImGuizmo::OPERATION::SCALE;
             break;
         case IV_KEY_R:
-            if (!m_using_gizmo)
+            if (!m_using_gizmo && m_viewport_focused)
                 m_gizmo = -1;
             break;
         case IV_KEY_D:
