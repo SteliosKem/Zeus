@@ -181,6 +181,10 @@ namespace Ivory {
 			out << YAML::BeginMap;
 			out << YAML::Key << "RestLength";
 			out << YAML::Value << comp.spring.get_rest_length();
+			out << YAML::Key << "Height";
+			out << YAML::Value << comp.height;
+			out << YAML::Key << "Revolutions";
+			out << YAML::Value << comp.revolutions;
 			out << YAML::Key << "BothObjectForce";
 			out << YAML::Value << comp.spring.get_first_object_affected();
 			out << YAML::Key << "SpringConstant";
@@ -378,7 +382,8 @@ namespace Ivory {
 						component.first_object_id = spring_component["FirstObjectID"].as<uint64_t>();
 						component.second_object_id = spring_component["SecondObjectID"].as<uint64_t>();
 						component.spring.first_object_affected(spring_component["BothObjectForce"].as<bool>());
-
+						component.height = spring_component["Height"].as<float>();
+						component.revolutions = spring_component["Revolutions"].as<int>();
 					}
 
 					auto cable_component = entity["CableComponent"];

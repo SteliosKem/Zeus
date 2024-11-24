@@ -341,6 +341,9 @@ namespace Ivory {
 			draw_label("Rest Length", component.spring.get_rest_length(), 0.1f, "The default length of the spring", 0.0f);
 			draw_label("Spring Constant", component.spring.get_constant(), 0.1f, "The hardness value of the spring", 0.0f);
 
+			draw_label("Spring Height", component.height, 0.1f, "The height of the spring (visual)", 0.0f);
+			draw_int_label("Revolutions", component.revolutions, 0.1f, "The number of revolutions (visual)", 0.0f);
+
 			draw_checkbox("Force on Both Sides", &component.spring.get_first_object_affected(), "If this is set to true, the spring will excert force only on the second attached object, making the first one acting as an anchor");
 			ImGui::Text("Attached Object 1");
 			if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop a Point Mass from the Hierarchy to set this value");

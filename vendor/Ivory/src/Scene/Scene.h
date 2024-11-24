@@ -28,6 +28,7 @@ namespace Ivory {
 		void clear_entities();
 
 		void set_selected_entity(Entity entity);
+		void draw_selection(bool draw, const glm::vec2& point_a = { 0.0f, 0.0f }, const glm::vec2& point_b = {0.0f, 0.0f});
 		void remove_selected_entity();
 
 		void on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame);
@@ -53,8 +54,6 @@ namespace Ivory {
 		entt::registry& get_registry() { return m_registry; }
 		std::vector<entt::entity>& get_point_mass_entities() { return m_point_mass_entities; }
 	private:
-		
-
 		SceneType m_scene_type;
 
 		template<typename T>
@@ -83,5 +82,8 @@ namespace Ivory {
 
 		int32_t m_current_frame;
 		std::vector<CollisionInfo> m_collisions;
+
+		glm::vec2 m_selection[2];
+		bool m_draw_selection = false;
 	};
 }

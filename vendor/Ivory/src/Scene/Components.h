@@ -139,10 +139,12 @@ namespace Ivory {
 
 	struct SpringComponent {
 		Alchemist::PointMassSpring spring = {nullptr, 1.0f, 1.0f};
-		Alchemist::PointMass2D* first_object;
-		Alchemist::PointMass2D* second_object;
+		Alchemist::PointMass2D* first_object = nullptr;
+		Alchemist::PointMass2D* second_object = nullptr;
 		Uuid first_object_id = 0;
 		Uuid second_object_id = 0;
+		float height = 2.0f;
+		int revolutions = 20;
 
 		SpringComponent() = default;
 		SpringComponent(const SpringComponent&) = default;

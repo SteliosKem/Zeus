@@ -30,6 +30,9 @@ namespace Ivory {
 		Circle* circ_select{ nullptr };
 		glm::mat4* quad_transform{ nullptr };
 
+		if (m_draw_selection)
+			Renderer2D::draw_selection(m_selection[0], m_selection[1]);
+
 		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
 		for (auto entity : group) {
 			auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
@@ -59,7 +62,7 @@ namespace Ivory {
 				TransformComponent t2 = m_registry.get<TransformComponent>(get_by_uuid(spring.second_object_id));
 				t2.translation.z = 0;
 				Renderer2D::draw_spring(t1.translation, t2.translation
-					, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+					, spring.height, spring.revolutions, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 			}
 		}
 
@@ -153,6 +156,12 @@ namespace Ivory {
 
 	void Scene::remove_selected_entity() {
 		m_selected = false;
+	}
+
+	void Scene::draw_selection(bool draw, const glm::vec2& point_a, const glm::vec2& point_b) {
+		m_draw_selection = draw;
+		m_selection[0] = point_a;
+		m_selection[1] = point_b;
 	}
 
 	void Scene::on_play() {
@@ -303,6 +312,9 @@ namespace Ivory {
 		Circle* circ_select{ nullptr };
 		glm::mat4* quad_transform{ nullptr };
 
+		if (m_draw_selection)
+			Renderer2D::draw_selection(m_selection[0], m_selection[1]);
+
 		auto group = m_registry.group<TransformComponent>(entt::get<SpriteRendererComponent, PointMassComponent>);
 		for (auto entity : group) {
 			auto& [transform, sprite, point_mass] = group.get<TransformComponent, SpriteRendererComponent, PointMassComponent>(entity);
@@ -330,7 +342,7 @@ namespace Ivory {
 			SpringComponent spring = m_registry.get<SpringComponent>(entity);
 			if (spring.first_object_id && spring.second_object_id)
 				Renderer2D::draw_spring(glm::vec3(spring.first_object->get_position(), 0.0f), glm::vec3(spring.second_object->get_position(), 0.0f)
-				, 2.0f, 20, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
+				, spring.height, spring.revolutions, spring.spring.get_rest_length(), (m_selected && m_selected_entity == entity) ? glm::vec4(0.8f, 0.2f, 0.1f, 1.0f) : glm::vec4(1.0f), (int)entity);
 		}
 
 		auto cables = m_registry.view<CableComponent>();

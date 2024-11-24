@@ -440,13 +440,18 @@ namespace Ivory {
 		glm::vec3 cross_vec = glm::cross(npp_vec, glm::vec3(0.0, 0.0, 1.0));
 		cross_vec /= sqrtf(cross_vec.x * cross_vec.x + cross_vec.y * cross_vec.y);
 		glm::vec3 last_pos = pos_a;
+		glm::vec3 second_pos = (last_pos + npp_vec) + (cross_vec * n_height / 2.0f);
+		draw_line(last_pos, second_pos, color, entity_id);
+		last_pos = second_pos;
 
-		for (int i = 0; i < revolutions; i++) {
-			glm::vec3 second_pos = (last_pos + npp_vec) + (cross_vec * n_height) * ((i % 2 == 0) ? 1.0f : -1.0f);
+		for (int i = 1; i < revolutions - 1; i++) {
+			second_pos = (last_pos + npp_vec) + (cross_vec * n_height) * ((i % 2 == 0) ? 1.0f : -1.0f);
 			draw_line(last_pos, second_pos, color, entity_id);
 			last_pos = second_pos;
 		}
-		
+
+		second_pos = pos_b;
+		draw_line(last_pos, second_pos, color, entity_id);
 	}
 
 	void Renderer2D::draw_cable(const glm::vec3& pos_a, const glm::vec3& pos_b, const glm::vec4& color, int entity_id) {
@@ -462,4 +467,12 @@ namespace Ivory {
 
 	void Renderer2D::reset_stats() { memset(&s_data.statistics, 0, sizeof(s_data.statistics)); }
 	const Renderer2D::Statistics& Renderer2D::get_stats() { return s_data.statistics; }
+
+	void Renderer2D::draw_selection(const glm::vec2& point_a, const glm::vec2& point_b) {
+		static constexpr glm::vec4 color{ 196.0f / 255, 211.0f / 255, 209.0f / 255, 1 };
+		draw_line({ point_a, 0 }, {point_b.x, point_a.y, 0}, color);
+		draw_line({ point_a, 0 }, { point_a.x, point_b.y, 0 }, color);
+		draw_line({ point_b, 0 }, { point_b.x, point_a.y, 0 }, color);
+		draw_line({ point_b, 0 }, { point_a.x, point_b.y, 0 }, color);
+	}
 }

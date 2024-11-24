@@ -74,7 +74,10 @@ namespace Zeus {
         static float rot = 0;
         rot += dt;
         float x_pos = 2 * sinf(rot);
-
+        if(m_mouse_holding)
+            m_active_scene->draw_selection(true, m_selection[0], m_selection[1]);
+        else
+            m_active_scene->draw_selection(false);
         switch (m_scene_state) {
         case SceneState::Edit: {
             if (m_viewport_hovered && m_viewport_focused)
@@ -136,6 +139,9 @@ namespace Zeus {
             //m_hierarchy.set_selected(pixel_data == -1 ? Entity() : Entity((entt::entity)pixel_data, m_active_scene.get()));
 
             m_entity_hovered = pixel_data == -1 ? Entity() : Entity((entt::entity)pixel_data, m_active_scene.get());
+
+            if (m_mouse_holding)
+                m_selection[1] = get_world_pos_from_mouse({mx, my});
         }
        
 
@@ -887,6 +893,7 @@ namespace Zeus {
         EventDispatcher dispatcher(e);
         dispatcher.dispatch<KeyPressedEvent>(IV_BIND_EVENT_FN(EditorLayer::on_key_pressed));
         dispatcher.dispatch<MouseButtonPressedEvent>(IV_BIND_EVENT_FN(EditorLayer::on_mouse_button_pressed));
+        dispatcher.dispatch<MouseButtonReleasedEvent>(IV_BIND_EVENT_FN(EditorLayer::on_mouse_button_released));
     }
     bool EditorLayer::on_key_pressed(KeyPressedEvent& e) {
         if (e.get_repeat_count() > 0)
@@ -967,8 +974,22 @@ namespace Zeus {
         if ((e.get_mouse_button() == IV_MOUSE_BUTTON_1 || e.get_mouse_button() == IV_MOUSE_BUTTON_2) && m_viewport_hovered && !ImGuizmo::IsOver()) {
             if (m_entity_hovered)
                 m_hierarchy.set_selected(m_entity_hovered);
-            else
+            else {
+                m_mouse_holding = true;
+                m_selection[0] = get_world_pos_from_mouse();
                 on_deselect();
+            }
+        }
+        return false;
+    }
+
+    bool EditorLayer::on_mouse_button_released(MouseButtonReleasedEvent& e) {
+        if (e.get_mouse_button() == IV_MOUSE_BUTTON_1) {
+            m_mouse_holding = false;
+            m_check_for_hold = false;
+
+            m_selection[0] = { 0, 0 };
+            m_selection[1] = { 0, 0 };
         }
         return false;
     }

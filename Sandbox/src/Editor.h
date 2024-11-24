@@ -49,6 +49,7 @@ namespace Zeus {
 	private:
 		bool on_key_pressed(KeyPressedEvent& e);
 		bool on_mouse_button_pressed(MouseButtonPressedEvent& e);
+		bool on_mouse_button_released(MouseButtonReleasedEvent& e);
 
 		void on_deselect();
 
@@ -166,6 +167,10 @@ namespace Zeus {
 		bool m_show_inspector = true;
 		bool m_show_grapher = true;
 		bool m_show_scene_graph = true;
+
+		bool m_check_for_hold = false;
+		bool m_mouse_holding = false;
+		glm::vec2 m_selection[2];
 	};
 
 	class Editor : public Application {
