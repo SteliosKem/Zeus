@@ -901,18 +901,20 @@ namespace Zeus {
             }
             break;
         case IV_KEY_DELETE:
-            if (m_snapshot_manager.empty())
-            {
-                m_active_scene->destroy_entity(m_hierarchy.get_selected());
-                m_hierarchy.empty_selection();
-            }
-            else if (m_timeline.get_current_frame() == 0) {
-                clear_recording();
-                m_active_scene->destroy_entity(m_hierarchy.get_selected());
-                m_hierarchy.empty_selection();
-            }
-            else {
-                log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);
+            if (m_viewport_focused && m_hierarchy.get_selected()) {
+                if (m_snapshot_manager.empty())
+                {
+                    m_active_scene->destroy_entity(m_hierarchy.get_selected());
+                    m_hierarchy.empty_selection();
+                }
+                else if (m_timeline.get_current_frame() == 0) {
+                    clear_recording();
+                    m_active_scene->destroy_entity(m_hierarchy.get_selected());
+                    m_hierarchy.empty_selection();
+                }
+                else {
+                    log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);
+                }
             }
             break;
         case IV_KEY_Z:
