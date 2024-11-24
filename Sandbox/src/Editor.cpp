@@ -648,6 +648,9 @@ namespace Zeus {
                         m_tether_type = TetherType::Rod;
                     }
                 }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Delete Entity"))
+                    delete_entity(selected);
             }
             ImGui::EndPopup();
         }
@@ -834,6 +837,49 @@ namespace Zeus {
         ImGui::End();
     }
 
+    void EditorLayer::delete_entity(Entity entity) {
+        bool no_snapshots = m_snapshot_manager.empty();
+        bool first_frame = m_timeline.get_current_frame() == 0;
+        if (!no_snapshots && !first_frame)
+        {
+            log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);
+            return;
+        }
+        if (first_frame)
+            clear_recording();
+
+        if (entity.has_component<PointMassComponent>()) {
+            auto springs = m_active_scene->get_registry().view<SpringComponent>();
+            auto cables = m_active_scene->get_registry().view<CableComponent>();
+            auto rods = m_active_scene->get_registry().view<RodComponent>();
+            Uuid id = entity.get_component<IdComponent>().id;
+            for (auto& spring : springs) {
+                SpringComponent& comp = m_active_scene->get_registry().get<SpringComponent>(spring);
+                if (comp.first_object_id == id)
+                    comp.first_object_id = 0;
+                if (comp.second_object_id == id)
+                    comp.second_object_id = 0;
+            }
+            for (auto& cable : cables) {
+                CableComponent& comp = m_active_scene->get_registry().get<CableComponent>(cable);
+                if (comp.first_object_id == id)
+                    comp.first_object_id = 0;
+                if (comp.second_object_id == id)
+                    comp.second_object_id = 0;
+            }
+            for (auto& rod : rods) {
+                RodComponent& comp = m_active_scene->get_registry().get<RodComponent>(rod);
+                if (comp.first_object_id == id)
+                    comp.first_object_id = 0;
+                if (comp.second_object_id == id)
+                    comp.second_object_id = 0;
+            }
+        }
+        m_active_scene->destroy_entity(m_hierarchy.get_selected());
+        m_hierarchy.empty_selection();
+
+    }
+
     void EditorLayer::on_event(Event& e) {
         m_camera_controller.on_event(e);
         m_editor_camera.on_event(e);
@@ -902,19 +948,7 @@ namespace Zeus {
             break;
         case IV_KEY_DELETE:
             if (m_viewport_focused && m_hierarchy.get_selected()) {
-                if (m_snapshot_manager.empty())
-                {
-                    m_active_scene->destroy_entity(m_hierarchy.get_selected());
-                    m_hierarchy.empty_selection();
-                }
-                else if (m_timeline.get_current_frame() == 0) {
-                    clear_recording();
-                    m_active_scene->destroy_entity(m_hierarchy.get_selected());
-                    m_hierarchy.empty_selection();
-                }
-                else {
-                    log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);
-                }
+                delete_entity(m_hierarchy.get_selected());
             }
             break;
         case IV_KEY_Z:

@@ -70,6 +70,7 @@ namespace Zeus {
 		void on_scene_play();
 		void on_scene_stop();
 		void clear_recording();
+		void delete_entity(Entity entity);
 
 		glm::vec2 get_world_pos_from_mouse(); // Check now for mouse coordinates
 		glm::vec2 get_world_pos_from_mouse(const glm::vec2& mouse_coords);

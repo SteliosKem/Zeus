@@ -280,36 +280,9 @@ namespace Ivory {
 			}
 		}
 
-		/*if (ImGui::Button("Add Component"))
-			ImGui::OpenPopup("AddComponent");
-
-		if (ImGui::BeginPopup("AddComponent")) {
-			if (ImGui::MenuItem("Sprite Renderer")) {
-				m_selection_context.add_component<SpriteRendererComponent>();
-				ImGui::CloseCurrentPopup();
-			}
-			if (ImGui::MenuItem("Circle Renderer")) {
-				m_selection_context.add_component<CircleRendererComponent>();
-				ImGui::CloseCurrentPopup();
-			}
-			if (ImGui::MenuItem("Point Mass")) {
-				m_selection_context.add_component<PointMassComponent>();
-				ImGui::CloseCurrentPopup();
-			}
-			if (ImGui::MenuItem("Spring")) {
-				m_selection_context.add_component<SpringComponent>();
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
-		}*/
-
 		draw_component<TransformComponent>("Transform Component", entity, [entity, this](auto& component) {
 			float speed = 0.1f;
-
-			//glm::vec2 translation{component.translation.x, component.translation.y};
 			draw_vec3_internal(entity, "Translation", component.translation, speed / 2);
-			//component.translation = { translation, 0.0f };
-
 
 			glm::vec3 rotation = glm::degrees(component.rotation);
 			draw_vec3_control("Rotation", rotation, speed / 2);
@@ -319,7 +292,6 @@ namespace Ivory {
 
 		draw_component<SpriteRendererComponent>("Sprite Renderer Component", entity, [](auto& component) {
 			ImGui::ColorPicker4("Color", glm::value_ptr(component.color));
-			//ImGui::ColorEdit4("Color", glm::value_ptr(component.color));
 		});
 
 		draw_component<CircleRendererComponent>("Circle Renderer Component", entity, [](auto& component) {
@@ -343,7 +315,6 @@ namespace Ivory {
 			component.point_mass.set_only_collide_plainly(only_plain_collision);
 			draw_checkbox("Affected by Gravity", &component.affected_by_gravity);
 
-			//ImGui::DragFloat2("Position", glm::value_ptr(component.point_mass.get_position()), 0.1f);
 			glm::vec3 vel = { component.point_mass.get_velocity() , 0 };
 			draw_vec3_internal(entity, "Velocity", vel, 0.1/5);
 			component.point_mass.set_velocity({ vel.x, vel.y });
