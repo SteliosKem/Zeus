@@ -146,6 +146,11 @@ namespace Ivory {
 		m_data.vsync = enabled;
 	}
 
+	void WinPlatformWindow::set_title(const std::string& title) {
+		m_data.title = title;
+		glfwSetWindowTitle(m_window, title.c_str());
+	}
+
 	bool WinPlatformWindow::get_vsync() const { return m_data.vsync; }
 
 	void WinPlatformWindow::set_image(const std::string& path) {

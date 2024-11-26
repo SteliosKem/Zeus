@@ -29,6 +29,7 @@ namespace Ivory {
 
 		virtual void* get_native() const = 0;
 		virtual void set_image(const std::string& path) = 0;
+		virtual void set_title(const std::string& title) = 0;
 
 		static Window* create(const WindowProps& props = WindowProps{});
 	};

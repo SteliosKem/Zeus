@@ -1025,6 +1025,8 @@ namespace Zeus {
     }
 
     void EditorLayer::open_scene(const std::filesystem::path& file_path) {
+        Application::get().get_window().set_title("Zeus - " + file_path.filename().replace_extension().string());
+
         if (file_path.extension().string() != ".iscene") {
             log_and_notify("Cannot open non-scene file in the Viewport", LogType::Warn);
             return;
@@ -1035,7 +1037,6 @@ namespace Zeus {
         
 
         std::shared_ptr<Scene> new_scene = std::make_shared<Scene>();
-        
 
         SceneSerializer serializer(new_scene);
         if (serializer.deserialize(file_path.string())) {

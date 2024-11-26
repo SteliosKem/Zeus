@@ -18,6 +18,7 @@ namespace Ivory {
 		inline void set_event_callback(const EventCallback& callback) override { m_data.event_callback = callback; }
 		void set_vsync(bool enabled);
 		bool get_vsync() const;
+		void set_title(const std::string& title) override;
 
 		void set_image(const std::string& path) override;
 
