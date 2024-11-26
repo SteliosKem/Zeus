@@ -5,6 +5,7 @@
 #include "Scene/Entity.h"
 #include <Core/IvoryEngine.h>
 #include "Grapher.h"
+#include <variant>
 
 namespace Ivory {
 	class SceneHierarchy {
@@ -25,6 +26,10 @@ namespace Ivory {
 		void draw_components(Entity entity);
 		void add_to_graph(Entity entity, const std::string& quantity, Quantity quantity_type);
 		void draw_vec3_internal(Entity entity, const std::string& label, glm::vec3& values, float speed, float reset_value = 0.0f, float column_width = 120.0f);
+		void draw_create_menu();
+		void attach_drag_drop(SpringComponent& component, bool first_attachment);
+		void attach_drag_drop(CableComponent& component, bool first_attachment);
+		void attach_drag_drop(RodComponent& component, bool first_attachment);
 
 		bool m_is_playing;
 
