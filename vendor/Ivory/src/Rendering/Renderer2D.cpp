@@ -454,6 +454,15 @@ namespace Ivory {
 		draw_line(last_pos, second_pos, color, entity_id);
 	}
 
+	void Renderer2D::draw_arrow(const glm::vec3& pos_a, const glm::vec3& pos_b, const glm::vec4& color, int entity_id) {
+		draw_line(pos_a, pos_b, color, entity_id);
+		glm::vec3 arrow_base = pos_a + ((pos_b - pos_a) * 0.9f);
+		glm::vec3 cross_vec = glm::cross(pos_b - pos_a, glm::vec3(0.0, 0.0, 1.0));
+		cross_vec = glm::normalize(cross_vec);
+		draw_line(pos_b, arrow_base + (cross_vec * .2f), color, entity_id);
+		draw_line(pos_b, arrow_base + (-cross_vec * 0.2f), color, entity_id);
+	}
+
 	void Renderer2D::draw_cable(const glm::vec3& pos_a, const glm::vec3& pos_b, const glm::vec4& color, int entity_id) {
 		draw_line(pos_a, pos_b, color, entity_id);
 	}

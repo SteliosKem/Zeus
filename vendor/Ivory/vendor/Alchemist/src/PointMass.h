@@ -60,7 +60,6 @@ namespace Alchemist {
 	private:
 		void integrate(float dt);
 		void clear_force_accumulator() { m_force_accumulator = { 0.0f, 0.0f }; }
-		
 	private:
 		Circle m_shape;
 
@@ -83,7 +82,6 @@ namespace Alchemist {
 
 		// Holds overall force for every update pass
 		glm::vec2 m_force_accumulator{0.0f};
-		
 	};
 
 	class ForceGenerator2D {

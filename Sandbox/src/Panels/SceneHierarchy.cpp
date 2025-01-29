@@ -393,6 +393,10 @@ namespace Ivory {
 			draw_checkbox("Ignore Collisions", &component.ignore_collisions, "Determines if the object will take part in collisions");
 			draw_checkbox("Is Circle", &component.is_circle, "Used for circle collisions and correct visual feedback");
 
+			ImGui::Separator();
+
+			draw_checkbox("Show Velocity", &component.show_velocity, "Visualise the object's velocity inside the editor");
+
 			if (ImGui::Button("Add Force")) {
 				component.forces_info["Force " + std::to_string(component.force_counter++)];
 			}

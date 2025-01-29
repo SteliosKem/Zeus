@@ -51,6 +51,9 @@ namespace Ivory {
 				tsfm = transform.get_transform();
 				quad_transform = &tsfm;
 			}
+
+			
+			Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ point_mass.point_mass.get_acceleration(), 0}, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
 		}
 
 		auto springs = m_registry.view<SpringComponent>();
@@ -334,7 +337,14 @@ namespace Ivory {
 				tsfm = transform.get_transform();
 				quad_transform = &tsfm;
 			}
-			
+			if (point_mass.show_velocity) {
+				glm::vec2 vel = point_mass.point_mass.get_velocity();
+				//if (glm::length(vel) > 3.0f) {
+					vel = glm::normalize(vel);
+					vel *= 3;
+				//}
+				Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vel, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
+			}
 		}
 
 		auto springs = m_registry.view<SpringComponent>();

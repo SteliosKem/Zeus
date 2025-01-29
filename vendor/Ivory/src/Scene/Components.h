@@ -124,6 +124,7 @@ namespace Ivory {
 			float force_length;
 			float angle;
 		};
+		bool show_velocity;
 		bool is_circle = false;
 		Alchemist::PointMass2D point_mass = {1.0f};
 		bool affected_by_gravity = true;
