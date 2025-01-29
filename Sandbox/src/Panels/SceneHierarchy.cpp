@@ -165,7 +165,7 @@ namespace Ivory {
 	}
 
 	void SceneHierarchy::on_imgui_render(bool is_playing, bool show_inspector, bool show_hierarchy) {
-		m_is_playing = is_playing;
+		//m_is_playing = is_playing;
 		if (show_hierarchy) {
 			ImGui::Begin("Scene Hierarchy");
 			
@@ -229,10 +229,7 @@ namespace Ivory {
 		// Right click menu
 		if (ImGui::BeginPopupContextItem()) {
 			if (ImGui::MenuItem("Delete Entity")) {
-				if (!m_is_playing)
-					deleted = true;
-				else
-					ImGui::InsertNotification({ ImGuiToastType::Info, 3000, "Cannot delete entities while in runtime!" });
+				deleted = true;
 			}
 			if (ImGui::MenuItem("Duplicate Entity")) {
 				if (m_allowed_to_action)
@@ -257,11 +254,9 @@ namespace Ivory {
 		if (ImGui::IsItemHovered()) ImGui::SetTooltip("Drag and Drop");
 
 		// On delete code
-		if (deleted) {
-			m_context->destroy_entity(entity);
-			if (m_selection_context == entity)
-				m_selection_context = {};
-		}
+		if (deleted)
+			m_on_delete_callback(entity);
+
 		ImGui::PopID();
 	}
 

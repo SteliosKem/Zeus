@@ -18,6 +18,7 @@ namespace Zeus {
         m_hierarchy.set_grapher(&m_grapher);
         m_hierarchy.start_up();
         m_hierarchy.set_allow_action_ptr(true);
+        m_hierarchy.set_on_delete_callback([this](Entity entity) {this->delete_entity(entity); });
         m_setup_window.show(false);
 
         m_play_icon = Texture2D::create("Assets/EditorIcons/play.png");
@@ -846,6 +847,10 @@ namespace Zeus {
     void EditorLayer::delete_entity(Entity entity) {
         bool no_snapshots = m_snapshot_manager.empty();
         bool first_frame = m_timeline.get_current_frame() == 0;
+        if (m_scene_state != SceneState::Edit) {
+            log_and_notify("Cannot delete entities while not in edit mode!", LogType::Info);
+            return;
+        }
         if (!no_snapshots && !first_frame)
         {
             log_and_notify("Cannot delete entities while viewing a recording!", LogType::Info);

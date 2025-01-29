@@ -14,6 +14,7 @@ namespace Ivory {
 		SceneHierarchy(const std::shared_ptr<Scene>& scene);
 		void set_context(const std::shared_ptr<Scene>& scene);
 		void set_allow_action_ptr(bool allow) { m_allowed_to_action = allow; }
+		void set_on_delete_callback(std::function<void(Entity)> callback) { m_on_delete_callback = callback; }
 		void empty_selection() { m_selection_context = {}; }
 		void start_up() { m_knot_icon = Texture2D::create("Assets/EditorIcons/knot.png"); }
 
@@ -31,7 +32,7 @@ namespace Ivory {
 		void attach_drag_drop(CableComponent& component, bool first_attachment);
 		void attach_drag_drop(RodComponent& component, bool first_attachment);
 
-		bool m_is_playing;
+		std::function<void(Entity)> m_on_delete_callback;
 
 		bool m_allowed_to_action;
 

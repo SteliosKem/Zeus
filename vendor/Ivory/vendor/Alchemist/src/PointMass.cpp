@@ -247,7 +247,7 @@ namespace Alchemist {
 
 		glm::vec2 center_b = find_mean_vector(polygons);
 
-		if (glm::dot(center_b - circle_center, normal) > 0)
+		if (glm::dot(center_b - circle_center, normal) < 0)
 			normal = -normal;
 
 		return Collision{ depth, normal };
@@ -382,4 +382,4 @@ namespace Alchemist {
 
 		return 1;
 	}
-}
+} 
