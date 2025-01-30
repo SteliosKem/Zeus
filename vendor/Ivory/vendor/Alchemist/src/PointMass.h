@@ -100,6 +100,7 @@ namespace Alchemist {
 		Registry registrations;
 	public:
 		void add(PointMass2D* point_mass, ForceGenerator2D* force_gen) { registrations.push_back({ point_mass, force_gen }); }
+		std::vector<ForceGenerator2D*> get_forces(PointMass2D* point_mass);
 		//void remove(PointMass2D*, ForceGenerator2D* force_gen) { registrations.re }
 
 		void clear() { registrations.clear(); }

@@ -46,7 +46,7 @@ namespace Ivory {
 		m_context->init();
 
 		glfwSetWindowUserPointer(m_window, &m_data);
-		set_vsync(true);
+		set_vsync(false);
 
 		// GLFW event callbacks
 		glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {

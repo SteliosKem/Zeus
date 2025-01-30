@@ -28,6 +28,7 @@ namespace Ivory {
 		void clear_entities();
 
 		void set_selected_entity(Entity entity);
+		void set_time_per_frame(float time);
 		void draw_selection(bool draw, const glm::vec2& point_a = { 0.0f, 0.0f }, const glm::vec2& point_b = {0.0f, 0.0f});
 		void remove_selected_entity();
 
@@ -79,6 +80,7 @@ namespace Ivory {
 		Alchemist::ForceRegistry m_force_registry;
 		void on_update_physics(float dt);
 		std::vector<entt::entity> m_point_mass_entities;
+		float m_time_per_frame = 0.01f;
 
 		int32_t m_current_frame;
 		std::vector<CollisionInfo> m_collisions;

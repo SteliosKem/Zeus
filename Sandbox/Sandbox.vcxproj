@@ -140,6 +140,7 @@
     <ClInclude Include="src\Panels\ContentBrowser.h" />
     <ClInclude Include="src\Panels\Grapher.h" />
     <ClInclude Include="src\Panels\Items.h" />
+    <ClInclude Include="src\Panels\Preferences.h" />
     <ClInclude Include="src\Panels\SceneHierarchy.h" />
     <ClInclude Include="src\Panels\Timeline.h" />
     <ClInclude Include="src\Panels\WaveViewport.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\Panels\ContentBrowser.cpp" />
     <ClCompile Include="src\Panels\Grapher.cpp" />
     <ClCompile Include="src\Panels\Items.cpp" />
+    <ClCompile Include="src\Panels\Preferences.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchy.cpp" />
     <ClCompile Include="src\Panels\Timeline.cpp" />
     <ClCompile Include="src\Panels\WaveViewport.cpp" />

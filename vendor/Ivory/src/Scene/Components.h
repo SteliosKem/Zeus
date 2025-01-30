@@ -124,13 +124,19 @@ namespace Ivory {
 			float force_length;
 			float angle;
 		};
-		bool show_velocity;
+
+		bool show_velocity = false;
+		bool show_forces = false;
 		bool is_circle = false;
 		Alchemist::PointMass2D point_mass = {1.0f};
 		bool affected_by_gravity = true;
 		std::unordered_map<std::string, ForceInfo> forces_info;
+
 		int force_counter = 0;
 		std::vector<Alchemist::SimpleForce> forces;
+
+		std::unordered_map<std::string, glm::vec2> natural_forces;
+
 		bool ignore_collisions = false;
 		bool will_update = true;
 

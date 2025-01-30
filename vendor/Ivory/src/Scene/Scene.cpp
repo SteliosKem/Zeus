@@ -53,7 +53,14 @@ namespace Ivory {
 			}
 
 			
-			Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ point_mass.point_mass.get_acceleration(), 0}, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
+			if (point_mass.show_velocity) {
+				glm::vec2 vel = point_mass.point_mass.get_velocity();
+				//if (glm::length(vel) > 3.0f) {
+				vel = glm::normalize(vel);
+				vel *= 3;
+				//}
+				Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vel, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
+			}
 		}
 
 		auto springs = m_registry.view<SpringComponent>();
@@ -524,80 +531,85 @@ namespace Ivory {
 	}
 
 	void Scene::on_update_physics(float dt) {
-		
-		m_force_registry.update_forces(dt);
-		auto view = m_registry.view<PointMassComponent>();
+		static float accumulated_time = 0;
+		std::cout << dt << '\n';
+		accumulated_time += dt;
+		if (accumulated_time > m_time_per_frame) {
+			accumulated_time -= m_time_per_frame;
+			dt = m_time_per_frame;
+			m_force_registry.update_forces(dt);
+			auto view = m_registry.view<PointMassComponent>();
 
-		std::unordered_map<entt::entity, entt::entity> collision_history;
+			std::unordered_map<entt::entity, entt::entity> collision_history;
 
 
-		auto cable_view = m_registry.view<CableComponent>();
-		for (auto& e : cable_view) {
-			CableComponent cable = m_registry.get<CableComponent>(e);
-			if (cable.first_object_id && cable.second_object_id) {
-				Alchemist::Collision collision;
-				collision.restitution = 0.0f;
-				collision.first = cable.first_object;
-				collision.second = cable.second_object;
-				if (cable.cable.fill_collision(&collision, 1))
-					Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
-			}
-		}
-		auto rod_view = m_registry.view<RodComponent>();
-		for (auto& e : rod_view) {
-			RodComponent rod = m_registry.get<RodComponent>(e);
-			if (rod.first_object_id && rod.second_object_id) {
-				Alchemist::Collision collision;
-				collision.first = rod.first_object;
-				collision.second = rod.second_object;
-				if (rod.rod.fill_collision(&collision, 1))
-					Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
-			}
-		}
-		if(m_point_mass_entities.size())
-			for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
-				entt::entity entity = m_point_mass_entities[i];
-				auto& point_mass1 = view.get<PointMassComponent>(entity);
-				if (point_mass1.ignore_collisions)
-					continue;
-				for (int j = i + 1; j < m_point_mass_entities.size(); j++) {
-					entt::entity entity2 = m_point_mass_entities[j];
-					auto& point_mass2 = view.get<PointMassComponent>(entity2);
-					if (point_mass2.ignore_collisions)
-						continue;
-					if (point_mass1.point_mass.is_static() && point_mass2.point_mass.is_static())
-						continue;
-					const auto& transform1 = m_registry.get<TransformComponent>(entity);
-					const auto& transform2 = m_registry.get<TransformComponent>(entity2);
+			auto cable_view = m_registry.view<CableComponent>();
+			for (auto& e : cable_view) {
+				CableComponent cable = m_registry.get<CableComponent>(e);
+				if (cable.first_object_id && cable.second_object_id) {
 					Alchemist::Collision collision;
-					if (point_mass1.is_circle && point_mass2.is_circle)
-						collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
-					else if(!point_mass1.is_circle && !point_mass2.is_circle)
-						collision = Alchemist::check_sat_collision(transform1.get_transformed_points(), transform2.get_transformed_points());
-					else {
-						if (point_mass1.is_circle)
-							collision = Alchemist::check_sat_circle_collision(point_mass1.point_mass.get_position(), 0.5f, transform2.get_transformed_points());
-						else
-							collision = Alchemist::check_sat_circle_collision(point_mass2.point_mass.get_position(), 0.5f, transform1.get_transformed_points());
-					}
-
-
-					float restitution = fminf(point_mass1.point_mass.get_restitution(), point_mass2.point_mass.get_restitution());
-					collision.restitution = restitution;
-
-					if (collision.depth != 0) {
-						Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
-					}
+					collision.restitution = 0.0f;
+					collision.first = cable.first_object;
+					collision.second = cable.second_object;
+					if (cable.cable.fill_collision(&collision, 1))
+						Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
 				}
 			}
+			auto rod_view = m_registry.view<RodComponent>();
+			for (auto& e : rod_view) {
+				RodComponent rod = m_registry.get<RodComponent>(e);
+				if (rod.first_object_id && rod.second_object_id) {
+					Alchemist::Collision collision;
+					collision.first = rod.first_object;
+					collision.second = rod.second_object;
+					if (rod.rod.fill_collision(&collision, 1))
+						Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
+				}
+			}
+			if (m_point_mass_entities.size())
+				for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
+					entt::entity entity = m_point_mass_entities[i];
+					auto& point_mass1 = view.get<PointMassComponent>(entity);
+					if (point_mass1.ignore_collisions)
+						continue;
+					for (int j = i + 1; j < m_point_mass_entities.size(); j++) {
+						entt::entity entity2 = m_point_mass_entities[j];
+						auto& point_mass2 = view.get<PointMassComponent>(entity2);
+						if (point_mass2.ignore_collisions)
+							continue;
+						if (point_mass1.point_mass.is_static() && point_mass2.point_mass.is_static())
+							continue;
+						const auto& transform1 = m_registry.get<TransformComponent>(entity);
+						const auto& transform2 = m_registry.get<TransformComponent>(entity2);
+						Alchemist::Collision collision;
+						if (point_mass1.is_circle && point_mass2.is_circle)
+							collision = Alchemist::check_circle_collision_depth(point_mass1.point_mass, point_mass2.point_mass);
+						else if (!point_mass1.is_circle && !point_mass2.is_circle)
+							collision = Alchemist::check_sat_collision(transform1.get_transformed_points(), transform2.get_transformed_points());
+						else {
+							if (point_mass1.is_circle)
+								collision = Alchemist::check_sat_circle_collision(point_mass1.point_mass.get_position(), 0.5f, transform2.get_transformed_points());
+							else
+								collision = Alchemist::check_sat_circle_collision(point_mass2.point_mass.get_position(), 0.5f, transform1.get_transformed_points());
+						}
 
-		
-		for (auto entity : view) {
-			auto& point_mass_component = view.get<PointMassComponent>(entity);
-			if (point_mass_component.will_update)
-				point_mass_component.point_mass.on_update(dt);
+
+						float restitution = fminf(point_mass1.point_mass.get_restitution(), point_mass2.point_mass.get_restitution());
+						collision.restitution = restitution;
+
+						if (collision.depth != 0) {
+							Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+						}
+					}
+				}
+
+
+			for (auto entity : view) {
+				auto& point_mass_component = view.get<PointMassComponent>(entity);
+				if (point_mass_component.will_update)
+					point_mass_component.point_mass.on_update(dt);
+			}
 		}
-
 	}
 
 	template<typename T>

@@ -382,4 +382,13 @@ namespace Alchemist {
 
 		return 1;
 	}
+
+	std::vector<ForceGenerator2D*> ForceRegistry::get_forces(PointMass2D* point_mass) {
+		std::vector<ForceGenerator2D*> forces;
+		for (auto& i : registrations) {
+			if (i.point_mass == point_mass)
+				forces.push_back(i.force_generator);
+		}
+		return forces;
+	}
 } 

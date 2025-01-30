@@ -548,7 +548,6 @@ namespace Zeus {
         int mousex = (int)mx;
         int mousey = (int)my;
 
-        std::cout << mousex << " " << mousey << "\n";
         if (ImGui::BeginPopupContextWindow(0)) {
             glm::vec3 translation;
 
