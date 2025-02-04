@@ -30,6 +30,8 @@ namespace Ivory {
 		void update();
 		void reset();
 		void clear_lists();
+
+		void set_time_per_frame(float time) { m_time_per_frame = time; }
 	private:
 		struct WatchInfo {
 			Entity entity;
@@ -39,5 +41,7 @@ namespace Ivory {
 		std::unordered_map<std::string, std::vector<float>> m_map;
 		std::shared_ptr<Texture2D> m_knot_icon;
 		std::shared_ptr<Scene> m_scene;
+
+		float m_time_per_frame;
 	};
 }

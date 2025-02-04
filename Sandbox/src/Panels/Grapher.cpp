@@ -32,11 +32,17 @@ namespace Ivory {
 
 		if(has_recording)
 			if (ImPlot::BeginPlot("Plot", {ImGui::GetContentRegionAvail()})) {
-				int32_t times[1] = {time};
-				ImPlot::PlotInfLines("Time", times, 1);
+				ImPlot::SetupAxes("Time (s)", "");
+				float times[1] = {time * m_time_per_frame};
+				
 				for (auto& [name, list] : m_map) {
-					ImPlot::PlotLine(name.c_str(), &list[0], list.size());
+					// Number of Frames
+					int n = list.size();
+					// Time at each frame
+					std::vector<float> time(n);
+					ImPlot::PlotLine(name.c_str(), &list[0], n, m_time_per_frame);
 				}
+				ImPlot::PlotInfLines("Time", times, 1, m_time_per_frame);
 				ImPlot::EndPlot();
 			}
 		ImGui::End();
