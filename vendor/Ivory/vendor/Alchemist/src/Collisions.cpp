@@ -2,7 +2,7 @@
 
 namespace Alchemist {
 	// Utility
-	float distance(const glm::vec2& first, const glm::vec2& second) {}
+	float distance(const glm::vec2& first, const glm::vec2& second) { return 0; }
 
 	// Collision Detection
 	bool check_AABBs(const AABB& first, const AABB& second) {

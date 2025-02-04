@@ -9,14 +9,37 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Action.h" />
     <ClInclude Include="src\AlchemistSandbox.h" />
     <ClInclude Include="src\Editor.h" />
     <ClInclude Include="src\Panels\ContentBrowser.h">
       <Filter>Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\Grapher.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\Items.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\Preferences.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\SceneHierarchy.h">
       <Filter>Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panels\Timeline.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\UI.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\WaveViewport.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\WorldSettings.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Snapshot.h" />
     <ClInclude Include="src\Test2D.h" />
     <ClInclude Include="src\Windows\Dialogs.h">
       <Filter>Windows</Filter>
@@ -24,23 +47,33 @@
     <ClInclude Include="src\Windows\ProjectSetupWindow.h">
       <Filter>Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\WorldSettings.h" />
-    <ClInclude Include="src\Panels\Timeline.h" />
-    <ClInclude Include="src\Panels\UI.h" />
-    <ClInclude Include="src\Snapshot.h" />
-    <ClInclude Include="src\Panels\Grapher.h" />
-    <ClInclude Include="src\Panels\WaveViewport.h" />
-    <ClInclude Include="src\Action.h" />
-    <ClInclude Include="src\Panels\Items.h" />
-    <ClInclude Include="src\Panels\Preferences.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Action.cpp" />
     <ClCompile Include="src\AlchemistSandbox.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\Panels\ContentBrowser.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\Grapher.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\Items.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\Preferences.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
     <ClCompile Include="src\Panels\SceneHierarchy.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\Timeline.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\WaveViewport.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Panels\WorldSettings.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\Test2D.cpp" />
@@ -50,12 +83,5 @@
     <ClCompile Include="src\Windows\ProjectSetupWindow.cpp">
       <Filter>Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Panels\WorldSettings.cpp" />
-    <ClCompile Include="src\Panels\Timeline.cpp" />
-    <ClCompile Include="src\Panels\Grapher.cpp" />
-    <ClCompile Include="src\Panels\WaveViewport.cpp" />
-    <ClCompile Include="src\Action.cpp" />
-    <ClCompile Include="src\Panels\Items.cpp" />
-    <ClCompile Include="src\Panels\Preferences.cpp" />
   </ItemGroup>
 </Project>

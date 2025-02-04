@@ -166,9 +166,9 @@
     <ClInclude Include="src\ImGui\ImGuiStyle.h" />
     <ClInclude Include="src\ImGui\ImPlot\implot.h" />
     <ClInclude Include="src\ImGui\ImPlot\implot_internal.h" />
+    <ClInclude Include="src\ImGui\L2DFileDialog.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
     <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
-    <ClInclude Include="src\ImGui\L2DFileDialog.h" />
     <ClInclude Include="src\ImGui\fa_solid-900.h" />
     <ClInclude Include="src\ImGui\imgui_spectrum.h" />
     <ClInclude Include="src\Layers\Layer.h" />
@@ -670,7 +670,6 @@
   <ItemGroup>
     <None Include="src\ImGui\fa-regular-400.ttf" />
     <None Include="src\ImGui\fa-solid-900.ttf" />
-    <None Include="src\ImGui\Sequencer\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

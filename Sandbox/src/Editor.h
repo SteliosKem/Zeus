@@ -24,6 +24,7 @@
 #include "Panels/Grapher.h"
 #include "Panels/WaveViewport.h"
 #include "Panels/Items.h"
+#include "Panels/Preferences.h"
 
 #include "Action.h"
 
@@ -151,6 +152,7 @@ namespace Zeus {
 		Grapher m_grapher;
 		WaveViewport m_wave_viewport;
 		Items m_items;
+		Preferences m_preferences;
 
 		ActionManager m_action_manager;
 		

@@ -264,9 +264,9 @@ namespace Ivory {
 		
 	}
 
-	void Scene::on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame) {
+	bool Scene::on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame) {
 		m_current_frame = frame;
-		on_update_physics(m_paused ? 0 : dt * m_time_factor);
+		bool updated_physics = on_update_physics(m_paused ? 0 : dt * m_time_factor);
 
 		m_registry.view<CScriptComponent>().each([=](auto entity, auto& cscript_component) {
 			if (!cscript_component.instance) {
@@ -352,6 +352,7 @@ namespace Ivory {
 				//}
 				Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vel, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
 			}
+
 		}
 
 		auto springs = m_registry.view<SpringComponent>();
@@ -380,7 +381,7 @@ namespace Ivory {
 			Renderer2D::draw_overlay(quad_transform, circ_select, (int)m_selected_entity);
 
 		Renderer2D::end_scene();
-		
+		return updated_physics;
 	}
 
 	void Scene::on_viewport_resize(uint32_t width, uint32_t height) {
@@ -462,6 +463,7 @@ namespace Ivory {
 		new_scene->m_gravity_force = scene->m_gravity_force;
 		new_scene->m_time_factor = scene->m_time_factor;
 		new_scene->m_scene_type = scene->m_scene_type;
+		new_scene->m_time_per_frame = scene->m_time_per_frame;
 
 		std::unordered_map<Uuid, entt::entity> entity_map;
 
@@ -530,9 +532,8 @@ namespace Ivory {
 		m_registry.clear();
 	}
 
-	void Scene::on_update_physics(float dt) {
+	bool Scene::on_update_physics(float dt) {
 		static float accumulated_time = 0;
-		std::cout << dt << '\n';
 		accumulated_time += dt;
 		if (accumulated_time > m_time_per_frame) {
 			accumulated_time -= m_time_per_frame;
@@ -609,7 +610,9 @@ namespace Ivory {
 				if (point_mass_component.will_update)
 					point_mass_component.point_mass.on_update(dt);
 			}
+			return true;
 		}
+		return false;
 	}
 
 	template<typename T>

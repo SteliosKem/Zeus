@@ -28,11 +28,12 @@ namespace Ivory {
 		void clear_entities();
 
 		void set_selected_entity(Entity entity);
-		void set_time_per_frame(float time);
+		void set_time_per_frame(float time) { m_time_per_frame = time; }
 		void draw_selection(bool draw, const glm::vec2& point_a = { 0.0f, 0.0f }, const glm::vec2& point_b = {0.0f, 0.0f});
 		void remove_selected_entity();
 
-		void on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame);
+		// Returns true if physics updated this step
+		bool on_update_runtime(Timestep dt, EditorCamera& camera, int32_t frame);
 		void on_update_editor(Timestep dt, EditorCamera& camera);
 
 		void on_play();
@@ -78,7 +79,7 @@ namespace Ivory {
 
 		// Physics
 		Alchemist::ForceRegistry m_force_registry;
-		void on_update_physics(float dt);
+		bool on_update_physics(float dt);
 		std::vector<entt::entity> m_point_mass_entities;
 		float m_time_per_frame = 0.01f;
 

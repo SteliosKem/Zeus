@@ -38,6 +38,7 @@ project "Sandbox"
 		"vendor/Ivory/vendor/spdlog/include",
 		"vendor/Ivory/src",
 		"vendor/Ivory/vendor/imgui",
+		"vendor/Ivory/vendor/yaml-cpp/include",
 		"%{ZeusIncludeDir.glm}",
 		"%{ZeusIncludeDir.ImGuizmo}",
 		"%{ZeusIncludeDir.entt}", 

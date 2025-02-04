@@ -27,6 +27,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\Collisions.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\PointMass.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -1280,6 +1283,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Collisions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\PointMass.cpp">
       <Filter>src</Filter>
     </ClCompile>

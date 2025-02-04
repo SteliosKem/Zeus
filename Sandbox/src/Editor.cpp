@@ -14,6 +14,7 @@ namespace Zeus {
     }
 
     void EditorLayer::on_attach() {
+        m_preferences.load();
         m_action_manager.set_snapshot_manager(&m_snapshot_manager);
         m_hierarchy.set_grapher(&m_grapher);
         m_hierarchy.start_up();
@@ -97,20 +98,31 @@ namespace Zeus {
             m_camera_controller.on_update(dt);
             m_editor_camera.on_update(dt);
             m_timeline.increment(1);
-            m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
-            m_grapher.update();
-            m_snapshot_manager.record_snapshot(m_active_scene);
+            if (!m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame())) {
+                m_timeline.decrement(1);
+            }
+            else {
+                m_grapher.update();
+                m_snapshot_manager.record_snapshot(m_active_scene);
+            }
             m_wave_viewport.on_update(dt);
             break;
         }
         case SceneState::Play: {
+            static float accumulated_time = 0;
+            accumulated_time += dt;
+
             m_camera_controller.on_update(dt);
             m_editor_camera.on_update(dt);
             if (m_timeline.get_current_frame() < m_timeline.get_time_played()) {
-                m_timeline.increment(1);
-                //m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
                 m_active_scene->on_update_editor(dt, m_editor_camera);
-                m_snapshot_manager.retrieve_snapshot(m_timeline.get_current_time(), m_active_scene);
+                if (accumulated_time > m_preferences.get_time_per_frame()) {
+                    accumulated_time -= m_preferences.get_time_per_frame();
+                    m_timeline.increment(1);
+                    //m_active_scene->on_update_runtime(dt, m_editor_camera, m_timeline.get_current_frame());
+                    
+                    m_snapshot_manager.retrieve_snapshot(m_timeline.get_current_time(), m_active_scene);
+                }
             }
             else {
                 on_scene_pause();
@@ -140,6 +152,7 @@ namespace Zeus {
             //m_hierarchy.set_selected(pixel_data == -1 ? Entity() : Entity((entt::entity)pixel_data, m_active_scene.get()));
 
             m_entity_hovered = pixel_data == -1 ? Entity() : Entity((entt::entity)pixel_data, m_active_scene.get());
+            std::cout << pixel_data << "\n";
 
             if (m_mouse_holding)
                 m_selection[1] = get_world_pos_from_mouse({mx, my});
@@ -174,6 +187,7 @@ namespace Zeus {
 
     void EditorLayer::on_imgui_render() {
         m_setup_window.on_imgui_render();
+        m_preferences.on_imgui_render();
 
         static bool docking = true;
         static bool opt_fullscreen = true;
@@ -1041,6 +1055,7 @@ namespace Zeus {
         
 
         std::shared_ptr<Scene> new_scene = std::make_shared<Scene>();
+        new_scene->set_time_per_frame(m_preferences.get_time_per_frame());
 
         SceneSerializer serializer(new_scene);
         if (serializer.deserialize(file_path.string())) {
@@ -1073,6 +1088,7 @@ namespace Zeus {
     }
     void EditorLayer::new_scene(Scene::SceneType scene_type) {
         m_active_scene = std::make_shared<Scene>(scene_type);
+        m_active_scene->set_time_per_frame(m_preferences.get_time_per_frame());
         m_active_scene->on_viewport_resize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);
         m_hierarchy.set_context(m_active_scene);
     }

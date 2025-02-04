@@ -13,6 +13,12 @@
     <Filter Include="src\ImGui">
       <UniqueIdentifier>{170E22B3-8378-D629-CCB6-87CF3860B47E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ImGui\ImPlot">
+      <UniqueIdentifier>{FB528C40-E74B-AB92-107E-9017FCD58A9E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ImGui\Sequencer">
+      <UniqueIdentifier>{F12DE45D-5D8F-C16B-E6FC-071E525DF82A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Layers">
       <UniqueIdentifier>{4C4DA51D-3805-E76A-A10C-C0C68DE3815B}</UniqueIdentifier>
     </Filter>
@@ -123,8 +129,23 @@
     <ClInclude Include="src\ImGui\ImGuiNotify.h">
       <Filter>src\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\ImGui\ImGuiStyle.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\ImPlot\implot.h">
+      <Filter>src\ImGui\ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\ImPlot\implot_internal.h">
+      <Filter>src\ImGui\ImPlot</Filter>
+    </ClInclude>
     <ClInclude Include="src\ImGui\L2DFileDialog.h">
       <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h">
+      <Filter>src\ImGui\Sequencer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h">
+      <Filter>src\ImGui\Sequencer</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\fa_solid-900.h">
       <Filter>src\ImGui</Filter>
@@ -1485,11 +1506,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_internal.h" />
-    <ClInclude Include="src\ImGui\Sequencer\imgui_neo_sequencer.h" />
-    <ClInclude Include="src\ImGui\ImGuiStyle.h" />
-    <ClInclude Include="src\ImGui\ImPlot\implot.h" />
-    <ClInclude Include="src\ImGui\ImPlot\implot_internal.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1506,6 +1522,18 @@
     </ClCompile>
     <ClCompile Include="src\ImGui\ImGuiLoad.cpp">
       <Filter>src\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\ImPlot\implot.cpp">
+      <Filter>src\ImGui\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\ImPlot\implot_items.cpp">
+      <Filter>src\ImGui\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_internal.cpp">
+      <Filter>src\ImGui\Sequencer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_sequencer.cpp">
+      <Filter>src\ImGui\Sequencer</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\imgui_spectrum.cpp">
       <Filter>src\ImGui</Filter>
@@ -1600,19 +1628,12 @@
     <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_internal.cpp" />
-    <ClCompile Include="src\ImGui\Sequencer\imgui_neo_sequencer.cpp" />
-    <ClCompile Include="src\ImGui\ImPlot\implot.cpp" />
-    <ClCompile Include="src\ImGui\ImPlot\implot_items.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ImGui\fa-regular-400.ttf">
       <Filter>src\ImGui</Filter>
     </None>
     <None Include="src\ImGui\fa-solid-900.ttf">
-      <Filter>src\ImGui</Filter>
-    </None>
-    <None Include="src\ImGui\Sequencer\LICENSE">
       <Filter>src\ImGui</Filter>
     </None>
   </ItemGroup>
