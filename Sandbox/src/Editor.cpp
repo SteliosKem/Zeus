@@ -21,6 +21,7 @@ namespace Zeus {
         m_hierarchy.set_allow_action_ptr(true);
         m_hierarchy.set_on_delete_callback([this](Entity entity) {this->delete_entity(entity); });
         m_setup_window.show(false);
+        m_timeline.set_time_per_frame(m_preferences.get_time_per_frame());
 
         m_play_icon = Texture2D::create("Assets/EditorIcons/play.png");
         m_record_icon = Texture2D::create("Assets/EditorIcons/record.png");

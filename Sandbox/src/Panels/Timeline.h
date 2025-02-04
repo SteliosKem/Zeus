@@ -19,10 +19,12 @@ namespace Zeus {
 		void set_scene_ptr(const std::shared_ptr<Ivory::Scene>& scene) { m_scene = scene; }
 		int32_t get_time_played() { return m_time_played; }
 		void set_frame(int32_t frame) { m_current_time = frame; }
+		void set_time_per_frame(float time_per_frame) { m_time_per_frame = time_per_frame; }
 	private:
 		int32_t m_current_time = 0;
 		int32_t m_time_played = 1;
 		bool m_is_playing = false;
+		float m_time_per_frame;
 		std::shared_ptr<Ivory::Scene> m_scene;
 	};
 }

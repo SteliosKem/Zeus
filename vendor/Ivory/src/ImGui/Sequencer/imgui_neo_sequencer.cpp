@@ -475,7 +475,7 @@ namespace ImGui
     }
 
     static void
-        processAndRenderZoom(ImGuiNeoSequencerInternalData& context, const ImVec2& cursor, bool allowEditingLength,
+        processAndRenderZoom(float time_per_frame, ImGuiNeoSequencerInternalData& context, const ImVec2& cursor, bool allowEditingLength,
             FrameIndexType* start,
             FrameIndexType* end)
     {
@@ -659,7 +659,7 @@ namespace ImGui
 
             char overlayTextBuffer[128];
 
-            snprintf(overlayTextBuffer, sizeof(overlayTextBuffer), "%i - %i", viewStart, viewEnd);
+            snprintf(overlayTextBuffer, sizeof(overlayTextBuffer), "%g - %g", viewStart * time_per_frame, viewEnd * time_per_frame);
 
             const auto overlaySize = CalcTextSize(overlayTextBuffer);
 
@@ -865,7 +865,7 @@ namespace ImGui
     }
 
     bool
-        BeginNeoSequencer(const char* idin, FrameIndexType* frame, FrameIndexType* startFrame, FrameIndexType* endFrame,
+        BeginNeoSequencer(float time_per_frame, const char* idin, FrameIndexType* frame, FrameIndexType* startFrame, FrameIndexType* endFrame,
             const ImVec2& size,
             ImGuiNeoSequencerFlags flags)
     {
@@ -951,13 +951,13 @@ namespace ImGui
             drawList, style.SequencerRounding);
 
 
-        RenderNeoSequencerTopBarOverlay(context.Zoom, context.ValuesWidth, context.StartFrame, context.EndFrame,
+        RenderNeoSequencerTopBarOverlay(time_per_frame, context.Zoom, context.ValuesWidth, context.StartFrame, context.EndFrame,
             context.OffsetFrame,
             context.TopBarStartCursor, context.TopBarSize, drawList,
             style.TopBarShowFrameLines, style.TopBarShowFrameTexts, style.MaxSizePerTick);
 
         if (showZoom)
-            processAndRenderZoom(context, context.TopLeftCursor, flags & ImGuiNeoSequencerFlags_AllowLengthChanging,
+            processAndRenderZoom(time_per_frame, context, context.TopLeftCursor, flags & ImGuiNeoSequencerFlags_AllowLengthChanging,
                 startFrame, endFrame);
 
         if (context.Size.y < context.FilledHeight)

@@ -106,7 +106,7 @@ namespace ImGui {
     IMGUI_API void PushNeoSequencerStyleColor(ImGuiNeoSequencerCol idx, const ImVec4& col);
     IMGUI_API void PopNeoSequencerStyleColor(int count = 1);
 
-    IMGUI_API bool BeginNeoSequencer(const char* id, FrameIndexType* frame, FrameIndexType* startFrame, FrameIndexType* endFrame, const ImVec2& size = ImVec2(0, 0), ImGuiNeoSequencerFlags flags = ImGuiNeoSequencerFlags_None);
+    IMGUI_API bool BeginNeoSequencer(float time_per_frame, const char* id, FrameIndexType* frame, FrameIndexType* startFrame, FrameIndexType* endFrame, const ImVec2& size = ImVec2(0, 0), ImGuiNeoSequencerFlags flags = ImGuiNeoSequencerFlags_None);
     IMGUI_API void EndNeoSequencer(); //Call only when BeginNeoSequencer() returns true!!
 
     IMGUI_API bool BeginNeoGroup(const char* label, bool* open = nullptr);
