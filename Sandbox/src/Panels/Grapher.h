@@ -36,6 +36,7 @@ namespace Ivory {
 		struct WatchInfo {
 			Entity entity;
 			Quantity quantity;
+			bool show_tangent = false;
 		};
 		std::unordered_map<std::string, WatchInfo> m_watch_list;
 		std::unordered_map<std::string, std::vector<float>> m_map;

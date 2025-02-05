@@ -36,7 +36,7 @@ namespace Zeus {
         frame_buffer_spec.attachments = { FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INTEGER, FrameBufferTextureFormat::Depth };
         m_frame_buffer = FrameBuffer::create(frame_buffer_spec);
 
-        m_active_scene = std::make_shared<Scene>();
+        new_scene();
         m_editor_scene = m_active_scene;
 
         m_hierarchy.set_context(m_active_scene);
@@ -1055,7 +1055,7 @@ namespace Zeus {
         if (m_scene_state != SceneState::Edit)
             on_scene_stop();
         
-
+        clear_recording();
         std::shared_ptr<Scene> new_scene = std::make_shared<Scene>();
         new_scene->set_time_per_frame(m_preferences.get_time_per_frame());
 
@@ -1089,6 +1089,7 @@ namespace Zeus {
         }
     }
     void EditorLayer::new_scene(Scene::SceneType scene_type) {
+        clear_recording();
         m_active_scene = std::make_shared<Scene>(scene_type);
         m_active_scene->set_time_per_frame(m_preferences.get_time_per_frame());
         m_active_scene->on_viewport_resize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);

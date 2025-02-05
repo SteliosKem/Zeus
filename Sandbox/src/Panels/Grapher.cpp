@@ -1,6 +1,7 @@
 #include "Grapher.h"
 #include "ImGui/ImPlot/implot.h"
 #include "Scene/Components.h"
+#include <ImGui/ImPlot/implot_internal.h>
 
 namespace Ivory {
 	void Grapher::on_imgui_render(bool has_recording, int32_t time) {
@@ -27,6 +28,8 @@ namespace Ivory {
 				ImGui::SameLine();
 				if (ImGui::Button(std::string("X##" + name).c_str()))
 					remove(name);
+				if (ImGui::Button(std::string("Show Tangent##" + name).c_str()))
+					m_watch_list[name].show_tangent = !m_watch_list[name].show_tangent;
 			}
 		}
 
@@ -38,9 +41,17 @@ namespace Ivory {
 				for (auto& [name, list] : m_map) {
 					// Number of Frames
 					int n = list.size();
-					// Time at each frame
-					std::vector<float> time(n);
 					ImPlot::PlotLine(name.c_str(), &list[0], n, m_time_per_frame);
+					if(m_watch_list[name].show_tangent) {
+						glm::vec2 point_a = { time, list[time] };
+						glm::vec2 point_b = (time < list.size() - 1) 
+							? glm::vec2{(time + 1), list[time + 1]} : glm::vec2{(time - 1), list[time - 1]};
+						std::vector<float> tangent(time + 1 / m_time_per_frame);
+						for (int i = 0; i < tangent.size(); i++) {
+							tangent[i] = ((point_a.y - point_b.y) / (point_a.x - point_b.x)) * (i - time) + point_a.y;
+						}
+						ImPlot::PlotLine((name + "'s Tangent").c_str(), &tangent[0], time + 1 / m_time_per_frame, m_time_per_frame);
+					}
 				}
 				ImPlot::PlotInfLines("Time", times, 1, m_time_per_frame);
 				ImPlot::EndPlot();
