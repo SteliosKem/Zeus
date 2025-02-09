@@ -6,6 +6,7 @@
 
 namespace Ivory {
 	Scene::Scene(SceneType scene_type) : m_scene_type{scene_type} {
+		m_registry = entt::registry();
 	}
 
 	Entity Scene::create_entity(const std::string& name, bool no_transform) {
@@ -23,6 +24,7 @@ namespace Ivory {
 	void Scene::destroy_entity(Entity entity) {
 		m_registry.destroy(entity);
 	}
+
 	void Scene::on_update_editor(Timestep dt, EditorCamera& camera) {
 		Renderer2D::begin_scene(camera);
 		Circle circ{};
@@ -52,7 +54,7 @@ namespace Ivory {
 				quad_transform = &tsfm;
 			}
 
-			
+
 			if (point_mass.show_velocity) {
 				glm::vec2 vel = point_mass.point_mass.get_velocity();
 				//if (glm::length(vel) > 3.0f) {
@@ -60,6 +62,17 @@ namespace Ivory {
 				vel *= 3;
 				//}
 				Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vel, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
+			}
+
+			if (point_mass.show_forces) {
+				for (auto& [name, force] : point_mass.impulses) {
+					//if (glm::length(vel) > 3.0f) {
+					glm::vec2 vec;
+					vec = glm::normalize(force);
+					vec *= 3;
+					//}
+					Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vec, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
+				}
 			}
 		}
 
@@ -206,6 +219,8 @@ namespace Ivory {
 				comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
 				comp.cable.first = comp.first_object;
 				comp.cable.second = comp.second_object;
+				get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(entity).tag] = { 0, 0 };
+				get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(entity).tag] = { 0, 0 };
 			}
 		}
 		auto anchored_cables = m_registry.view<AnchoredCableComponent>();
@@ -229,6 +244,8 @@ namespace Ivory {
 				comp.second_object = &get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().point_mass;
 				comp.rod.first = comp.first_object;
 				comp.rod.second = comp.second_object;
+				get_by_uuid(comp.first_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(entity).tag] = { 0, 0 };
+				get_by_uuid(comp.second_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(entity).tag] = { 0, 0 };
 			}
 		}
 		auto anchored_rods = m_registry.view<AnchoredRodComponent>();
@@ -352,7 +369,16 @@ namespace Ivory {
 				//}
 				Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vel, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
 			}
-
+			if (point_mass.show_forces) {
+				for (auto& [name, force] : point_mass.impulses) {
+					//if (glm::length(vel) > 3.0f) {
+					glm::vec2 vec;
+					vec = glm::normalize(force);
+					vec *= 3;
+					//}
+					Renderer2D::draw_arrow(transform.translation, transform.translation + glm::vec3{ vec, 0 }, { 0.8, 0.8, 0.8, 1.0f }, (int)entity);
+				}
+			}
 		}
 
 		auto springs = m_registry.view<SpringComponent>();
@@ -529,7 +555,7 @@ namespace Ivory {
 	}
 
 	void Scene::clear_entities() {
-		m_registry.clear();
+		//m_registry.clear();
 	}
 
 	bool Scene::on_update_physics(float dt) {
@@ -541,6 +567,12 @@ namespace Ivory {
 			m_force_registry.update_forces(dt);
 			auto view = m_registry.view<PointMassComponent>();
 
+			for (auto entity : view) {
+				auto& point_mass_component = view.get<PointMassComponent>(entity);
+				if (point_mass_component.will_update)
+					point_mass_component.point_mass.on_update(dt);
+			}
+			
 			std::unordered_map<entt::entity, entt::entity> collision_history;
 
 
@@ -552,8 +584,11 @@ namespace Ivory {
 					collision.restitution = 0.0f;
 					collision.first = cable.first_object;
 					collision.second = cable.second_object;
+					glm::vec2 impulse_vec;
 					if (cable.cable.fill_collision(&collision, 1))
-						Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
+						impulse_vec = Alchemist::resolve_collision(cable.first_object, cable.second_object, collision);
+					get_by_uuid(cable.first_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(e).tag] = -impulse_vec / dt;
+					get_by_uuid(cable.second_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(e).tag] = impulse_vec / dt;
 				}
 			}
 			auto rod_view = m_registry.view<RodComponent>();
@@ -563,14 +598,22 @@ namespace Ivory {
 					Alchemist::Collision collision;
 					collision.first = rod.first_object;
 					collision.second = rod.second_object;
+					glm::vec2 impulse_vec;
 					if (rod.rod.fill_collision(&collision, 1))
-						Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
+						impulse_vec = Alchemist::resolve_collision(rod.first_object, rod.second_object, collision);
+					get_by_uuid(rod.first_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(e).tag] = -impulse_vec / dt;
+					get_by_uuid(rod.second_object_id).get_component<PointMassComponent>().impulses[m_registry.get<TagComponent>(e).tag] = impulse_vec / dt;
 				}
+			}
+			for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
+				entt::entity entity = m_point_mass_entities[i];
+				view.get<PointMassComponent>(entity).impulses["N"] = { 0, 0 };
 			}
 			if (m_point_mass_entities.size())
 				for (int i = 0; i < m_point_mass_entities.size() - 1; i++) {
 					entt::entity entity = m_point_mass_entities[i];
 					auto& point_mass1 = view.get<PointMassComponent>(entity);
+					
 					if (point_mass1.ignore_collisions)
 						continue;
 					for (int j = i + 1; j < m_point_mass_entities.size(); j++) {
@@ -598,18 +641,18 @@ namespace Ivory {
 						float restitution = fminf(point_mass1.point_mass.get_restitution(), point_mass2.point_mass.get_restitution());
 						collision.restitution = restitution;
 
+						glm::vec2 impulse_vec;
+
 						if (collision.depth != 0) {
-							Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+							impulse_vec = Alchemist::resolve_collision_with_friction(&point_mass1.point_mass, &point_mass2.point_mass, collision);
+							m_registry.get<PointMassComponent>(entity).impulses["N"] -= impulse_vec / dt;
+							m_registry.get<PointMassComponent>(entity2).impulses["N"] += impulse_vec / dt;
 						}
 					}
 				}
 
 
-			for (auto entity : view) {
-				auto& point_mass_component = view.get<PointMassComponent>(entity);
-				if (point_mass_component.will_update)
-					point_mass_component.point_mass.on_update(dt);
-			}
+			
 			return true;
 		}
 		return false;

@@ -396,6 +396,7 @@ namespace Ivory {
 			ImGui::Separator();
 
 			draw_checkbox("Show Velocity", &component.show_velocity, "Visualise the object's velocity inside the editor");
+			draw_checkbox("Show Forces", &component.show_forces, "Visualise the object's forces inside the editor");
 
 			if (ImGui::Button("Add Force")) {
 				component.forces_info["Force " + std::to_string(component.force_counter++)];
@@ -411,6 +412,15 @@ namespace Ivory {
 				glm::vec3 force_vec = { component.forces_info[name].force_vector, 0 };
 				draw_vec3_control(name.c_str(), force_vec, 0.1 / 5, 1.0f);
 				component.forces_info[name].force_vector = { force_vec.x, force_vec.y };
+				ImGui::PopID();
+			}
+
+			// Impulses
+			for (auto& [name, force] : component.impulses) {
+				ImGui::PushID(name.c_str());
+				// Remove Force
+				glm::vec3 force_vec = { force, 0 };
+				draw_vec3_internal(entity, name.c_str(), force_vec, 0.1 / 5, 1.0f);
 				ImGui::PopID();
 			}
 		});

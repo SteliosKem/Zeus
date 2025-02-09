@@ -289,27 +289,28 @@ namespace Alchemist {
 		}
 	}
 
-	void resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
+	glm::vec2 resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision) {
 		glm::vec2 relative_velocity = second->get_velocity() - first->get_velocity();
 		resolve_plain_collision(first, second, collision);
 		if (first->does_only_collide_plainly() || second->does_only_collide_plainly())
-			return;
+			return {0, 0};
 		if (glm::dot(relative_velocity, collision.collision_normal) < 0)
-			return;
+			return { 0, 0 };
 
 		float impulse = ( - (1.0f + collision.restitution) * glm::dot(relative_velocity, collision.collision_normal) )
 						/ ( first->get_mass_inverse() + second->get_mass_inverse() );
 		first->set_velocity(first->get_velocity() - impulse * first->get_mass_inverse() * collision.collision_normal);
 		second->set_velocity(second->get_velocity() + impulse * second->get_mass_inverse() * collision.collision_normal);
+		return impulse * collision.collision_normal;
 	}
 
-	void resolve_collision_with_friction(PointMass2D* first, PointMass2D* second, const Collision& collision) {
+	glm::vec2 resolve_collision_with_friction(PointMass2D* first, PointMass2D* second, const Collision& collision) {
 		glm::vec2 relative_velocity = second->get_velocity() - first->get_velocity();
 		resolve_plain_collision(first, second, collision);
 		if (first->does_only_collide_plainly() || second->does_only_collide_plainly())
-			return;
+			return { 0, 0 };
 		if (glm::dot(relative_velocity, collision.collision_normal) < 0)
-			return;
+			return { 0, 0 };
 
 		float impulse = (-(1.0f + collision.restitution) * glm::dot(relative_velocity, collision.collision_normal))
 			/ (first->get_mass_inverse() + second->get_mass_inverse());
@@ -331,6 +332,7 @@ namespace Alchemist {
 
 		first->set_velocity(first->get_velocity() - friction_vector * first->get_mass_inverse());
 		second->set_velocity(second->get_velocity() + friction_vector * second->get_mass_inverse());
+		return impulse * collision.collision_normal;
 	}
 
 	float Cable::get_current_length() const {

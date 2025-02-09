@@ -1090,6 +1090,7 @@ namespace Zeus {
     }
     void EditorLayer::new_scene(Scene::SceneType scene_type) {
         clear_recording();
+        m_active_scene->clear_entities();
         m_active_scene = std::make_shared<Scene>(scene_type);
         m_active_scene->set_time_per_frame(m_preferences.get_time_per_frame());
         m_active_scene->on_viewport_resize((uint32_t)m_viewport_size.x, (uint32_t)m_viewport_size.y);

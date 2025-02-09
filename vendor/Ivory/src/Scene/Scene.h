@@ -61,7 +61,7 @@ namespace Ivory {
 		template<typename T>
 		void on_component_add(Entity entity, T& component);
 
-		entt::registry m_registry;
+		entt::registry m_registry{};
 		
 		uint32_t m_vp_width{ 1 }, m_vp_height{ 1 };
 

@@ -188,8 +188,8 @@ namespace Alchemist {
 
 	void resolve_elastic_collision_circle(PointMass2D& first, PointMass2D& second);
 	void resolve_plain_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
-	void resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
-	void resolve_collision_with_friction(PointMass2D* first, PointMass2D* second, const Collision& collision);
+	glm::vec2 resolve_collision(PointMass2D* first, PointMass2D* second, const Collision& collision);
+	glm::vec2 resolve_collision_with_friction(PointMass2D* first, PointMass2D* second, const Collision& collision);
 
 	// Constraints
 
